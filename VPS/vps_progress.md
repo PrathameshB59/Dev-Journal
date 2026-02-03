@@ -88,7 +88,11 @@
 - [StackPilot Overview](#stackpilot-overview)
 - [What We Have Done (StackPilot)](#what-we-have-done-stackpilot)
 - [How We Set It Up (StackPilot)](#how-we-set-it-up-stackpilot)
-- [What We Will Do Next (StackPilot)](#what-we-will-do-next-stackpilot)
+- [MongoDB Atlas (StackPilot)](#mongodb-atlas-stackpilot)
+- [Cloning & Running on VPS](#cloning--running-on-vps)
+- [ngrok Usage](#ngrok-usage)
+- [Deployment Flow](#deployment-flow)
+- [StackPilot Roadmap](#stackpilot-roadmap)
 - [StackPilot Folder Structure](#stackpilot-folder-structure)
 
 ---
@@ -915,23 +919,96 @@ Live at: [stackpilot.in](http://stackpilot.in)
 
 ## How We Set It Up (StackPilot)
 
-- Containerized databases using Docker
-- Environment variables isolated via `.env`
-- Strict separation of backend, frontend, and docs
-- VPS used as service host (not desktop)
-- GitHub → VPS pull-based deployment workflow
+- Containerized services using Docker
+- Secrets isolated using `.env`
+- Separated backend, frontend, and docs
+- VPS used strictly for hosting services
+- GitHub → VPS pull-based deployment
 
 ---
 
-## What We Will Do Next (StackPilot)
+## MongoDB Atlas (StackPilot)
 
-- [ ] Initialize Express backend
-- [ ] Connect MongoDB Atlas
-- [ ] Build Docs CRUD APIs
-- [ ] Create HTML documentation UI
+**Recommended database for StackPilot:**
+
+- No VPS load
+- Automatic backups
+- Free tier sufficient for documentation
+- Production-grade reliability
+
+```text
+mongodb+srv://user:pass@cluster.mongodb.net/devjournal
+```
+
+---
+
+## Cloning & Running on VPS
+
+### Clone Repository
+
+```bash
+cd ~
+git clone https://github.com/PrathameshB59/Dev-Journal.git
+cd Dev-Journal
+```
+
+### Backend Setup
+
+```bash
+cd backend
+npm install
+cp .env.example .env
+npm run dev
+```
+
+### Docker Services
+
+```bash
+cd docker
+docker compose up -d
+```
+
+---
+
+## ngrok Usage
+
+- [x] Allowed for development & testing
+- [x] Useful for mobile testing & demos
+- [ ] Not allowed for production
+
+```bash
+ngrok http 3000
+```
+
+> ⚠️ Later replaced by Nginx + domain + HTTPS
+
+---
+
+## Deployment Flow
+
+**Industry Standard Deployment:**
+
+```text
+Local PC
+   ↓ git push
+GitHub
+   ↓ git pull
+VPS
+   ↓ Docker / Node
+Live Application
+```
+
+---
+
+## StackPilot Roadmap
+
+- [x] Finalize repo structure
+- [x] Setup Express backend
+- [x] Connect MongoDB Atlas
+- [ ] Build HTML UI
 - [ ] Add markdown rendering
-- [ ] Implement search & tagging
-- [ ] Configure Nginx reverse proxy
+- [ ] Add search & tags
+- [ ] Add Nginx reverse proxy
 - [ ] Enable HTTPS for stackpilot.in
 
 ---
