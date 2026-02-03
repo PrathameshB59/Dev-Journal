@@ -115,6 +115,15 @@
                         <a href="#dev-journal-structure" class="dropdown-link">📁 Folder Structure</a>
                     </div>
                 </li>
+                <li class="nav-item">
+                    <a href="#stackpilot" class="nav-link">StackPilot ▾</a>
+                    <div class="dropdown-menu">
+                        <a href="#stackpilot-done" class="dropdown-link">✅ What We Have Done</a>
+                        <a href="#stackpilot-setup" class="dropdown-link">🛠 How We Set It Up</a>
+                        <a href="#stackpilot-next" class="dropdown-link">📌 What We Will Do Next</a>
+                        <a href="#stackpilot-structure" class="dropdown-link">📁 Folder Structure</a>
+                    </div>
+                </li>
             </ul>
         </div>
     </nav>
@@ -6597,6 +6606,82 @@
 
     <div class="card full" id="dev-journal-structure">
         <h2>📁 Dev-Journal / Project Folder Structure</h2>
+        <div class="folder">
+            Dev-Journal/
+            ├── backend/
+            │ ├── src/
+            │ │ ├── app.js
+            │ │ ├── server.js
+            │ │ ├── config/
+            │ │ └── modules/
+            │ ├── package.json
+            │ └── Dockerfile
+            ├── frontend/
+            │ ├── public/
+            │ └── views/
+            │ └── progress.html
+            ├── docs/
+            │ ├── daily/
+            │ ├── docker/
+            │ ├── linux/
+            │ └── database/
+            ├── docker/
+            │ └── docker-compose.yml
+            ├── scripts/
+            ├── .env.example
+            ├── README.md
+            └── CHANGELOG.md
+        </div>
+    </div>
+
+    <!-- STACKPILOT PROJECT -->
+    <div class="card full" id="stackpilot">
+        <h2>🚀 StackPilot — VPS Progress & Dev Journal</h2>
+        <p class="muted">VPS Infrastructure Progress • Dev Journal • Production Documentation</p>
+        <p>Live at: <a href="http://stackpilot.in" target="_blank">stackpilot.in</a></p>
+    </div>
+
+    <div class="card" id="stackpilot-done">
+        <h2>✅ What We Have Done (VPS)</h2>
+        <ul class="list">
+            <li><span class="status done"></span>Ubuntu VPS provisioned and secured (SSH)</li>
+            <li><span class="status done"></span>Git & GitHub integration completed</li>
+            <li><span class="status done"></span>Docker & Docker Compose installed</li>
+            <li><span class="status done"></span>MySQL running in Docker container</li>
+            <li><span class="status done"></span>phpMyAdmin configured via Docker</li>
+            <li><span class="status done"></span>Firewall (UFW) reviewed and aligned</li>
+            <li><span class="status done"></span>Node.js backend architecture planned</li>
+            <li><span class="status done"></span>MongoDB Atlas selected as primary database</li>
+        </ul>
+    </div>
+
+    <div class="card" id="stackpilot-setup">
+        <h2>🛠 How We Set It Up</h2>
+        <ul class="list">
+            <li><span class="status done"></span>Containerized databases using Docker</li>
+            <li><span class="status done"></span>Environment variables isolated via <code>.env</code></li>
+            <li><span class="status done"></span>Strict separation of backend, frontend, and docs</li>
+            <li><span class="status done"></span>VPS used as service host (not desktop)</li>
+            <li><span class="status done"></span>GitHub → VPS pull-based deployment workflow</li>
+        </ul>
+    </div>
+
+    <div class="card" id="stackpilot-next">
+        <h2>📌 What We Will Do Next</h2>
+        <ul class="list">
+            <li><span class="status todo"></span>Initialize Express backend</li>
+            <li><span class="status todo"></span>Connect MongoDB Atlas</li>
+            <li><span class="status todo"></span>Build Docs CRUD APIs</li>
+            <li><span class="status todo"></span>Create HTML documentation UI</li>
+            <li><span class="status todo"></span>Add markdown rendering</li>
+            <li><span class="status todo"></span>Implement search & tagging</li>
+            <li><span class="status todo"></span>Configure Nginx reverse proxy</li>
+            <li><span class="status todo"></span>Enable HTTPS for stackpilot.in</li>
+        </ul>
+    </div>
+
+    <div class="card full" id="stackpilot-structure">
+        <h2>📁 Dev / Project Folder Structure</h2>
         <div class="folder">
             Dev-Journal/
             ├── backend/

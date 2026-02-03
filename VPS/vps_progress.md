@@ -83,6 +83,14 @@
 - [What We Will Do Next (Dev-Journal)](#what-we-will-do-next-dev-journal)
 - [Dev-Journal Folder Structure](#dev-journal-folder-structure)
 
+### StackPilot Project
+
+- [StackPilot Overview](#stackpilot-overview)
+- [What We Have Done (StackPilot)](#what-we-have-done-stackpilot)
+- [How We Set It Up (StackPilot)](#how-we-set-it-up-stackpilot)
+- [What We Will Do Next (StackPilot)](#what-we-will-do-next-stackpilot)
+- [StackPilot Folder Structure](#stackpilot-folder-structure)
+
 ---
 
 ## What We Have Done
@@ -852,6 +860,83 @@ A production-ready documentation system for tracking VPS progress, infrastructur
 ---
 
 ## Dev-Journal Folder Structure
+
+```text
+Dev-Journal/
+├── backend/
+│   ├── src/
+│   │   ├── app.js
+│   │   ├── server.js
+│   │   ├── config/
+│   │   └── modules/
+│   ├── package.json
+│   └── Dockerfile
+├── frontend/
+│   ├── public/
+│   └── views/
+│       └── progress.html
+├── docs/
+│   ├── daily/
+│   ├── docker/
+│   ├── linux/
+│   └── database/
+├── docker/
+│   └── docker-compose.yml
+├── scripts/
+├── .env.example
+├── README.md
+└── CHANGELOG.md
+```
+
+---
+
+## StackPilot Overview
+
+**StackPilot** — VPS Infrastructure Progress & Dev Journal
+
+VPS Infrastructure Progress • Dev Journal • Production Documentation
+
+Live at: [stackpilot.in](http://stackpilot.in)
+
+---
+
+## What We Have Done (StackPilot)
+
+- [x] Ubuntu VPS provisioned and secured (SSH)
+- [x] Git & GitHub integration completed
+- [x] Docker & Docker Compose installed
+- [x] MySQL running in Docker container
+- [x] phpMyAdmin configured via Docker
+- [x] Firewall (UFW) reviewed and aligned
+- [x] Node.js backend architecture planned
+- [x] MongoDB Atlas selected as primary database
+
+---
+
+## How We Set It Up (StackPilot)
+
+- Containerized databases using Docker
+- Environment variables isolated via `.env`
+- Strict separation of backend, frontend, and docs
+- VPS used as service host (not desktop)
+- GitHub → VPS pull-based deployment workflow
+
+---
+
+## What We Will Do Next (StackPilot)
+
+- [ ] Initialize Express backend
+- [ ] Connect MongoDB Atlas
+- [ ] Build Docs CRUD APIs
+- [ ] Create HTML documentation UI
+- [ ] Add markdown rendering
+- [ ] Implement search & tagging
+- [ ] Configure Nginx reverse proxy
+- [ ] Enable HTTPS for stackpilot.in
+
+---
+
+## StackPilot Folder Structure
 
 ```text
 Dev-Journal/

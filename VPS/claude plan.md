@@ -212,3 +212,162 @@ All CSS must be in styles.css, no inline styles
 All JavaScript must be in script.js, no inline scripts
 Prevent horizontal scrolling on all screen sizes
 Ensure content fits within viewport width
+Plan: Add StackPilot Section to VPS Progress Files
+Overview
+Add a new "StackPilot" section to both vps_progress.html and vps_progress.md files. StackPilot is a VPS infrastructure progress and dev journal documentation system for the stackpilot.in domain.
+
+Files to Modify
+vps_progress.html - Main HTML documentation file
+vps_progress.md - Markdown version of documentation
+Implementation Plan
+
+1. Add StackPilot Navigation Dropdown (HTML)
+Location: vps_progress.html:117 (after Dev-Journal dropdown)
+
+Add new navigation item:
+
+<li class="nav-item">
+    <a href="#stackpilot" class="nav-link">StackPilot ▾</a>
+    <div class="dropdown-menu">
+        <a href="#stackpilot-done" class="dropdown-link">✅ What We Have Done</a>
+        <a href="#stackpilot-setup" class="dropdown-link">🛠 How We Set It Up</a>
+        <a href="#stackpilot-next" class="dropdown-link">📌 What We Will Do Next</a>
+        <a href="#stackpilot-structure" class="dropdown-link">📁 Folder Structure</a>
+    </div>
+</li>
+2. Add StackPilot Content Sections (HTML)
+Location: vps_progress.html:6626 (after Dev-Journal structure, before footer)
+
+Add 5 new cards:
+
+Card 1: Overview (id="stackpilot")
+Title: "🚀 StackPilot — VPS Progress & Dev Journal"
+Subtitle: "VPS Infrastructure Progress • Dev Journal • Production Documentation"
+Card 2: What We Have Done (id="stackpilot-done")
+Ubuntu VPS provisioned and secured (SSH)
+Git & GitHub integration completed
+Docker & Docker Compose installed
+MySQL running in Docker container
+phpMyAdmin configured via Docker
+Firewall (UFW) reviewed and aligned
+Node.js backend architecture planned
+MongoDB Atlas selected as primary database
+Card 3: How We Set It Up (id="stackpilot-setup")
+Containerized databases using Docker
+Environment variables isolated via .env
+Strict separation of backend, frontend, and docs
+VPS used as service host (not desktop)
+GitHub → VPS pull-based deployment workflow
+Card 4: What We Will Do Next (id="stackpilot-next")
+Initialize Express backend
+Connect MongoDB Atlas
+Build Docs CRUD APIs
+Create HTML documentation UI
+Add markdown rendering
+Implement search & tagging
+Configure Nginx reverse proxy
+Enable HTTPS for stackpilot.in
+Card 5: Folder Structure (id="stackpilot-structure")
+Dev-Journal folder structure with backend, frontend, docs, docker, scripts directories
+
+1. Add StackPilot Section (Markdown)
+Location: vps_progress.md:816 (after Dev-Journal Folder Structure, before Footer)
+
+Add to Table of Contents (around line 72-78):
+
+### StackPilot Project
+
+- [StackPilot Overview](#stackpilot-overview)
+- [What We Have Done (StackPilot)](#what-we-have-done-stackpilot)
+- [How We Set It Up (StackPilot)](#how-we-set-it-up-stackpilot)
+- [What We Will Do Next (StackPilot)](#what-we-will-do-next-stackpilot)
+- [StackPilot Folder Structure](#stackpilot-folder-structure)
+Add content sections:
+
+## StackPilot Overview
+
+**StackPilot** — VPS Infrastructure Progress & Dev Journal
+
+VPS Infrastructure Progress • Dev Journal • Production Documentation
+
+Live at: [stackpilot.in](http://stackpilot.in)
+
+---
+
+## What We Have Done (StackPilot)
+
+- [x] Ubuntu VPS provisioned and secured (SSH)
+- [x] Git & GitHub integration completed
+- [x] Docker & Docker Compose installed
+- [x] MySQL running in Docker container
+- [x] phpMyAdmin configured via Docker
+- [x] Firewall (UFW) reviewed and aligned
+- [x] Node.js backend architecture planned
+- [x] MongoDB Atlas selected as primary database
+
+---
+
+## How We Set It Up (StackPilot)
+
+- Containerized databases using Docker
+- Environment variables isolated via `.env`
+- Strict separation of backend, frontend, and docs
+- VPS used as service host (not desktop)
+- GitHub → VPS pull-based deployment workflow
+
+---
+
+## What We Will Do Next (StackPilot)
+
+- [ ] Initialize Express backend
+- [ ] Connect MongoDB Atlas
+- [ ] Build Docs CRUD APIs
+- [ ] Create HTML documentation UI
+- [ ] Add markdown rendering
+- [ ] Implement search & tagging
+- [ ] Configure Nginx reverse proxy
+- [ ] Enable HTTPS for stackpilot.in
+
+---
+
+## StackPilot Folder Structure
+
+\`\`\`text
+Dev-Journal/
+├── backend/
+│   ├── src/
+│   │   ├── app.js
+│   │   ├── server.js
+│   │   ├── config/
+│   │   └── modules/
+│   ├── package.json
+│   └── Dockerfile
+├── frontend/
+│   ├── public/
+│   └── views/
+│       └── progress.html
+├── docs/
+│   ├── daily/
+│   ├── docker/
+│   ├── linux/
+│   └── database/
+├── docker/
+│   └── docker-compose.yml
+├── scripts/
+├── .env.example
+├── README.md
+└── CHANGELOG.md
+\`\`\`
+Summary of Changes
+File Change Location
+vps_progress.html Add StackPilot dropdown After line 117
+vps_progress.html Add 5 StackPilot cards After line 6626
+vps_progress.md Add TOC entries After line 78
+vps_progress.md Add content sections After line 816
+Verification
+Open vps_progress.html in browser
+Verify "StackPilot ▾" dropdown appears in navigation
+Click each dropdown link → verify smooth scroll to correct section
+Open vps_progress.md in VS Code preview
+Click TOC links → verify navigation works
+Verify all 5 StackPilot sections appear with correct content
