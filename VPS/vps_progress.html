@@ -106,6 +106,15 @@
                         <a href="#malware-scanner" class="dropdown-link">🛡️ Malware Scanner & Auto-Removal</a>
                     </div>
                 </li>
+                <li class="nav-item">
+                    <a href="#dev-journal" class="nav-link">Dev-Journal ▾</a>
+                    <div class="dropdown-menu">
+                        <a href="#dev-journal-done" class="dropdown-link">✅ What We Have Done</a>
+                        <a href="#dev-journal-setup" class="dropdown-link">🛠 How We Set It Up</a>
+                        <a href="#dev-journal-next" class="dropdown-link">📌 What We Will Do Next</a>
+                        <a href="#dev-journal-structure" class="dropdown-link">📁 Folder Structure</a>
+                    </div>
+                </li>
             </ul>
         </div>
     </nav>
@@ -6539,6 +6548,81 @@
             ✔ VPS security baseline complete.<br />
             Safe for backend development and production use.
         </blockquote>
+    </div>
+
+    <!-- DEV-JOURNAL PROJECT -->
+    <div class="card full" id="dev-journal">
+        <h2>📓 Dev-Journal — VPS Progress Report</h2>
+        <p class="muted">Production-ready documentation of infrastructure, setup, and next steps</p>
+    </div>
+
+    <div class="card" id="dev-journal-done">
+        <h2>✅ What We Have Done (VPS)</h2>
+        <ul class="list">
+            <li><span class="status done"></span>Ubuntu VPS provisioned & secured (SSH)</li>
+            <li><span class="status done"></span>Git installed & GitHub connected</li>
+            <li><span class="status done"></span>Docker & Docker Compose installed</li>
+            <li><span class="status done"></span>MySQL running inside Docker</li>
+            <li><span class="status done"></span>phpMyAdmin connected via Docker</li>
+            <li><span class="status done"></span>Firewall (UFW) reviewed</li>
+            <li><span class="status done"></span>Node.js environment planned</li>
+            <li><span class="status done"></span>MongoDB Atlas selected as primary DB</li>
+        </ul>
+    </div>
+
+    <div class="card" id="dev-journal-setup">
+        <h2>🛠 How We Set It Up</h2>
+        <ul class="list">
+            <li><span class="status done"></span>Used Docker for database isolation</li>
+            <li><span class="status done"></span>Kept secrets outside Git using <code>.env</code></li>
+            <li><span class="status done"></span>Separated backend, frontend, and docs</li>
+            <li><span class="status done"></span>Used VPS only for services (not as desktop)</li>
+            <li><span class="status done"></span>Adopted GitHub → VPS pull workflow</li>
+        </ul>
+    </div>
+
+    <div class="card" id="dev-journal-next">
+        <h2>📌 What We Will Do Next (Plan)</h2>
+        <ul class="list">
+            <li><span class="status todo"></span>Initialize Express backend</li>
+            <li><span class="status todo"></span>Connect MongoDB Atlas</li>
+            <li><span class="status todo"></span>Create Docs API (CRUD)</li>
+            <li><span class="status todo"></span>Build HTML UI</li>
+            <li><span class="status todo"></span>Add markdown rendering</li>
+            <li><span class="status todo"></span>Add search & tags</li>
+            <li><span class="status todo"></span>Add Nginx reverse proxy</li>
+            <li><span class="status todo"></span>Attach domain + HTTPS</li>
+        </ul>
+    </div>
+
+    <div class="card full" id="dev-journal-structure">
+        <h2>📁 Dev-Journal / Project Folder Structure</h2>
+        <div class="folder">
+            Dev-Journal/
+            ├── backend/
+            │ ├── src/
+            │ │ ├── app.js
+            │ │ ├── server.js
+            │ │ ├── config/
+            │ │ └── modules/
+            │ ├── package.json
+            │ └── Dockerfile
+            ├── frontend/
+            │ ├── public/
+            │ └── views/
+            │ └── progress.html
+            ├── docs/
+            │ ├── daily/
+            │ ├── docker/
+            │ ├── linux/
+            │ └── database/
+            ├── docker/
+            │ └── docker-compose.yml
+            ├── scripts/
+            ├── .env.example
+            ├── README.md
+            └── CHANGELOG.md
+        </div>
     </div>
 
     <footer>
