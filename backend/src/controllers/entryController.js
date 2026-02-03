@@ -1,0 +1,168 @@
+const Entry = require('../models/Entry');
+
+// Get all entries with optional filtering
+exports.getAllEntries = async (req, res) => {
+    try {
+        const { category, tag, sort = '-createdAt', limit = 50, page = 1 } = req.query;
+
+        const query = {};
+
+        if (category) {
+            query.category = category;
+        }
+
+        if (tag) {
+            query.tags = { $in: [tag.toLowerCase()] };
+        }
+
+        const skip = (parseInt(page) - 1) * parseInt(limit);
+
+        const entries = await Entry.find(query)
+            .sort(sort)
+            .skip(skip)
+            .limit(parseInt(limit));
+
+        const total = await Entry.countDocuments(query);
+
+        res.json({
+            success: true,
+            data: entries,
+            pagination: {
+                total,
+                page: parseInt(page),
+                limit: parseInt(limit),
+                pages: Math.ceil(total / parseInt(limit))
+            }
+        });
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+};
+
+// Get single entry by ID
+exports.getEntry = async (req, res) => {
+    try {
+        const entry = await Entry.findById(req.params.id);
+
+        if (!entry) {
+            return res.status(404).json({ success: false, error: 'Entry not found' });
+        }
+
+        res.json({ success: true, data: entry });
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+};
+
+// Create new entry
+exports.createEntry = async (req, res) => {
+    try {
+        const { title, category, content, tags, codeLanguage, codeBlock } = req.body;
+
+        const entry = await Entry.create({
+            title,
+            category,
+            content,
+            tags: tags || [],
+            codeLanguage: codeLanguage || '',
+            codeBlock: codeBlock || ''
+        });
+
+        res.status(201).json({ success: true, data: entry });
+    } catch (error) {
+        if (error.name === 'ValidationError') {
+            const messages = Object.values(error.errors).map(e => e.message);
+            return res.status(400).json({ success: false, error: messages.join(', ') });
+        }
+        res.status(500).json({ success: false, error: error.message });
+    }
+};
+
+// Update entry
+exports.updateEntry = async (req, res) => {
+    try {
+        const { title, category, content, tags, codeLanguage, codeBlock } = req.body;
+
+        const entry = await Entry.findByIdAndUpdate(
+            req.params.id,
+            { title, category, content, tags, codeLanguage, codeBlock },
+            { new: true, runValidators: true }
+        );
+
+        if (!entry) {
+            return res.status(404).json({ success: false, error: 'Entry not found' });
+        }
+
+        res.json({ success: true, data: entry });
+    } catch (error) {
+        if (error.name === 'ValidationError') {
+            const messages = Object.values(error.errors).map(e => e.message);
+            return res.status(400).json({ success: false, error: messages.join(', ') });
+        }
+        res.status(500).json({ success: false, error: error.message });
+    }
+};
+
+// Delete entry
+exports.deleteEntry = async (req, res) => {
+    try {
+        const entry = await Entry.findByIdAndDelete(req.params.id);
+
+        if (!entry) {
+            return res.status(404).json({ success: false, error: 'Entry not found' });
+        }
+
+        res.json({ success: true, data: {} });
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+};
+
+// Search entries
+exports.searchEntries = async (req, res) => {
+    try {
+        const { q } = req.query;
+
+        if (!q) {
+            return res.status(400).json({ success: false, error: 'Search query is required' });
+        }
+
+        const entries = await Entry.find(
+            { $text: { $search: q } },
+            { score: { $meta: 'textScore' } }
+        ).sort({ score: { $meta: 'textScore' } }).limit(20);
+
+        res.json({ success: true, data: entries });
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+};
+
+// Get all unique tags
+exports.getAllTags = async (req, res) => {
+    try {
+        const tags = await Entry.distinct('tags');
+        res.json({ success: true, data: tags.filter(t => t) });
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+};
+
+// Get category stats
+exports.getCategoryStats = async (req, res) => {
+    try {
+        const stats = await Entry.aggregate([
+            {
+                $group: {
+                    _id: '$category',
+                    count: { $sum: 1 }
+                }
+            },
+            { $sort: { count: -1 } }
+        ]);
+
+        res.json({ success: true, data: stats });
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+};

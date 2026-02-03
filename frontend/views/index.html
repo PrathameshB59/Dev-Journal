@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dev Journal - Personal Developer Documentation</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <h1><span class="logo-icon">&#128221;</span> Dev Journal</h1>
+            <p>Personal developer journal for daily learnings, project notes, and code snippets</p>
+        </div>
+    </header>
+
+    <nav>
+        <div class="nav-container">
+            <a href="/" class="nav-brand">&#128218; Dev Journal</a>
+            <div class="nav-actions">
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="Search entries...">
+                    <button id="searchBtn">&#128269;</button>
+                </div>
+                <a href="/new" class="btn-new">+ New Entry</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container">
+        <aside class="sidebar">
+            <div class="sidebar-section">
+                <h3>Categories</h3>
+                <ul class="category-list">
+                    <li><a href="#" data-category="" class="active">All Entries</a></li>
+                    <li><a href="#" data-category="daily-learning">&#128218; Daily Learning</a></li>
+                    <li><a href="#" data-category="project-note">&#128196; Project Notes</a></li>
+                    <li><a href="#" data-category="bug-fix">&#128027; Bug Fixes</a></li>
+                    <li><a href="#" data-category="code-snippet">&#128187; Code Snippets</a></li>
+                    <li><a href="#" data-category="concept">&#128161; Concepts</a></li>
+                </ul>
+            </div>
+
+            <div class="sidebar-section">
+                <h3>Tags</h3>
+                <div id="tagCloud" class="tag-cloud">
+                    <!-- Tags loaded dynamically -->
+                </div>
+            </div>
+
+            <div class="sidebar-section stats-section">
+                <h3>Statistics</h3>
+                <div id="categoryStats" class="stats-grid">
+                    <!-- Stats loaded dynamically -->
+                </div>
+            </div>
+        </aside>
+
+        <section class="content">
+            <div class="content-header">
+                <h2 id="contentTitle">All Entries</h2>
+                <span id="entryCount" class="entry-count">0 entries</span>
+            </div>
+
+            <div id="entriesGrid" class="entries-grid">
+                <!-- Entries loaded dynamically -->
+            </div>
+
+            <div id="loadingIndicator" class="loading">
+                <div class="spinner"></div>
+                <p>Loading entries...</p>
+            </div>
+
+            <div id="noEntries" class="no-entries" style="display: none;">
+                <p>&#128466; No entries found</p>
+                <a href="/new" class="btn-primary">Create your first entry</a>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <p>Dev Journal - Personal Developer Documentation System</p>
+            <p>Built with Node.js, Express, MongoDB Atlas</p>
+        </div>
+    </footer>
+
+    <script src="/js/app.js"></script>
+</body>
+</html>

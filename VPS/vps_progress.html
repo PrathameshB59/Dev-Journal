@@ -6563,6 +6563,337 @@
         </blockquote>
     </div>
 
+    <!-- NGINX REVERSE PROXY -->
+    <div class="card full" id="nginx">
+        <h2>🌐 Nginx — Reverse Proxy Setup</h2>
+        <p class="muted">
+            Production web server configuration for serving Dev-Journal via stackpilot.in domain.
+        </p>
+
+        <hr />
+
+        <h3>📦 Installation</h3>
+
+        <ul class="list">
+            <li><span class="status done"></span>Nginx installed via APT</li>
+            <li><span class="status done"></span>APT source conflict resolved (Docker duplicate)</li>
+            <li><span class="status done"></span>Nginx service enabled on boot</li>
+        </ul>
+
+        <h4>Installation Commands</h4>
+        <pre><code>sudo apt update
+sudo apt install nginx -y
+sudo systemctl enable nginx
+sudo systemctl start nginx</code></pre>
+
+        <hr />
+
+        <h3>⚠️ APT Source Conflict Fix</h3>
+
+        <p class="muted">
+            During installation, an APT source conflict was detected between two Docker repository files
+            with different Signed-By keys.
+        </p>
+
+        <pre><code># Error: Conflicting values for Signed-By
+# /etc/apt/sources.list.d/docker.list
+# /etc/apt/sources.list.d/docker.sources
+
+# Fix: Removed the duplicate source
+sudo rm /etc/apt/sources.list.d/docker.sources
+sudo apt update</code></pre>
+
+        <blockquote class="success">
+            ✔ APT sources cleaned up. Nginx installed successfully.
+        </blockquote>
+
+        <hr />
+
+        <h3>📋 Current Status</h3>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Component</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Nginx Installed</td>
+                    <td>✅ Done</td>
+                </tr>
+                <tr>
+                    <td>Service Running</td>
+                    <td>✅ Active</td>
+                </tr>
+                <tr>
+                    <td>Server Block (stackpilot.in)</td>
+                    <td>✅ Done</td>
+                </tr>
+                <tr>
+                    <td>UFW Ports 80/443</td>
+                    <td>✅ Done (Nginx Full)</td>
+                </tr>
+                <tr>
+                    <td>SSL Certificate</td>
+                    <td>✅ Done (Let's Encrypt)</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <hr />
+
+        <h3>✅ Completed Steps</h3>
+
+        <ul class="list">
+            <li><span class="status done"></span>Created Nginx server block for stackpilot.in</li>
+            <li><span class="status done"></span>Enabled site (symlink to sites-enabled)</li>
+            <li><span class="status done"></span>Tested Nginx configuration (syntax ok)</li>
+            <li><span class="status done"></span>Allowed Nginx Full in UFW (ports 80/443)</li>
+            <li><span class="status done"></span>Installed Certbot with Nginx plugin</li>
+            <li><span class="status done"></span>Obtained SSL certificate from Let's Encrypt</li>
+            <li><span class="status done"></span>HTTPS enabled for stackpilot.in and www.stackpilot.in</li>
+        </ul>
+
+        <h4>Server Block Configuration</h4>
+        <pre><code>server {
+    listen 80;
+    server_name stackpilot.in www.stackpilot.in;
+
+    location / {
+        proxy_pass http://127.0.0.1:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_cache_bypass $http_upgrade;
+    }
+}</code></pre>
+
+        <hr />
+
+        <h3>🔐 SSL Certificate Details</h3>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Property</th>
+                    <th>Value</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Provider</td>
+                    <td>Let's Encrypt</td>
+                </tr>
+                <tr>
+                    <td>Domains</td>
+                    <td>stackpilot.in, www.stackpilot.in</td>
+                </tr>
+                <tr>
+                    <td>Certificate Path</td>
+                    <td>/etc/letsencrypt/live/stackpilot.in/fullchain.pem</td>
+                </tr>
+                <tr>
+                    <td>Key Path</td>
+                    <td>/etc/letsencrypt/live/stackpilot.in/privkey.pem</td>
+                </tr>
+                <tr>
+                    <td>Expires</td>
+                    <td>2026-05-04</td>
+                </tr>
+                <tr>
+                    <td>Auto-Renewal</td>
+                    <td>Enabled (systemd timer)</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <blockquote class="success">
+            ✔ HTTPS is now enabled for https://stackpilot.in<br />
+            ✔ Certbot will automatically renew the certificate before expiration.
+        </blockquote>
+    </div>
+
+    <!-- PM2 PROCESS MANAGER -->
+    <div class="card full" id="pm2">
+        <h2>⚙️ PM2 — Production Process Manager</h2>
+        <p class="muted">
+            Node.js process manager for running Dev-Journal in production with auto-restart and monitoring.
+        </p>
+
+        <hr />
+
+        <h3>📦 Installation & Setup</h3>
+
+        <ul class="list">
+            <li><span class="status done"></span>PM2 installed globally via npm</li>
+            <li><span class="status done"></span>Ecosystem config file created</li>
+            <li><span class="status done"></span>Production server started</li>
+            <li><span class="status done"></span>Process list saved for restart</li>
+            <li><span class="status done"></span>Systemd startup service enabled</li>
+        </ul>
+
+        <h4>Commands Used</h4>
+        <pre><code># Install PM2 globally
+npm install -g pm2
+
+# Start production server
+cd /home/devuser/dev/projects/Dev-Journal/backend
+pm2 start ecosystem.config.js --env production
+
+# Save process list
+pm2 save
+
+# Enable startup on boot (requires sudo)
+pm2 startup</code></pre>
+
+        <hr />
+
+        <h3>📊 Running Processes</h3>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Mode</th>
+                    <th>Status</th>
+                    <th>Port</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>0</td>
+                    <td>fintrack-api</td>
+                    <td>fork</td>
+                    <td>✅ online</td>
+                    <td>-</td>
+                </tr>
+                <tr>
+                    <td>1</td>
+                    <td>dev-journal</td>
+                    <td>fork</td>
+                    <td>✅ online</td>
+                    <td>3000</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <hr />
+
+        <h3>📁 Ecosystem Config</h3>
+
+        <pre><code>// ecosystem.config.js
+module.exports = {
+  apps: [{
+    name: 'dev-journal',
+    script: 'src/server.js',
+    cwd: '/home/devuser/dev/projects/Dev-Journal/backend',
+    instances: 1,
+    exec_mode: 'fork',
+    env_production: {
+      NODE_ENV: 'production',
+      PORT: 3000
+    }
+  }]
+};</code></pre>
+
+        <hr />
+
+        <h3>🔧 Useful PM2 Commands</h3>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Command</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>pm2 list</code></td>
+                    <td>Show all running processes</td>
+                </tr>
+                <tr>
+                    <td><code>pm2 logs dev-journal</code></td>
+                    <td>View application logs</td>
+                </tr>
+                <tr>
+                    <td><code>pm2 restart dev-journal</code></td>
+                    <td>Restart the application</td>
+                </tr>
+                <tr>
+                    <td><code>pm2 stop dev-journal</code></td>
+                    <td>Stop the application</td>
+                </tr>
+                <tr>
+                    <td><code>pm2 monit</code></td>
+                    <td>Real-time monitoring dashboard</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <hr />
+
+        <h3>🔄 Systemd Startup Service</h3>
+
+        <p class="muted">
+            PM2 is configured to start automatically on system boot via systemd.
+        </p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Property</th>
+                    <th>Value</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Service Name</td>
+                    <td>pm2-devuser</td>
+                </tr>
+                <tr>
+                    <td>Service File</td>
+                    <td>/etc/systemd/system/pm2-devuser.service</td>
+                </tr>
+                <tr>
+                    <td>User</td>
+                    <td>devuser</td>
+                </tr>
+                <tr>
+                    <td>PM2 Home</td>
+                    <td>/home/devuser/.pm2</td>
+                </tr>
+                <tr>
+                    <td>Restart Policy</td>
+                    <td>on-failure</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h4>Startup Command</h4>
+        <pre><code># Generate and enable startup script
+sudo env PATH=$PATH:/usr/bin /usr/lib/node_modules/pm2/bin/pm2 startup systemd -u devuser --hp /home/devuser
+
+# Save current process list (required after changes)
+pm2 save
+
+# Remove startup script (if needed)
+pm2 unstartup systemd</code></pre>
+
+        <blockquote class="success">
+            ✔ Dev-Journal is running in production mode<br />
+            ✔ Process will auto-restart on crash<br />
+            ✔ PM2 starts automatically on server reboot
+        </blockquote>
+    </div>
+
     <!-- DEV-JOURNAL PROJECT -->
     <div class="card full" id="dev-journal">
         <h2>📓 Dev-Journal — VPS Progress Report</h2>
@@ -6577,9 +6908,20 @@
             <li><span class="status done"></span>Docker & Docker Compose installed</li>
             <li><span class="status done"></span>MySQL running inside Docker</li>
             <li><span class="status done"></span>phpMyAdmin connected via Docker</li>
-            <li><span class="status done"></span>Firewall (UFW) reviewed</li>
-            <li><span class="status done"></span>Node.js environment planned</li>
-            <li><span class="status done"></span>MongoDB Atlas selected as primary DB</li>
+            <li><span class="status done"></span>Firewall (UFW) configured (ports 22, 80, 443, 3000)</li>
+            <li><span class="status done"></span>Node.js v20.20.0 environment ready</li>
+            <li><span class="status done"></span>MongoDB Atlas connected & working</li>
+            <li><span class="status done"></span>Express backend initialized</li>
+            <li><span class="status done"></span>Journal Entry API (CRUD) created</li>
+            <li><span class="status done"></span>HTML UI with external CSS/JS built</li>
+            <li><span class="status done"></span>PM2 process manager installed</li>
+            <li><span class="status done"></span>Nginx installed & configured</li>
+            <li><span class="status done"></span>Server block created for stackpilot.in</li>
+            <li><span class="status done"></span>SSL certificate installed (Let's Encrypt)</li>
+            <li><span class="status done"></span>HTTPS enabled with auto-renewal</li>
+            <li><span class="status done"></span>PM2 production server started</li>
+            <li><span class="status done"></span>PM2 systemd startup enabled (auto-boot)</li>
+            <li><span class="status done"></span>🎉 https://stackpilot.in is LIVE!</li>
         </ul>
     </div>
 
@@ -6597,15 +6939,22 @@
     <div class="card" id="dev-journal-next">
         <h2>📌 What We Will Do Next (Plan)</h2>
         <ul class="list">
-            <li><span class="status todo"></span>Initialize Express backend</li>
-            <li><span class="status todo"></span>Connect MongoDB Atlas</li>
-            <li><span class="status todo"></span>Create Docs API (CRUD)</li>
-            <li><span class="status todo"></span>Build HTML UI</li>
-            <li><span class="status todo"></span>Add markdown rendering</li>
-            <li><span class="status todo"></span>Add search & tags</li>
-            <li><span class="status todo"></span>Add Nginx reverse proxy</li>
-            <li><span class="status todo"></span>Attach domain + HTTPS</li>
+            <li><span class="status done"></span>Initialize Express backend</li>
+            <li><span class="status done"></span>Connect MongoDB Atlas</li>
+            <li><span class="status done"></span>Create Docs API (CRUD)</li>
+            <li><span class="status done"></span>Build HTML UI</li>
+            <li><span class="status done"></span>Add search & tags</li>
+            <li><span class="status done"></span>Install Nginx on VPS</li>
+            <li><span class="status done"></span>Create Nginx server block for stackpilot.in</li>
+            <li><span class="status done"></span>Allow Nginx ports (80/443) in UFW</li>
+            <li><span class="status done"></span>Install SSL certificate (Let's Encrypt)</li>
+            <li><span class="status done"></span>Start PM2 production server</li>
+            <li><span class="status done"></span>Verify https://stackpilot.in is live</li>
         </ul>
+
+        <blockquote class="success">
+            🎉 All deployment tasks completed! Dev-Journal is now live at https://stackpilot.in
+        </blockquote>
     </div>
 
     <div class="card full" id="dev-journal-structure">
@@ -6642,7 +6991,7 @@
     <div class="card full" id="stackpilot">
         <h2>🚀 StackPilot — VPS Progress & Dev Journal</h2>
         <p class="muted">VPS Infrastructure Progress • Dev Journal • Production Documentation</p>
-        <p>Live at: <a href="http://stackpilot.in" target="_blank">stackpilot.in</a></p>
+        <p>Live at: <a href="https://stackpilot.in" target="_blank">https://stackpilot.in</a></p>
     </div>
 
     <div class="card" id="stackpilot-done">
@@ -6653,9 +7002,19 @@
             <li><span class="status done"></span>Docker & Docker Compose installed</li>
             <li><span class="status done"></span>MySQL running in Docker container</li>
             <li><span class="status done"></span>phpMyAdmin configured via Docker</li>
-            <li><span class="status done"></span>Firewall (UFW) reviewed and aligned</li>
-            <li><span class="status done"></span>Node.js backend architecture planned</li>
-            <li><span class="status done"></span>MongoDB Atlas selected as primary database</li>
+            <li><span class="status done"></span>Firewall (UFW) configured (ports 22, 80, 443, 3000)</li>
+            <li><span class="status done"></span>Node.js v20.20.0 + npm ready</li>
+            <li><span class="status done"></span>MongoDB Atlas connected & working</li>
+            <li><span class="status done"></span>Express.js backend built with CRUD API</li>
+            <li><span class="status done"></span>Frontend HTML/CSS/JS built</li>
+            <li><span class="status done"></span>PM2 process manager installed</li>
+            <li><span class="status done"></span>Nginx web server installed & configured</li>
+            <li><span class="status done"></span>Server block created for stackpilot.in</li>
+            <li><span class="status done"></span>SSL certificate installed (Let's Encrypt)</li>
+            <li><span class="status done"></span>HTTPS enabled with auto-renewal</li>
+            <li><span class="status done"></span>PM2 production server started</li>
+            <li><span class="status done"></span>PM2 systemd startup enabled (auto-boot)</li>
+            <li><span class="status done"></span>🎉 https://stackpilot.in is LIVE!</li>
         </ul>
     </div>
 
@@ -6673,6 +7032,7 @@
     <div class="card" id="stackpilot-mongodb">
         <h2>🗄 MongoDB Atlas (Recommended)</h2>
         <ul class="list">
+<<<<<<< HEAD
             <li><span class="status done"></span>No VPS load</li>
             <li><span class="status done"></span>Automatic backups</li>
             <li><span class="status done"></span>Free tier sufficient for documentation</li>
@@ -6737,7 +7097,25 @@ docker compose up -d</pre>
             <li><span class="status todo"></span>Add search & tags</li>
             <li><span class="status todo"></span>Add Nginx reverse proxy</li>
             <li><span class="status todo"></span>Enable HTTPS for stackpilot.in</li>
+=======
+            <li><span class="status done"></span>Initialize Express backend</li>
+            <li><span class="status done"></span>Connect MongoDB Atlas</li>
+            <li><span class="status done"></span>Build Docs CRUD APIs</li>
+            <li><span class="status done"></span>Create HTML documentation UI</li>
+            <li><span class="status done"></span>Implement search & tagging</li>
+            <li><span class="status done"></span>Install Nginx on VPS</li>
+            <li><span class="status done"></span>Create Nginx server block for stackpilot.in</li>
+            <li><span class="status done"></span>Open ports 80/443 in UFW</li>
+            <li><span class="status done"></span>Install SSL certificate (Let's Encrypt)</li>
+            <li><span class="status done"></span>Start PM2 production server</li>
+            <li><span class="status done"></span>Enable PM2 systemd startup (auto-boot)</li>
+            <li><span class="status done"></span>Verify https://stackpilot.in is live</li>
+>>>>>>> 99946d2 (app is started)
         </ul>
+
+        <blockquote class="success">
+            🎉 All deployment tasks completed! StackPilot Dev-Journal is now live at https://stackpilot.in
+        </blockquote>
     </div>
 
     <div class="card full" id="stackpilot-structure">
