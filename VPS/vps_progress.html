@@ -34,7 +34,8 @@
                         <a href="#vps-as-desktop" class="dropdown-link">🧠 Can VPS Be Used as Desktop?</a>
                         <a href="#vps-upgrade-decision" class="dropdown-link">📈 VPS Upgrade Decision</a>
                         <a href="#vps-health-analysis" class="dropdown-link">🖥️ Current VPS Health Analysis</a>
-                        <a href="#vps-as-desktop-decision" class="dropdown-link">🖥️ VPS as Personal Desktop Decision</a>
+                        <a href="#vps-as-desktop-decision" class="dropdown-link">🖥️ VPS as Personal Desktop
+                            Decision</a>
                     </div>
                 </li>
                 <li class="nav-item">
@@ -71,8 +72,10 @@
                 <li class="nav-item">
                     <a href="#phpmyadmin" class="nav-link">phpMyAdmin ▾</a>
                     <div class="dropdown-menu">
-                        <a href="#php-phpmyadmin-clarification" class="dropdown-link">🐘 PHP & phpMyAdmin Clarification</a>
-                        <a href="#directory-workflow-confusion" class="dropdown-link">📂 Directory & Workflow Confusion</a>
+                        <a href="#php-phpmyadmin-clarification" class="dropdown-link">🐘 PHP & phpMyAdmin
+                            Clarification</a>
+                        <a href="#directory-workflow-confusion" class="dropdown-link">📂 Directory & Workflow
+                            Confusion</a>
                         <a href="#php-not-required" class="dropdown-link">🚫 PHP Knowledge Not Required</a>
                         <a href="#phpmyadmin-docker" class="dropdown-link">🧩 phpMyAdmin via Docker</a>
                         <a href="#phpmyadmin-access-denied" class="dropdown-link">🔐 phpMyAdmin Access Denied</a>
@@ -95,6 +98,12 @@
                         <a href="#django-secret-key" class="dropdown-link">🔐 Django SECRET_KEY Resolution</a>
                         <a href="#gitignore-update" class="dropdown-link">🧾 .gitignore Update</a>
                         <a href="#env-cleanup" class="dropdown-link">🧩 Environment Configuration Cleanup</a>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a href="#security" class="nav-link">Security ▾</a>
+                    <div class="dropdown-menu">
+                        <a href="#malware-scanner" class="dropdown-link">🛡️ Malware Scanner & Auto-Removal</a>
                     </div>
                 </li>
             </ul>
@@ -1419,113 +1428,113 @@
     <!-- MYSQL ROOT PASSWORD CHANGE (DOCKER SAFE METHOD) -->
     <div class="card full" id="mysql-root-password">
         <h2>🔐 MySQL Root Password Change (Docker – Safe Method)</h2>
-    
+
         <p class="muted">
             This section documents the <strong>correct and production-safe way</strong>
             to change the MySQL <code>root</code> password inside a Docker container,
             without data loss or container rebuilds.
         </p>
-    
+
         <blockquote class="success">
             ✔ Docker volume preserved<br>
             ✔ No database reset<br>
             ✔ Industry-standard approach
         </blockquote>
-    
+
         <h3>🎯 Objective</h3>
         <p>
             Replace the default MySQL root password
             (<code>rootpassword</code>) with a stronger password,
             while keeping all existing data intact.
         </p>
-    
+
         <h3>✅ Step 1: Login as MySQL Root (Current Password)</h3>
         <div class="folder">
             docker exec -it mysql-dev mysql -u root -p
         </div>
-    
+
         <div class="folder">
             Password: rootpassword
         </div>
-    
+
         <p class="muted">
             Successful login shows the <code>mysql></code> prompt.
         </p>
-    
+
         <h3>✅ Step 2: Change Root Password (Inside MySQL)</h3>
         <p class="muted">
             This must be done <strong>inside the running MySQL instance</strong>,
             not only in Docker configuration files.
         </p>
-    
+
         <div class="folder">
             ALTER USER 'root'@'%' IDENTIFIED BY 'StrongRoot@123';
             FLUSH PRIVILEGES;
         </div>
-    
+
         <div class="folder">
             exit;
         </div>
-    
+
         <blockquote class="success">
             ✔ Root password updated successfully
         </blockquote>
-    
+
         <h3>✅ Step 3: Verify New Password</h3>
         <div class="folder">
             docker exec -it mysql-dev mysql -u root -p
         </div>
-    
+
         <div class="folder">
             Password: StrongRoot@123
         </div>
-    
+
         <ul class="list">
             <li><span class="status done"></span>Login successful</li>
             <li><span class="status done"></span>Password change confirmed</li>
         </ul>
-    
+
         <h3>🔁 IMPORTANT: Sync docker-compose.yml</h3>
         <p class="muted">
             Docker does <strong>not</strong> auto-update credentials.
             The configuration must match the live database state.
         </p>
-    
+
         <div class="folder">
             nano docker-compose.yml
         </div>
-    
+
         <p class="muted">Update the following value:</p>
-    
+
         <div class="folder">
             MYSQL_ROOT_PASSWORD: StrongRoot@123
         </div>
-    
+
         <p class="muted">
             Save → <code>Ctrl + O</code>, Enter → <code>Ctrl + X</code>
         </p>
-    
+
         <h3>🚨 Common Mistakes (Avoided)</h3>
         <ul class="list">
             <li><span class="status danger"></span>Changing only docker-compose.yml</li>
             <li><span class="status danger"></span>Restarting container without updating MySQL</li>
             <li><span class="status danger"></span>Deleting Docker volumes unnecessarily</li>
         </ul>
-    
+
         <h3>🔐 Optional: Change Application User Password</h3>
         <p class="muted">
             Recommended if credentials were exposed or reused.
         </p>
-    
+
         <div class="folder">
             ALTER USER 'shopease_user'@'%' IDENTIFIED BY 'NewAppPass@123';
             FLUSH PRIVILEGES;
         </div>
-    
+
         <p class="muted">
             Django environment variables must be updated afterward.
         </p>
-    
+
         <h3>✅ Final Checklist</h3>
         <ul class="list">
             <li><span class="status done"></span>MySQL root password changed</li>
@@ -1533,7 +1542,7 @@
             <li><span class="status done"></span>No container rebuild</li>
             <li><span class="status done"></span>Production-safe workflow</li>
         </ul>
-    
+
         <blockquote class="success">
             ✔ Secure<br>
             ✔ Reversible<br>
@@ -1543,15 +1552,15 @@
     <!-- MYSQL 8 ROOT ACCESS DENIED (GUARANTEED FIX) -->
     <div class="card full" id="mysql-root-access-denied">
         <h2>🛠️ MySQL 8 + Docker: Root Access Still Denied (Guaranteed Fix)</h2>
-    
+
         <p class="muted">
             After changing the MySQL root password, login was still intermittently denied.
             This section documents the <strong>exact root cause</strong> and the
             <strong>100% reliable fix</strong> for MySQL 8 running inside Docker with persistent volumes.
         </p>
-    
+
         <h3>🚨 Why Access Was STILL Denied (Truth)</h3>
-    
+
         <ul class="list">
             <li><span class="status done"></span>MySQL 8 stores users as <code>user@host</code> pairs</li>
             <li><span class="status done"></span><code>root</code> often exists only as <code>root@localhost</code></li>
@@ -1559,118 +1568,118 @@
             <li><span class="status done"></span>Docker volumes keep old authentication data</li>
             <li><span class="status done"></span>Docker environment variables do NOT override existing users</li>
         </ul>
-    
+
         <blockquote class="success">
             ✔ MySQL was behaving correctly<br>
             ✔ Docker was not broken<br>
             ✔ The issue was targeting the wrong user host
         </blockquote>
-    
+
         <h3>✅ Guaranteed Fix (Do This Exactly)</h3>
-    
+
         <h4>🔹 Step 1: Enter the Container Shell</h4>
         <div class="folder">
             docker exec -it mysql-dev bash
         </div>
-    
+
         <h4>🔹 Step 2: Login via Local Socket (No Password)</h4>
         <p class="muted">
             This bypasses TCP authentication and works when password auth is broken.
         </p>
-    
+
         <div class="folder">
             mysql -u root
         </div>
-    
+
         <blockquote class="success">
             ✔ mysql&gt; prompt appears
         </blockquote>
-    
+
         <h4>🔹 Step 3: Inspect the REAL Root User</h4>
         <div class="folder">
             SELECT user, host, plugin FROM mysql.user WHERE user='root';
         </div>
-    
+
         <p class="muted">
             Typical output:
         </p>
-    
+
         <div class="folder">
             root | localhost | caching_sha2_password
         </div>
-    
+
         <p class="muted">
             ⚠️ Important: <strong>host = localhost</strong>, not <code>%</code>
         </p>
-    
+
         <h4>🔹 Step 4: Fix the CORRECT Root Account</h4>
         <div class="folder">
             ALTER USER 'root'@'localhost' IDENTIFIED BY 'StrongRoot@123';
             FLUSH PRIVILEGES;
         </div>
-    
+
         <div class="folder">
             exit;
         </div>
-    
+
         <blockquote class="success">
             ✔ Root password updated for the correct user
         </blockquote>
-    
+
         <h4>🔹 Step 5: Test from Outside the Container</h4>
         <div class="folder">
             docker exec -it mysql-dev mysql -u root -p
         </div>
-    
+
         <div class="folder">
             Password: StrongRoot@123
         </div>
-    
+
         <blockquote class="success">
             ✔ Login successful<br>
             ✔ Issue fully resolved
         </blockquote>
-    
+
         <h3>🔁 Docker Compose Synchronization (Required)</h3>
         <p class="muted">
             This does NOT change MySQL passwords — it prevents future confusion.
         </p>
-    
+
         <div class="folder">
             nano docker-compose.yml
         </div>
-    
+
         <div class="folder">
             MYSQL_ROOT_PASSWORD: StrongRoot@123
         </div>
-    
+
         <h3>🧠 Why Earlier Attempts Failed</h3>
         <ul class="list">
             <li><span class="status danger"></span>Password changed for <code>root@'%'</code></li>
             <li><span class="status danger"></span>Actual login user was <code>root@localhost</code></li>
             <li><span class="status danger"></span>MySQL rejected access correctly</li>
         </ul>
-    
+
         <h3>🆘 Last Resort (Rare, Still No Data Loss)</h3>
         <p class="muted">
             Only if socket login fails.
         </p>
-    
+
         <div class="folder">
             docker exec -it mysql-dev bash
             mysql --skip-grant-tables
         </div>
-    
+
         <div class="folder">
             ALTER USER 'root'@'localhost' IDENTIFIED BY 'StrongRoot@123';
             FLUSH PRIVILEGES;
             exit;
         </div>
-    
+
         <div class="folder">
             docker restart mysql-dev
         </div>
-    
+
         <h3>🏁 Final State</h3>
         <ul class="list">
             <li><span class="status done"></span>Root access restored</li>
@@ -1678,7 +1687,7 @@
             <li><span class="status done"></span>No data loss</li>
             <li><span class="status done"></span>Docker volume intact</li>
         </ul>
-    
+
         <blockquote class="success">
             ✔ Correct MySQL 8 behavior understood<br>
             ✔ Real-world database debugging skill gained
@@ -1687,19 +1696,19 @@
     <!-- MYSQL ROOT RESET USING SKIP-GRANT-TABLES (LAST RESORT / GUARANTEED FIX) -->
     <div class="card full" id="mysql-root-lockout">
         <h2>🚨 MySQL Docker Root Lockout: Guaranteed Recovery (skip-grant-tables)</h2>
-    
+
         <p class="muted">
             In a rare MySQL 8 + Docker state, root access remained blocked even
             after password changes.
             This section documents the <strong>official, guaranteed recovery method</strong>
             using <code>--skip-grant-tables</code>, without deleting data.
         </p>
-    
+
         <blockquote class="danger">
             ⚠️ This method bypasses authentication temporarily.<br>
             It is safe when used carefully and is a <strong>standard DBA recovery technique</strong>.
         </blockquote>
-    
+
         <h3>🧠 Problem Summary</h3>
         <ul class="list">
             <li><span class="status danger"></span>Root password existed but login failed</li>
@@ -1707,32 +1716,32 @@
             <li><span class="status done"></span>Docker volume intact</li>
             <li><span class="status done"></span>MySQL service running</li>
         </ul>
-    
+
         <blockquote class="success">
             ✔ Nothing was broken<br>
             ✔ This is a known MySQL 8 behavior<br>
             ✔ Recovery does NOT require data deletion
         </blockquote>
-    
+
         <h3>1️⃣ Stop the Main MySQL Container</h3>
         <div class="folder">
             docker stop mysql-dev
         </div>
-    
+
         <div class="folder">
             docker ps
         </div>
-    
+
         <p class="muted">
             Confirm that <code>mysql-dev</code> is NOT running.
         </p>
-    
+
         <h3>2️⃣ Start MySQL in Password-Bypass Mode</h3>
         <p class="muted">
             This starts MySQL with authentication disabled,
             using the <strong>same Docker volume</strong>.
         </p>
-    
+
         <div class="folder">
             docker run --rm -it \
             --name mysql-reset \
@@ -1740,32 +1749,32 @@
             mysql:8.0 \
             --skip-grant-tables --skip-networking
         </div>
-    
+
         <ul class="list">
             <li><span class="status done"></span>MySQL runs without auth</li>
             <li><span class="status done"></span>Container stays in foreground</li>
             <li><span class="status danger"></span>Do NOT close this terminal</li>
         </ul>
-    
+
         <h3>3️⃣ Open a Second SSH Session</h3>
         <p class="muted">
             Keep the reset container running. In a new terminal:
         </p>
-    
+
         <div class="folder">
             docker exec -it mysql-reset mysql
         </div>
-    
+
         <blockquote class="success">
             ✔ <code>mysql&gt;</code> prompt appears<br>
             ✔ No password required (expected)
         </blockquote>
-    
+
         <h3>4️⃣ Reset Root Password Properly</h3>
         <p class="muted">
             Fix password, authentication plugin, and both host entries.
         </p>
-    
+
         <div class="folder">
             FLUSH PRIVILEGES;
             ALTER USER 'root'@'localhost'
@@ -1774,59 +1783,59 @@
             IDENTIFIED WITH mysql_native_password BY 'StrongRoot@123';
             FLUSH PRIVILEGES;
         </div>
-    
+
         <div class="folder">
             exit;
         </div>
-    
+
         <blockquote class="success">
             ✔ Root password reset<br>
             ✔ Auth plugin corrected<br>
             ✔ localhost + % hosts fixed
         </blockquote>
-    
+
         <h3>5️⃣ Stop the Reset Container</h3>
         <p class="muted">
             Return to the first terminal and stop the temporary MySQL instance.
         </p>
-    
+
         <div class="folder">
             CTRL + C
         </div>
-    
+
         <h3>6️⃣ Start Normal MySQL Container Again</h3>
         <div class="folder">
             docker compose up -d
         </div>
-    
+
         <h3>7️⃣ Final Verification (Must Pass)</h3>
         <div class="folder">
             docker exec -it mysql-dev mysql -u root -p
         </div>
-    
+
         <div class="folder">
             Password: StrongRoot@123
         </div>
-    
+
         <blockquote class="success">
             🎉 Root access restored<br>
             🎉 MySQL fully operational
         </blockquote>
-    
+
         <h3>🔁 Required Sync Step</h3>
         <p class="muted">
             Docker does not auto-sync credentials.
             Configuration must match runtime state.
         </p>
-    
+
         <div class="folder">
             nano docker-compose.yml
         </div>
-    
+
         <div class="folder">
             MYSQL_ROOT_PASSWORD: StrongRoot@123
         </div>
-    
+
         <h3>🧠 Why This Happened (Honest Explanation)</h3>
         <ul class="list">
             <li><span class="status done"></span>MySQL 8 caches auth in Docker volumes</li>
@@ -1834,7 +1843,7 @@
             <li><span class="status done"></span>Root locked to mismatched auth plugin</li>
             <li><span class="status done"></span>skip-grant-tables is the official fix</li>
         </ul>
-    
+
         <h3>🏁 Final Status</h3>
         <ul class="list">
             <li><span class="status done"></span>Root access restored</li>
@@ -1842,7 +1851,7 @@
             <li><span class="status done"></span>Docker volume preserved</li>
             <li><span class="status done"></span>Ready for Django & phpMyAdmin</li>
         </ul>
-    
+
         <blockquote class="success">
             ✔ Recovery complete<br>
             ✔ Production-grade fix documented
@@ -1851,14 +1860,14 @@
     <!-- MYSQL RESET ERROR: UNINITIALIZED DATABASE (DOCKER SAFETY CHECK) -->
     <div class="card full" id="mysql-reset-error">
         <h2>⚠️ MySQL Reset Error: Uninitialized Database (Docker Safety Check)</h2>
-    
+
         <p class="muted">
             During the MySQL root recovery process, an error appeared while starting
             MySQL with <code>--skip-grant-tables</code>.
             This section explains <strong>why the error is expected</strong> and
             documents the <strong>correct, production-safe fix</strong>.
         </p>
-    
+
         <h3>❌ Error Message Observed</h3>
         <div class="folder">
             Database is uninitialized and password option is not specified
@@ -1867,46 +1876,47 @@
             - MYSQL_ALLOW_EMPTY_PASSWORD
             - MYSQL_RANDOM_ROOT_PASSWORD
         </div>
-    
+
         <h3>🧠 What This Error Actually Means</h3>
         <ul class="list">
             <li><span class="status done"></span>Docker was protecting against an insecure MySQL start</li>
-            <li><span class="status done"></span><code>--skip-grant-tables</code> bypasses auth, but Docker still enforces
+            <li><span class="status done"></span><code>--skip-grant-tables</code> bypasses auth, but Docker still
+                enforces
                 safety rules</li>
             <li><span class="status done"></span>This is expected behavior, not a failure</li>
             <li><span class="status done"></span>No data corruption occurred</li>
         </ul>
-    
+
         <blockquote class="success">
             ✔ Docker working correctly<br>
             ✔ MySQL behaving as designed<br>
             ✔ One required flag was missing
         </blockquote>
-    
+
         <h3>✅ Correct & Guaranteed Fix</h3>
         <p class="muted">
             The fix is to explicitly allow an empty password
             <strong>temporarily</strong> while MySQL runs in recovery mode.
         </p>
-    
+
         <h4>1️⃣ Ensure Normal MySQL Is Stopped</h4>
         <div class="folder">
             docker stop mysql-dev
         </div>
-    
+
         <div class="folder">
             docker ps
         </div>
-    
+
         <p class="muted">
             Confirm no MySQL containers are running.
         </p>
-    
+
         <h4>2️⃣ Start Recovery Container (Correct Command)</h4>
         <p class="muted">
             Note the required environment variable below.
         </p>
-    
+
         <div class="folder">
             docker run --rm -it \
             --name mysql-reset \
@@ -1915,32 +1925,32 @@
             mysql:8.0 \
             --skip-grant-tables --skip-networking
         </div>
-    
+
         <ul class="list">
             <li><span class="status done"></span>No error appears</li>
             <li><span class="status done"></span>MySQL logs start normally</li>
             <li><span class="status danger"></span>Terminal must stay open</li>
         </ul>
-    
+
         <h4>3️⃣ Open a Second SSH Session</h4>
         <p class="muted">
             Keep the reset container running and open a new terminal.
         </p>
-    
+
         <div class="folder">
             ssh devuser@72.61.251.2
         </div>
-    
+
         <h4>4️⃣ Connect to MySQL (No Password)</h4>
         <div class="folder">
             docker exec -it mysql-reset mysql
         </div>
-    
+
         <blockquote class="success">
             ✔ mysql&gt; prompt appears<br>
             ✔ Authentication bypassed (expected)
         </blockquote>
-    
+
         <h4>5️⃣ Reset Root Password Properly</h4>
         <div class="folder">
             FLUSH PRIVILEGES;
@@ -1950,43 +1960,43 @@
             IDENTIFIED WITH mysql_native_password BY 'StrongRoot@123';
             FLUSH PRIVILEGES;
         </div>
-    
+
         <div class="folder">
             exit;
         </div>
-    
+
         <h4>6️⃣ Stop Recovery Container</h4>
         <div class="folder">
             CTRL + C
         </div>
-    
+
         <h4>7️⃣ Start Normal MySQL Again</h4>
         <div class="folder">
             docker compose up -d
         </div>
-    
+
         <h4>8️⃣ Final Verification</h4>
         <div class="folder">
             docker exec -it mysql-dev mysql -u root -p
         </div>
-    
+
         <div class="folder">
             Password: StrongRoot@123
         </div>
-    
+
         <blockquote class="success">
             🎉 Root access restored successfully
         </blockquote>
-    
+
         <h3>🔁 Required Configuration Sync</h3>
         <p class="muted">
             Docker does not update credentials automatically.
         </p>
-    
+
         <div class="folder">
             MYSQL_ROOT_PASSWORD: StrongRoot@123
         </div>
-    
+
         <h3>🧠 Why This Worked</h3>
         <ul class="list">
             <li><span class="status done"></span>Docker safety requirement satisfied</li>
@@ -1994,7 +2004,7 @@
             <li><span class="status done"></span>Password + plugin reset cleanly</li>
             <li><span class="status done"></span>Volume preserved (no data loss)</li>
         </ul>
-    
+
         <h3>🏁 Final Outcome</h3>
         <blockquote class="success">
             ✔ Error understood (not a mistake)<br>
@@ -2005,7 +2015,7 @@
     <!-- MYSQL SKIP-GRANT-TABLES RULE (ALTER USER BLOCKED - FINAL FIX) -->
     <div class="card full" id="mysql-alter-user">
         <h2>🧠 MySQL Rule Explained: Why ALTER USER Fails Under --skip-grant-tables</h2>
-    
+
         <p class="muted">
             During the MySQL recovery process, an error occurred when attempting to run
             <code>ALTER USER</code> while MySQL was started with
@@ -2013,14 +2023,14 @@
             This section explains <strong>why this is expected behavior</strong> and
             documents the <strong>correct, guaranteed fix</strong>.
         </p>
-    
+
         <h3>❌ Error Encountered</h3>
         <div class="folder">
             ERROR 1290 (HY000):
             The MySQL server is running with the --skip-grant-tables option
             so it cannot execute this statement
         </div>
-    
+
         <h3>🧠 What Actually Happened (Important Rule)</h3>
         <ul class="list">
             <li><span class="status done"></span>MySQL was running with <code>--skip-grant-tables</code></li>
@@ -2028,127 +2038,127 @@
             <li><span class="status done"></span><code>ALTER USER</code> is blocked in this mode</li>
             <li><span class="status done"></span>This is enforced by MySQL internally</li>
         </ul>
-    
+
         <blockquote class="success">
             ✔ Nothing was broken<br>
             ✔ MySQL was protecting system integrity<br>
             ✔ This is documented MySQL behavior
         </blockquote>
-    
+
         <h3>🔑 Key Rule (Must Know)</h3>
         <blockquote class="danger">
             When MySQL is started with <code>--skip-grant-tables</code>:<br><br>
             ❌ <strong>ALTER USER is NOT allowed</strong><br>
             ✅ You must update <code>mysql.user</code> directly
         </blockquote>
-    
+
         <h3>✅ Guaranteed Fix (Followed Exactly)</h3>
         <p class="muted">
             The recovery container (<code>mysql-reset</code>) was already running.
             It was <strong>not stopped</strong>.
         </p>
-    
+
         <h4>1️⃣ Open MySQL Shell (Inside Reset Container)</h4>
         <p class="muted">
             In the same terminal where <code>mysql-reset</code> logs are visible:
         </p>
-    
+
         <div class="folder">
             mysql
         </div>
-    
+
         <blockquote class="success">
             ✔ mysql&gt; prompt appears<br>
             ✔ No password required (expected)
         </blockquote>
-    
+
         <h4>2️⃣ Switch to System Database</h4>
         <div class="folder">
             USE mysql;
         </div>
-    
+
         <h4>3️⃣ Reset Root Authentication (Correct Method)</h4>
         <p class="muted">
             Directly update the authentication table (this works under skip-grants).
         </p>
-    
+
         <div class="folder">
             UPDATE user
             SET authentication_string = '',
             plugin = 'mysql_native_password'
             WHERE user = 'root';
         </div>
-    
+
         <div class="folder">
             FLUSH PRIVILEGES;
         </div>
-    
+
         <blockquote class="success">
             ✔ Root authentication reset<br>
             ✔ Plugin corrected
         </blockquote>
-    
+
         <div class="folder">
             exit;
         </div>
-    
+
         <h4>4️⃣ Stop the Reset Container</h4>
         <div class="folder">
             CTRL + C
         </div>
-    
+
         <h3>🔁 Return to Normal MySQL Mode</h3>
-    
+
         <div class="folder">
             cd ~/dev/docker/mysql
             docker compose up -d
         </div>
-    
+
         <h3>5️⃣ Set Password Normally (ALTER USER Works Again)</h3>
         <p class="muted">
             Now that MySQL is running normally, password commands are allowed.
         </p>
-    
+
         <div class="folder">
             docker exec -it mysql-dev mysql -u root
         </div>
-    
+
         <div class="folder">
             ALTER USER 'root'@'localhost' IDENTIFIED BY 'StrongRoot@123';
             FLUSH PRIVILEGES;
             exit;
         </div>
-    
+
         <h3>✅ Final Verification</h3>
         <div class="folder">
             docker exec -it mysql-dev mysql -u root -p
         </div>
-    
+
         <div class="folder">
             Password: StrongRoot@123
         </div>
-    
+
         <blockquote class="success">
             🎉 Root access fully restored<br>
             🎉 Authentication working correctly
         </blockquote>
-    
+
         <h3>🔁 Docker Configuration Sync</h3>
         <p class="muted">
             Docker environment variables must match the live database state.
         </p>
-    
+
         <div class="folder">
             MYSQL_ROOT_PASSWORD: StrongRoot@123
         </div>
-    
+
         <h3>🧠 Why This Worked (Short & Honest)</h3>
         <ul class="list">
             <li><span class="status done"></span><code>--skip-grant-tables</code> blocks <code>ALTER USER</code></li>
             <li><span class="status done"></span>Direct table update is the official recovery method</li>
             <li><span class="status done"></span>Normal restart restores standard authentication</li>
         </ul>
-    
+
         <blockquote class="success">
             ✔ Real MySQL admin rule learned<br>
             ✔ Correct recovery sequence applied<br>
@@ -2158,19 +2168,19 @@
     <!-- MYSQL COMMAND NOT FOUND (DOCKER-ONLY CLARIFICATION) -->
     <div class="card full" id="mysql-command-not-found">
         <h2>🐳 MySQL Command Not Found: Docker-Only Clarification</h2>
-    
+
         <p class="muted">
             After completing MySQL recovery, the command <code>mysql</code> returned
             <strong>command not found</strong> when run on the VPS.
             This section explains why this is <strong>correct behavior</strong> and
             documents the <strong>right way</strong> to use MySQL in a Docker-based setup.
         </p>
-    
+
         <h3>❌ Message Observed</h3>
         <div class="folder">
             mysql: command not found
         </div>
-    
+
         <h3>🧠 Why This Happened (Nothing Is Wrong)</h3>
         <ul class="list">
             <li><span class="status done"></span>The command was run on the Ubuntu host</li>
@@ -2178,100 +2188,100 @@
             <li><span class="status done"></span>MySQL exists only inside a Docker container</li>
             <li><span class="status done"></span>This was intentional by design</li>
         </ul>
-    
+
         <blockquote class="success">
             ✔ Docker setup is correct<br>
             ✔ Host system is clean<br>
             ✔ No MySQL packages installed on Ubuntu
         </blockquote>
-    
+
         <h3>✅ The Correct Mental Model</h3>
         <blockquote class="success">
             If MySQL runs in Docker,<br>
             <strong>all MySQL commands must be executed inside the container</strong>.
         </blockquote>
-    
+
         <h3>🔍 Step 1: Check Running MySQL Containers</h3>
         <div class="folder">
             docker ps
         </div>
-    
+
         <p class="muted">
             Expected containers:
         </p>
-    
+
         <ul class="list">
             <li><span class="status done"></span><code>mysql-dev</code> → normal MySQL mode</li>
             <li><span class="status todo"></span><code>mysql-reset</code> → recovery mode (temporary)</li>
         </ul>
-    
+
         <h3>🛑 Step 2: Stop Reset Container (If Still Running)</h3>
         <div class="folder">
             docker stop mysql-reset
         </div>
-    
+
         <p class="muted">
             This ensures only the normal MySQL container is active.
         </p>
-    
+
         <h3>▶ Step 3: Start Normal MySQL Container</h3>
         <div class="folder">
             cd ~/dev/docker/mysql
             docker compose up -d
         </div>
-    
+
         <div class="folder">
             docker ps
         </div>
-    
+
         <p class="muted">
             Confirm that <code>mysql-dev</code> is running.
         </p>
-    
+
         <h3>🔐 Step 4: Login to MySQL (Correct Way)</h3>
-    
+
         <p><strong>Login as root:</strong></p>
         <div class="folder">
             docker exec -it mysql-dev mysql -u root
         </div>
-    
+
         <p><strong>If password is required:</strong></p>
         <div class="folder">
             docker exec -it mysql-dev mysql -u root -p
         </div>
-    
+
         <p class="muted">
             Use the root password that was set during recovery.
         </p>
-    
+
         <h3>❌ What NOT to Do</h3>
         <ul class="list">
             <li><span class="status danger"></span>Running <code>mysql</code> directly on Ubuntu</li>
             <li><span class="status danger"></span>Installing MySQL with <code>apt</code></li>
             <li><span class="status danger"></span>Mixing host tools with container services</li>
         </ul>
-    
+
         <h3>🧠 Simple Rule to Remember</h3>
         <blockquote class="success">
             If MySQL runs in Docker →<br>
             <strong>Always prefix commands with:</strong><br>
             <code>docker exec -it mysql-dev</code>
         </blockquote>
-    
+
         <h4>📌 Examples</h4>
         <div class="folder">
             docker exec -it mysql-dev mysql
             docker exec -it mysql-dev mysql -u root -p
             docker exec -it mysql-dev mysql -u shopease_user -p
         </div>
-    
+
         <h3>🏁 Final State</h3>
         <ul class="list">
             <li><span class="status done"></span>Docker-only MySQL confirmed</li>
             <li><span class="status done"></span>No host-level MySQL installed</li>
             <li><span class="status done"></span>Clean, professional Docker workflow</li>
         </ul>
-    
+
         <blockquote class="success">
             ✔ Correct architecture followed<br>
             ✔ Common confusion resolved<br>
@@ -2281,14 +2291,14 @@
     <!-- FULL DOCKER + MYSQL CLEAN REINSTALL -->
     <div class="card full" id="docker-mysql-reinstall">
         <h2>🧹 Full Docker + MySQL Clean Reinstall (Final Reset)</h2>
-    
+
         <p class="muted">
             After repeated MySQL authentication issues, stopped containers, and partially
             initialized volumes, a <strong>full clean Docker reset</strong> was chosen.
             This decision avoided future instability and aligned the setup with
             <strong>industry best practices</strong>.
         </p>
-    
+
         <h3>🧠 Why a Full Reset Was the Right Decision</h3>
         <ul class="list">
             <li><span class="status done"></span>No production data existed yet</li>
@@ -2296,25 +2306,25 @@
             <li><span class="status done"></span>MySQL volume was partially initialized</li>
             <li><span class="status done"></span>Fixing forward would take longer than resetting</li>
         </ul>
-    
+
         <blockquote class="success">
             ✔ Resetting early saves time<br>
             ✔ Prevents hidden auth & volume bugs<br>
             ✔ Matches real DevOps workflows
         </blockquote>
-    
+
         <h3>⚠️ What This Reset Does</h3>
         <ul class="list">
             <li><span class="status danger"></span>Removes Docker completely</li>
             <li><span class="status danger"></span>Deletes all containers, images, volumes</li>
             <li><span class="status done"></span>Creates a fresh MySQL Docker setup</li>
         </ul>
-    
+
         <h3>🔴 Step 1: Stop Docker Service</h3>
         <div class="folder">
             sudo systemctl stop docker
         </div>
-    
+
         <h3>🔴 Step 2: Remove All Containers, Images & Volumes</h3>
         <div class="folder">
             docker ps -aq | xargs -r docker stop
@@ -2323,70 +2333,70 @@
             docker volume ls -q | xargs -r docker volume rm
             docker network prune -f
         </div>
-    
+
         <p class="muted">
             Errors like <em>“no such container”</em> are expected and safe.
         </p>
-    
+
         <h3>🔴 Step 3: Completely Uninstall Docker</h3>
         <div class="folder">
             sudo apt purge -y docker-ce docker-ce-cli containerd.io \
             docker-compose-plugin docker-buildx-plugin docker-ce-rootless-extras
-    
+
             sudo rm -rf /var/lib/docker
             sudo rm -rf /var/lib/containerd
         </div>
-    
+
         <h3>🔴 Step 4: Reboot VPS (Critical)</h3>
         <div class="folder">
             sudo reboot
         </div>
-    
+
         <p class="muted">
             VPS reboot ensures no leftover Docker processes or mounts remain.
         </p>
-    
+
         <h3>🟢 Step 5: Clean Docker Installation</h3>
         <div class="folder">
             sudo apt update
             sudo apt install -y ca-certificates curl gnupg
-    
+
             sudo install -m 0755 -d /etc/apt/keyrings
             curl -fsSL https://download.docker.com/linux/ubuntu/gpg | \
             sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
-    
+
             echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] \
             https://download.docker.com/linux/ubuntu \
             $(. /etc/os-release && echo $VERSION_CODENAME) stable" | \
             sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-    
+
             sudo apt update
             sudo apt install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
         </div>
-    
+
         <h4>Add user to Docker group</h4>
         <div class="folder">
             sudo usermod -aG docker devuser
             newgrp docker
         </div>
-    
+
         <h4>Verify Docker</h4>
         <div class="folder">
             docker run hello-world
         </div>
-    
+
         <h3>🐬 Clean MySQL Docker Setup</h3>
-    
+
         <h4>Step 6: Create MySQL Directory</h4>
         <div class="folder">
             mkdir -p ~/dev/docker/mysql
             cd ~/dev/docker/mysql
         </div>
-    
+
         <h4>Step 7: docker-compose.yml (Clean & Final)</h4>
         <div class="folder">
             version: "3.9"
-    
+
             services:
             mysql:
             image: mysql:8.0
@@ -2401,52 +2411,52 @@
             MYSQL_PASSWORD: ShopEase@123
             volumes:
             - mysql_data:/var/lib/mysql
-    
+
             volumes:
             mysql_data:
         </div>
-    
+
         <h4>Step 8: Start MySQL (First Boot)</h4>
         <div class="folder">
             docker compose up -d
         </div>
-    
+
         <div class="folder">
             docker ps
         </div>
-    
+
         <h4>Step 9: Verify MySQL Access</h4>
-    
+
         <p><strong>Root login:</strong></p>
         <div class="folder">
             docker exec -it mysql-dev mysql -u root -p
         </div>
-    
+
         <p>Password:</p>
         <div class="folder">Root@12345</div>
-    
+
         <p><strong>Application user login:</strong></p>
         <div class="folder">
             docker exec -it mysql-dev mysql -u shopease_user -p
         </div>
-    
+
         <p>Password:</p>
         <div class="folder">ShopEase@123</div>
-    
+
         <h3>🧠 Critical Rules (Never Break These)</h3>
         <ul class="list">
             <li><span class="status danger"></span>Never change MySQL passwords in docker-compose after first run</li>
             <li><span class="status done"></span>Change passwords inside MySQL only</li>
             <li><span class="status danger"></span>Never mix host MySQL with Docker MySQL</li>
         </ul>
-    
+
         <h3>🏁 Final Outcome</h3>
         <ul class="list">
             <li><span class="status done"></span>Fresh MySQL volume</li>
             <li><span class="status done"></span>Stable authentication</li>
             <li><span class="status done"></span>Production-grade Docker layout</li>
         </ul>
-    
+
         <blockquote class="success">
             ✔ Root login works<br>
             ✔ App user works<br>
@@ -2456,87 +2466,87 @@
     <!-- MYSQL VS LINUX CONTEXT CONFUSION (FINAL CLARITY) -->
     <div class="card full" id="mysql-context-confusion">
         <h2>🧠 MySQL vs Linux Context Confusion (Final Clarity)</h2>
-    
+
         <p class="muted">
             This section documents a very common beginner confusion that occurred
             <strong>after MySQL was successfully fixed</strong>.
             The issue was not technical — it was purely about
             <strong>command context awareness</strong>.
         </p>
-    
+
         <h3>✅ What Was Working (Confirmed Success)</h3>
         <blockquote class="success">
             Welcome to the MySQL monitor.<br>
             Server version: 8.0.45 MySQL Community Server - GPL
         </blockquote>
-    
+
         <ul class="list">
             <li><span class="status done"></span>Docker installed correctly</li>
             <li><span class="status done"></span>MySQL container running</li>
             <li><span class="status done"></span>Root password works</li>
             <li><span class="status done"></span>MySQL volume initialized cleanly</li>
         </ul>
-    
+
         <blockquote class="success">
             ✔ System was already in a perfect state
         </blockquote>
-    
+
         <h3>❗ The Small Mistake (Context Confusion)</h3>
         <p class="muted">
             The following command was accidentally typed <strong>inside the MySQL shell</strong>:
         </p>
-    
+
         <div class="folder">
             mysql> docker exec -it mysql-dev mysql -u shopease_user -p
         </div>
-    
+
         <p class="muted">
             This caused MySQL to treat the input as SQL instead of a Linux command,
             resulting in confusing arrow prompts.
         </p>
-    
+
         <h3>🧠 Why This Happened</h3>
         <ul class="list">
             <li><span class="status info"></span><code>mysql></code> means you are inside MySQL</li>
             <li><span class="status info"></span><code>docker exec</code> is a Linux command</li>
             <li><span class="status danger"></span>Linux commands cannot run inside MySQL</li>
         </ul>
-    
+
         <blockquote class="success">
             ✔ This was NOT an error<br>
             ✔ No configuration was broken<br>
             ✔ Only command context was wrong
         </blockquote>
-    
+
         <h3>✅ Correct Way to Login as Application User</h3>
-    
+
         <h4>Step 1: Exit MySQL Shell</h4>
         <div class="folder">
             exit;
         </div>
-    
+
         <p class="muted">
             This returns you to the Linux shell:
         </p>
-    
+
         <div class="folder">
             devuser@srv1310730:~/dev/docker/mysql$
         </div>
-    
+
         <h4>Step 2: Login as Application User (Correct Context)</h4>
         <div class="folder">
             docker exec -it mysql-dev mysql -u shopease_user -p
         </div>
-    
+
         <p>Password:</p>
         <div class="folder">ShopEase@123</div>
-    
+
         <p class="muted">
             Seeing <code>mysql></code> again confirms the app user works correctly.
         </p>
-    
+
         <h3>🧠 Golden Rule (Remember Forever)</h3>
-    
+
         <table class="table">
             <thead>
                 <tr>
@@ -2555,11 +2565,11 @@
                 </tr>
             </tbody>
         </table>
-    
+
         <blockquote class="success">
             👉 Never run <code>docker</code> commands inside <code>mysql></code>
         </blockquote>
-    
+
         <h3>🏁 Final Confirmation State</h3>
         <ul class="list">
             <li><span class="status done"></span>Docker clean install</li>
@@ -2569,7 +2579,7 @@
             <li><span class="status done"></span>No auth bugs</li>
             <li><span class="status done"></span>No broken volumes</li>
         </ul>
-    
+
         <blockquote class="success">
             ✔ Database layer complete<br>
             ✔ Mental model corrected<br>
@@ -2579,90 +2589,90 @@
     <!-- ROOT ACCESS DENIED AFTER CLEAN INSTALL (FINAL DIAGNOSTIC LOGIC) -->
     <div class="card full" id="root-access-diagnostic">
         <h2>🔐 Root Access Denied After Clean Install (Final Diagnostic)</h2>
-    
+
         <p class="muted">
             After a <strong>full Docker + MySQL clean reinstall</strong>, root login
             intermittently returned <code>ERROR 1045 (28000)</code>.
             This section documents the final diagnostic reasoning and the
             <strong>correct resolution path</strong>.
         </p>
-    
+
         <h3>📌 Facts Confirmed From Logs</h3>
         <ul class="list">
             <li><span class="status done"></span>MySQL container was running</li>
             <li><span class="status done"></span>MySQL started successfully</li>
             <li><span class="status done"></span>Fresh Docker volume (no legacy data)</li>
         </ul>
-    
+
         <blockquote class="success">
             ✔ MySQL was NOT broken<br>
             ✔ No authentication corruption<br>
             ✔ Infrastructure was clean
         </blockquote>
-    
+
         <h3>🧠 Real Cause (99% Probability)</h3>
         <p class="muted">
             When MySQL is freshly initialized and still denies root access,
             the most common reason is <strong>password mismatch</strong>, not configuration errors.
         </p>
-    
+
         <ul class="list">
             <li><span class="status info"></span>Typing mistake</li>
             <li><span class="status info"></span>Capital letter mismatch</li>
             <li><span class="status info"></span>Special character confusion</li>
             <li><span class="status info"></span>Human memory mismatch vs compose file</li>
         </ul>
-    
+
         <blockquote class="success">
             ✔ This is a MySQL behavior issue, not a DevOps mistake
         </blockquote>
-    
+
         <h3>✅ Step 1: Verify What Password MySQL Expects</h3>
         <div class="folder">
             nano ~/dev/docker/mysql/docker-compose.yml
         </div>
-    
+
         <p class="muted">
             Confirm the value character-by-character:
         </p>
-    
+
         <div class="folder">
             MYSQL_ROOT_PASSWORD: Root@12345
         </div>
-    
+
         <ul class="list">
             <li><span class="status info"></span>Capital <strong>R</strong></li>
             <li><span class="status info"></span><code>@</code> symbol</li>
             <li><span class="status info"></span>No spaces</li>
             <li><span class="status info"></span>No quotes</li>
         </ul>
-    
+
         <h3>🔄 Step 2: Restart MySQL Cleanly</h3>
         <div class="folder">
             docker compose down
             docker compose up -d
         </div>
-    
+
         <p class="muted">
             Wait at least <strong>15 seconds</strong> before attempting login.
         </p>
-    
+
         <div class="folder">
             docker ps
         </div>
-    
+
         <p class="muted">
             Ensure <code>mysql-dev</code> is running.
         </p>
-    
+
         <h3>🔐 Step 3: Login Carefully (Typing Matters)</h3>
         <div class="folder">
             docker exec -it mysql-dev mysql -u root -p
         </div>
-    
+
         <p>Password to type manually:</p>
         <div class="folder">Root@12345</div>
-    
+
         <h4>⚠️ Important Typing Rules</h4>
         <ul class="list">
             <li><span class="status danger"></span>Do NOT copy-paste</li>
@@ -2671,41 +2681,41 @@
             <li><span class="status danger"></span>No extra spaces</li>
             <li><span class="status danger"></span>Press Enter only once</li>
         </ul>
-    
+
         <h3>🟢 Expected Success State</h3>
         <blockquote class="success">
             mysql>
         </blockquote>
-    
+
         <p class="muted">
             Immediately verify:
         </p>
-    
+
         <div class="folder">
             SELECT user, host FROM mysql.user;
         </div>
-    
+
         <h3>🚨 Final Fallback (Guaranteed Fix)</h3>
         <p class="muted">
             Only required if login still fails (no production data exists).
         </p>
-    
+
         <div class="folder">
             docker compose down -v
             docker compose up -d
         </div>
-    
+
         <p class="muted">
             This removes the volume and reinitializes MySQL from scratch.
         </p>
-    
+
         <div class="folder">
             docker exec -it mysql-dev mysql -u root -p
         </div>
-    
+
         <p>Password:</p>
         <div class="folder">Root@12345</div>
-    
+
         <h3>🧠 Reality Check</h3>
         <blockquote class="success">
             ✔ You were not stuck<br>
@@ -2713,7 +2723,7 @@
             ✔ You did not misconfigure MySQL<br>
             ✔ This was pure password exactness
         </blockquote>
-    
+
         <h3>🏁 Final Outcome</h3>
         <ul class="list">
             <li><span class="status done"></span>Root login confirmed</li>
@@ -2721,7 +2731,7 @@
             <li><span class="status done"></span>Clean Docker-based database layer</li>
             <li><span class="status done"></span>Ready for Django migrations</li>
         </ul>
-    
+
         <blockquote class="success">
             ✔ Database phase fully completed<br>
             ✔ No hidden technical debt
@@ -2730,30 +2740,30 @@
     <!-- INTERMITTENT ROOT LOGIN SUCCESS (FINAL CONFIRMATION & LOCK-IN) -->
     <div class="card full" id="root-login-success">
         <h2>✅ Intermittent Root Login Success (Final Confirmation)</h2>
-    
+
         <p class="muted">
             This section documents the final confirmation that
             <strong>MySQL, Docker, and authentication were never broken</strong>.
             The issue was fully understood and permanently resolved.
         </p>
-    
+
         <h3>📌 What Was Observed</h3>
         <p class="muted">
             Multiple login attempts showed this pattern:
         </p>
-    
+
         <div class="folder">
             ERROR 1045 (28000): Access denied for user 'root'@'localhost'
         </div>
-    
+
         <p class="muted">
             Followed later by:
         </p>
-    
+
         <blockquote class="success">
             Welcome to the MySQL monitor
         </blockquote>
-    
+
         <h3>🧠 What This Proves (100% Certainty)</h3>
         <ul class="list">
             <li><span class="status done"></span>MySQL authentication was working</li>
@@ -2761,92 +2771,92 @@
             <li><span class="status done"></span>Root password was correct</li>
             <li><span class="status done"></span>No corruption or misconfiguration existed</li>
         </ul>
-    
+
         <blockquote class="success">
             ✔ Intermittent success = correct password<br>
             ✔ Consistent failure would indicate real issues
         </blockquote>
-    
+
         <h3>❗ Real Root Cause (Human Input Reliability)</h3>
         <p class="muted">
             The failures were caused by how the password was entered, not by MySQL.
         </p>
-    
+
         <ul class="list">
             <li><span class="status info"></span>Invisible password input (no echo)</li>
             <li><span class="status info"></span><code>@</code> key timing / keyboard layout</li>
             <li><span class="status info"></span>Shift / Caps Lock timing</li>
             <li><span class="status info"></span>Copy–paste inconsistencies</li>
         </ul>
-    
+
         <blockquote class="success">
             ✔ This is common<br>
             ✔ This is normal<br>
             ✔ This happens to almost everyone at least once
         </blockquote>
-    
+
         <h3>🔐 Permanent Fix Applied (While Logged In)</h3>
         <p class="muted">
             To prevent future confusion, the root password was changed to a
             <strong>simple, reliable format</strong>.
         </p>
-    
+
         <h4>Inside MySQL shell:</h4>
         <div class="folder">
             ALTER USER 'root'@'localhost' IDENTIFIED BY 'Root123!';
             FLUSH PRIVILEGES;
         </div>
-    
+
         <div class="folder">
             exit;
         </div>
-    
+
         <h3>🔁 Docker Configuration Sync (Critical)</h3>
         <p class="muted">
             Docker must always reflect the current MySQL credentials.
         </p>
-    
+
         <div class="folder">
             nano ~/dev/docker/mysql/docker-compose.yml
         </div>
-    
+
         <p class="muted">
             Change:
         </p>
-    
+
         <div class="folder">
             MYSQL_ROOT_PASSWORD: Root@12345
         </div>
-    
+
         <p class="muted">
             To:
         </p>
-    
+
         <div class="folder">
             MYSQL_ROOT_PASSWORD: Root123!
         </div>
-    
+
         <p class="muted">
             Restart containers:
         </p>
-    
+
         <div class="folder">
             docker compose down
             docker compose up -d
         </div>
-    
+
         <h3>✅ Final Verification</h3>
         <div class="folder">
             docker exec -it mysql-dev mysql -u root -p
         </div>
-    
+
         <p>Password:</p>
         <div class="folder">Root123!</div>
-    
+
         <blockquote class="success">
             mysql>
         </blockquote>
-    
+
         <h3>🧠 Key Takeaways (Lock This In)</h3>
         <ul class="list">
             <li><span class="status done"></span>Docker + MySQL were never broken</li>
@@ -2854,7 +2864,7 @@
             <li><span class="status done"></span>Issue was password input reliability</li>
             <li><span class="status done"></span>Problem solved correctly and permanently</li>
         </ul>
-    
+
         <h3>🏁 Final Status</h3>
         <ul class="list">
             <li><span class="status done"></span>Docker clean install</li>
@@ -2862,7 +2872,7 @@
             <li><span class="status done"></span>Root access reliable</li>
             <li><span class="status done"></span>Ready for Django database migrations</li>
         </ul>
-    
+
         <blockquote class="success">
             ✔ Database phase closed<br>
             ✔ No unresolved issues<br>
@@ -2872,93 +2882,93 @@
     <!-- CALM ROOT LOGIN DEBUGGING (DECISION TREE EXPLANATION) -->
     <div class="card full" id="root-login-debugging">
         <h2>🧭 Calm Root Login Debugging (Decision Tree)</h2>
-    
+
         <p class="muted">
             At this stage, the system had already gone through a
             <strong>full Docker + MySQL clean reinstall</strong>.
             This section documents the calm diagnostic logic that proved
             the issue was <strong>simple and recoverable</strong>.
         </p>
-    
+
         <h3>🔴 Why Root Was Denied After a Clean Install</h3>
-    
+
         <h4>📌 Facts Confirmed From Logs</h4>
         <ul class="list">
             <li><span class="status done"></span>MySQL container was running</li>
             <li><span class="status done"></span>MySQL started successfully</li>
             <li><span class="status done"></span>Brand-new Docker volume</li>
         </ul>
-    
+
         <blockquote class="success">
             ✔ MySQL was NOT broken<br>
             ✔ No authentication corruption existed
         </blockquote>
-    
+
         <h3>🧠 99% Probability Root Cause</h3>
         <p class="muted">
             When this exact error happens on a fresh install, it almost always means
             the <strong>password being typed does not exactly match</strong>
             what MySQL expects.
         </p>
-    
+
         <ul class="list">
             <li><span class="status info"></span>Typing mistake</li>
             <li><span class="status info"></span>Capital letter mismatch</li>
             <li><span class="status info"></span>Special character confusion</li>
             <li><span class="status info"></span>Mental password vs compose file mismatch</li>
         </ul>
-    
+
         <blockquote class="success">
             ✔ Infrastructure was clean<br>
             ✔ Issue was human input exactness
         </blockquote>
-    
+
         <h3>✅ Step 1: Verify What Password MySQL Expects</h3>
         <div class="folder">
             nano ~/dev/docker/mysql/docker-compose.yml
         </div>
-    
+
         <p class="muted">
             Compare the value <strong>character by character</strong>:
         </p>
-    
+
         <div class="folder">
             MYSQL_ROOT_PASSWORD: Root@12345
         </div>
-    
+
         <ul class="list">
             <li><span class="status info"></span>Capital <strong>R</strong></li>
             <li><span class="status info"></span><code>@</code> symbol</li>
             <li><span class="status info"></span>No spaces</li>
             <li><span class="status info"></span>No quotes</li>
         </ul>
-    
+
         <h3>🔄 Step 2: Restart MySQL Cleanly</h3>
         <div class="folder">
             docker compose down
             docker compose up -d
         </div>
-    
+
         <p class="muted">
             Wait <strong>15 seconds</strong> before attempting login.
         </p>
-    
+
         <div class="folder">
             docker ps
         </div>
-    
+
         <p class="muted">
             Ensure <code>mysql-dev</code> is running.
         </p>
-    
+
         <h3>🔐 Step 3: Login (Typing Matters)</h3>
         <div class="folder">
             docker exec -it mysql-dev mysql -u root -p
         </div>
-    
+
         <p>Password to type manually:</p>
         <div class="folder">Root@12345</div>
-    
+
         <h4>⚠️ Important Typing Rules</h4>
         <ul class="list">
             <li><span class="status danger"></span>Do NOT copy-paste</li>
@@ -2967,37 +2977,37 @@
             <li><span class="status danger"></span>No extra spaces</li>
             <li><span class="status danger"></span>Press Enter only once</li>
         </ul>
-    
+
         <h3>🟢 Expected Result</h3>
         <blockquote class="success">
             mysql>
         </blockquote>
-    
+
         <p class="muted">
             Immediate verification:
         </p>
-    
+
         <div class="folder">
             SELECT user, host FROM mysql.user;
         </div>
-    
+
         <h3>🚨 Final Fallback (Guaranteed, Safe)</h3>
         <p class="muted">
             Only used if login still fails. No production data existed.
         </p>
-    
+
         <div class="folder">
             docker compose down -v
             docker compose up -d
         </div>
-    
+
         <div class="folder">
             docker exec -it mysql-dev mysql -u root -p
         </div>
-    
+
         <p>Password:</p>
         <div class="folder">Root@12345</div>
-    
+
         <h3>✅ Reality Check</h3>
         <blockquote class="success">
             ✔ You were not stuck<br>
@@ -3005,7 +3015,7 @@
             ✔ MySQL was not misconfigured<br>
             ✔ This was pure password exactness
         </blockquote>
-    
+
         <h3>🏁 Outcome</h3>
         <ul class="list">
             <li><span class="status done"></span>Root login succeeded</li>
@@ -3016,133 +3026,133 @@
     <!-- FINAL FIX: APPLICATION USER (shopease_user) STABILIZATION -->
     <div class="card full" id="shopease-user-fix">
         <h2>👤 Final Fix: <code>shopease_user</code> Stabilization (No More 1045)</h2>
-    
+
         <p class="muted">
             After root access was fully stabilized, the final step was to ensure that
             the <strong>application database user</strong> works reliably every time.
             This section documents the clean, repeatable process used to fix
             <code>shopease_user</code> permanently.
         </p>
-    
+
         <blockquote class="success">
             ✔ One-time fix<br>
             ✔ Safe to repeat<br>
             ✔ Industry-standard MySQL practice
         </blockquote>
-    
+
         <h3>1️⃣ Login as Root (Confirmed Working)</h3>
         <div class="folder">
             docker exec -it mysql-dev mysql -u root -p
         </div>
-    
+
         <p>Password:</p>
         <div class="folder">Root123!</div>
-    
+
         <blockquote class="success">
             mysql>
         </blockquote>
-    
+
         <h3>2️⃣ Verify Whether <code>shopease_user</code> Exists</h3>
         <div class="folder">
             SELECT user, host FROM mysql.user WHERE user='shopease_user';
         </div>
-    
+
         <p class="muted">
             Possible valid states:
         </p>
-    
+
         <ul class="list">
             <li><span class="status info"></span>No rows → user does not exist yet</li>
             <li><span class="status done"></span><code>shopease_user | %</code> → correct</li>
             <li><span class="status done"></span><code>shopease_user | localhost</code> → acceptable</li>
         </ul>
-    
+
         <p class="muted">
             Regardless of the result, the user will be standardized safely.
         </p>
-    
+
         <h3>3️⃣ Recreate User Safely (Idempotent)</h3>
         <p class="muted">
             This command is safe to run multiple times and guarantees the correct password.
         </p>
-    
+
         <div class="folder">
             CREATE USER IF NOT EXISTS 'shopease_user'@'%' IDENTIFIED BY 'ShopEase123!';
             ALTER USER 'shopease_user'@'%' IDENTIFIED BY 'ShopEase123!';
         </div>
-    
+
         <h3>4️⃣ Grant Correct Database Permissions</h3>
         <div class="folder">
             GRANT ALL PRIVILEGES ON shopease_db.* TO 'shopease_user'@'%';
             FLUSH PRIVILEGES;
         </div>
-    
+
         <p class="muted">
             Verify grants:
         </p>
-    
+
         <div class="folder">
             SHOW GRANTS FOR 'shopease_user'@'%';
         </div>
-    
+
         <div class="folder">
             exit;
         </div>
-    
+
         <h3>5️⃣ Test Login as <code>shopease_user</code> (Correct Context)</h3>
         <p class="muted">
             From the Linux shell (not inside MySQL):
         </p>
-    
+
         <div class="folder">
             docker exec -it mysql-dev mysql -u shopease_user -p
         </div>
-    
+
         <p>Password:</p>
         <div class="folder">ShopEase123!</div>
-    
+
         <blockquote class="success">
             mysql>
         </blockquote>
-    
+
         <p class="muted">
             Test database access:
         </p>
-    
+
         <div class="folder">
             USE shopease_db;
             SHOW TABLES;
         </div>
-    
+
         <p class="muted">
             (Empty output is expected before migrations.)
         </p>
-    
+
         <h3>6️⃣ Keep Docker Configuration in Sync (Critical)</h3>
         <div class="folder">
             nano ~/dev/docker/mysql/docker-compose.yml
         </div>
-    
+
         <p class="muted">
             Ensure the following values match the live database:
         </p>
-    
+
         <div class="folder">
             MYSQL_ROOT_PASSWORD: Root123!
             MYSQL_USER: shopease_user
             MYSQL_PASSWORD: ShopEase123!
             MYSQL_DATABASE: shopease_db
         </div>
-    
+
         <p class="muted">
             Restart containers once:
         </p>
-    
+
         <div class="folder">
             docker compose down
             docker compose up -d
         </div>
-    
+
         <h3>✅ Final Checklist</h3>
         <ul class="list">
             <li><span class="status done"></span>Root login works reliably</li>
@@ -3151,7 +3161,7 @@
             <li><span class="status done"></span>Docker config aligned with DB state</li>
             <li><span class="status done"></span>Ready for Django integration</li>
         </ul>
-    
+
         <blockquote class="success">
             ✔ No more ERROR 1045<br>
             ✔ Database layer fully locked-in<br>
@@ -3161,76 +3171,76 @@
     <!-- PHP & PHPMYADMIN CLARITY (WHAT IT DOES ON MY VPS) -->
     <div class="card full" id="php-phpmyadmin-clarification">
         <h2>🐘 PHP & phpMyAdmin Clarification (What They Do on My VPS)</h2>
-    
+
         <p class="muted">
             This section clarifies a common confusion:
             <strong>PHP itself vs phpMyAdmin</strong>, and what role (if any)
             they play on this VPS setup.
         </p>
-    
+
         <h3>🧠 What Is PHP? (Simple Explanation)</h3>
         <p class="muted">
             <strong>PHP</strong> is a <strong>server-side programming language</strong>.
             It runs on the server (VPS), not in the browser.
         </p>
-    
+
         <ul class="list">
             <li><span class="status info"></span>Runs on the server</li>
             <li><span class="status info"></span>Generates HTML or talks to databases</li>
             <li><span class="status info"></span>Does nothing by itself</li>
         </ul>
-    
+
         <p class="muted">
             PHP is commonly used by:
         </p>
-    
+
         <ul class="list">
             <li><span class="status info"></span>WordPress</li>
             <li><span class="status info"></span>phpMyAdmin</li>
             <li><span class="status info"></span>Laravel apps</li>
             <li><span class="status info"></span>Legacy backend systems</li>
         </ul>
-    
+
         <blockquote class="success">
             ✔ PHP alone does nothing unless an application uses it
         </blockquote>
-    
+
         <h3>🧰 What Is phpMyAdmin? (Important Part)</h3>
         <p class="muted">
             <strong>phpMyAdmin</strong> is a <strong>web-based dashboard</strong>
             used to manage <strong>MySQL databases</strong>.
         </p>
-    
+
         <ul class="list">
             <li><span class="status done"></span>Written in PHP</li>
             <li><span class="status done"></span>Runs in a browser</li>
             <li><span class="status done"></span>Talks to MySQL for you</li>
         </ul>
-    
+
         <p class="muted">
             Instead of typing SQL commands manually:
         </p>
-    
+
         <div class="folder">
             CREATE TABLE users (...);
             SELECT * FROM orders;
         </div>
-    
+
         <p class="muted">
             phpMyAdmin provides:
         </p>
-    
+
         <ul class="list">
             <li><span class="status done"></span>Clickable UI</li>
             <li><span class="status done"></span>Forms & tables</li>
             <li><span class="status done"></span>Visual database management</li>
         </ul>
-    
+
         <h3>🖥️ What phpMyAdmin Does on This VPS</h3>
         <p class="muted">
             If phpMyAdmin is used on this VPS, it allows:
         </p>
-    
+
         <ul class="list">
             <li><span class="status done"></span>Viewing databases</li>
             <li><span class="status done"></span>Creating / deleting tables</li>
@@ -3239,21 +3249,21 @@
             <li><span class="status done"></span>User & permission management</li>
             <li><span class="status done"></span>Visual debugging</li>
         </ul>
-    
+
         <p class="muted">
             Access example:
         </p>
-    
+
         <div class="folder">
             http://your-server-ip/phpmyadmin
         </div>
-    
+
         <p class="muted">
             (Or via a Docker-exposed port)
         </p>
-    
+
         <h3>🔑 PHP vs phpMyAdmin vs MySQL (Do Not Confuse)</h3>
-    
+
         <table class="table">
             <thead>
                 <tr>
@@ -3280,59 +3290,59 @@
                 </tr>
             </tbody>
         </table>
-    
+
         <blockquote class="success">
             👉 PHP is not required unless an app needs it
         </blockquote>
-    
+
         <h3>🐳 Best Practice Used in This Project</h3>
         <p class="muted">
             For a modern Django + Docker VPS setup:
         </p>
-    
+
         <ul class="list">
             <li><span class="status danger"></span>Do NOT install PHP directly on Ubuntu</li>
             <li><span class="status danger"></span>Do NOT install phpMyAdmin globally</li>
             <li><span class="status done"></span>Run phpMyAdmin inside Docker (optional)</li>
         </ul>
-    
+
         <blockquote class="success">
             ✔ Clean system<br>
             ✔ Easy removal<br>
             ✔ Secure isolation<br>
             ✔ Same workflow as WSL
         </blockquote>
-    
+
         <h3>🔐 Is phpMyAdmin Required?</h3>
         <p class="muted">
             <strong>No.</strong>
         </p>
-    
+
         <p class="muted">
             Everything can be done via:
         </p>
-    
+
         <div class="folder">
             docker exec -it mysql-dev mysql
         </div>
-    
+
         <p class="muted">
             phpMyAdmin is useful if:
         </p>
-    
+
         <ul class="list">
             <li><span class="status info"></span>You prefer visual UI</li>
             <li><span class="status info"></span>You want quick inspection</li>
             <li><span class="status info"></span>You are learning databases</li>
         </ul>
-    
+
         <h3>🧠 Final Recommendation (For This VPS)</h3>
         <ul class="list">
             <li><span class="status done"></span>MySQL in Docker → YES</li>
             <li><span class="status info"></span>phpMyAdmin → Optional</li>
             <li><span class="status danger"></span>PHP apps → Not needed for Django</li>
         </ul>
-    
+
         <h3>🏁 Summary</h3>
         <ul class="list">
             <li><span class="status done"></span>PHP = backend language</li>
@@ -3340,7 +3350,7 @@
             <li><span class="status done"></span>PHP alone does nothing</li>
             <li><span class="status done"></span>Docker-based approach is safest</li>
         </ul>
-    
+
         <blockquote class="success">
             ✔ Tooling confusion resolved<br>
             ✔ VPS remains clean<br>
@@ -3350,198 +3360,198 @@
     <!-- FINAL ROOT CAUSE CLARITY: WRONG DIRECTORY & WORKFLOW CONFUSION -->
     <div class="card full" id="directory-workflow-confusion">
         <h2>📂 Final Root Cause Clarity: Wrong Directory & Workflow Confusion</h2>
-    
+
         <p class="muted">
             At this stage, it became clear that the issue was
             <strong>no longer MySQL-related</strong>.
             The remaining problems were caused by
             <strong>command context and directory misunderstandings</strong>.
         </p>
-    
+
         <h3>🔴 Real Problems Identified (Clear & Honest)</h3>
-    
+
         <h4>❌ Problem 1: Running <code>docker compose</code> in the Wrong Directory</h4>
-    
+
         <p class="muted">
             The following error was the key signal:
         </p>
-    
+
         <div class="folder">
             no configuration file provided: not found
         </div>
-    
+
         <p class="muted">
             This error <strong>always means</strong> Docker Compose cannot find
             <code>docker-compose.yml</code> in the current directory.
         </p>
-    
+
         <p class="muted">
             Actual file location:
         </p>
-    
+
         <div class="folder">
             ~/dev/docker/mysql/docker-compose.yml
         </div>
-    
+
         <p class="muted">
             But commands were being run from:
         </p>
-    
+
         <div class="folder">
             ~/dev/docker/
         </div>
-    
+
         <blockquote class="danger">
             ❌ Docker was not broken<br>
             ❌ MySQL was not broken<br>
             ✔ Commands were executed from the wrong folder
         </blockquote>
-    
+
         <h4>❌ Problem 2: Password Confusion ≠ MySQL Bug</h4>
-    
+
         <p class="muted">
             This message proved authentication was working:
         </p>
-    
+
         <blockquote class="success">
             Welcome to the MySQL monitor.
         </blockquote>
-    
+
         <p class="muted">
             Issues occurred due to:
         </p>
-    
+
         <ul class="list">
             <li><span class="status info"></span>Typing the password at the Linux prompt</li>
             <li><span class="status info"></span>Occasional mistyping during <code>-p</code> prompt</li>
             <li><span class="status info"></span>Invisible password input (no echo)</li>
         </ul>
-    
+
         <blockquote class="success">
             ✔ Authentication was correct<br>
             ✔ Workflow mistakes caused the confusion
         </blockquote>
-    
+
         <h3>✅ First Fix: Always Run Compose from Correct Folder</h3>
-    
+
         <div class="folder">
             cd ~/dev/docker/mysql
         </div>
-    
+
         <div class="folder">
             ls
         </div>
-    
+
         <p class="muted">
             You must see:
         </p>
-    
+
         <div class="folder">
             docker-compose.yml
         </div>
-    
+
         <p class="muted">
             Only then should Docker Compose commands be run.
         </p>
-    
+
         <h3>🔁 Restart MySQL Properly</h3>
-    
+
         <div class="folder">
             docker compose down
             docker compose up -d
         </div>
-    
+
         <div class="folder">
             docker ps
         </div>
-    
+
         <p class="muted">
             Expected container:
         </p>
-    
+
         <div class="folder">
             mysql-dev
         </div>
-    
+
         <h3>🔐 Login as Root (Confirmed Working)</h3>
-    
+
         <div class="folder">
             docker exec -it mysql-dev mysql -u root -p
         </div>
-    
+
         <p>Password:</p>
         <div class="folder">Root123!</div>
-    
+
         <blockquote class="success">
             mysql>
         </blockquote>
-    
+
         <h3>👤 Recreate <code>shopease_user</code> Cleanly (Final Fix)</h3>
-    
+
         <p class="muted">
             Inside the MySQL shell:
         </p>
-    
+
         <h4>1️⃣ Remove User if It Exists (Safe)</h4>
         <div class="folder">
             DROP USER IF EXISTS 'shopease_user'@'%';
         </div>
-    
+
         <h4>2️⃣ Recreate User with Clean Password</h4>
         <div class="folder">
             CREATE USER 'shopease_user'@'%' IDENTIFIED BY 'ShopEase123!';
         </div>
-    
+
         <h4>3️⃣ Grant Permissions</h4>
         <div class="folder">
             GRANT ALL PRIVILEGES ON shopease_db.* TO 'shopease_user'@'%';
             FLUSH PRIVILEGES;
         </div>
-    
+
         <h4>4️⃣ Verify</h4>
         <div class="folder">
             SHOW GRANTS FOR 'shopease_user'@'%';
         </div>
-    
+
         <div class="folder">
             exit;
         </div>
-    
+
         <h3>🧪 Test Application User Login (Correct Context)</h3>
-    
+
         <div class="folder">
             docker exec -it mysql-dev mysql -u shopease_user -p
         </div>
-    
+
         <p>Password:</p>
         <div class="folder">ShopEase123!</div>
-    
+
         <blockquote class="success">
             mysql>
         </blockquote>
-    
+
         <h3>❗ Important Clarification: Database ≠ User</h3>
-    
+
         <p class="muted">
             This command is incorrect:
         </p>
-    
+
         <div class="folder">
             docker exec -it mysql-dev mysql -u shopease_db -p
         </div>
-    
+
         <p class="muted">
             Because <code>shopease_db</code> is a <strong>database</strong>, not a user.
         </p>
-    
+
         <p class="muted">
             Correct form:
         </p>
-    
+
         <div class="folder">
             docker exec -it mysql-dev mysql -u shopease_user -p shopease_db
         </div>
-    
+
         <h3>🧠 Golden Rules (Pin These)</h3>
         <ul class="list">
             <li><span class="status done"></span>Run <code>docker compose</code> only where the compose file exists</li>
@@ -3549,7 +3559,7 @@
             <li><span class="status done"></span>User ≠ Database</li>
             <li><span class="status done"></span>If you see <code>mysql></code>, authentication succeeded</li>
         </ul>
-    
+
         <h3>🏁 Final State Achieved</h3>
         <ul class="list">
             <li><span class="status done"></span>Docker running cleanly</li>
@@ -3558,7 +3568,7 @@
             <li><span class="status done"></span><code>shopease_user</code> recreated cleanly</li>
             <li><span class="status done"></span>Ready for Django integration</li>
         </ul>
-    
+
         <blockquote class="success">
             ✔ Real root cause understood<br>
             ✔ Workflow corrected permanently<br>
@@ -3568,19 +3578,19 @@
     <!-- PHP KNOWLEDGE NOT REQUIRED (FINAL CLARITY & REASSURANCE) -->
     <div class="card full" id="php-not-required">
         <h2>🚫 PHP Knowledge Not Required (Final Clarity)</h2>
-    
+
         <p class="muted">
             This section permanently clears a common confusion:
             <strong>PHP knowledge is NOT required</strong> for this VPS, Docker,
             MySQL, or the ShopEase project.
         </p>
-    
+
         <h3>❗ Important Truth (Read First)</h3>
-    
+
         <blockquote class="success">
             You do <strong>NOT</strong> need PHP for:
         </blockquote>
-    
+
         <ul class="list">
             <li><span class="status done"></span>Docker</li>
             <li><span class="status done"></span>MySQL</li>
@@ -3588,29 +3598,29 @@
             <li><span class="status done"></span>ShopEase project</li>
             <li><span class="status done"></span>General VPS usage</li>
         </ul>
-    
+
         <blockquote class="success">
             ✔ Zero PHP knowledge required
         </blockquote>
-    
+
         <h3>🧠 Then Why Did PHP Even Come Up?</h3>
         <p class="muted">
             PHP appeared in discussion only because of <strong>phpMyAdmin</strong>.
         </p>
-    
+
         <ul class="list">
             <li><span class="status info"></span>phpMyAdmin is a tool</li>
             <li><span class="status info"></span>It is written in PHP internally</li>
             <li><span class="status info"></span>It exists only to manage MySQL visually</li>
         </ul>
-    
+
         <blockquote class="success">
             ✔ You are NOT writing PHP code<br>
             ✔ You are NOT becoming a PHP developer
         </blockquote>
-    
+
         <h3>🧰 How to Think About phpMyAdmin (Simple Model)</h3>
-    
+
         <table class="table">
             <thead>
                 <tr>
@@ -3633,28 +3643,28 @@
                 </tr>
             </tbody>
         </table>
-    
+
         <p class="muted">
             You do not need to know:
         </p>
-    
+
         <ul class="list">
             <li><span class="status info"></span>How phpMyAdmin is built</li>
             <li><span class="status info"></span>Which language it uses internally</li>
         </ul>
-    
+
         <p class="muted">
             You simply:
         </p>
-    
+
         <ul class="list">
             <li><span class="status done"></span>Click buttons</li>
             <li><span class="status done"></span>View tables</li>
             <li><span class="status done"></span>Run SQL queries</li>
         </ul>
-    
+
         <h3>🐍 The Actual Stack That Matters</h3>
-    
+
         <table class="table">
             <thead>
                 <tr>
@@ -3681,47 +3691,47 @@
                 </tr>
             </tbody>
         </table>
-    
+
         <blockquote class="danger">
             ❌ PHP is NOT part of this stack<br>
             ❌ You are NOT expected to learn PHP
         </blockquote>
-    
+
         <h3>🟢 When Would PHP Actually Matter?</h3>
         <p class="muted">
             Only if you intentionally decide to:
         </p>
-    
+
         <ul class="list">
             <li><span class="status info"></span>Build a PHP app (WordPress, Laravel)</li>
             <li><span class="status info"></span>Write backend code in PHP</li>
         </ul>
-    
+
         <p class="muted">
             You are <strong>not</strong> doing this.
         </p>
-    
+
         <h3>🧩 Should You Use phpMyAdmin?</h3>
-    
+
         <h4>Option A — Don’t Use It (Totally Fine)</h4>
         <p class="muted">
             You already use:
         </p>
-    
+
         <div class="folder">
             docker exec -it mysql-dev mysql
         </div>
-    
+
         <p class="muted">
             This is:
         </p>
-    
+
         <ul class="list">
             <li><span class="status done"></span>Industry-grade</li>
             <li><span class="status done"></span>Backend-standard</li>
             <li><span class="status done"></span>Used in real production systems</li>
         </ul>
-    
+
         <h4>Option B — Use phpMyAdmin (Optional)</h4>
         <ul class="list">
             <li><span class="status info"></span>Purely a UI</li>
@@ -3729,23 +3739,23 @@
             <li><span class="status info"></span>Helpful for learning & debugging</li>
             <li><span class="status info"></span>Can be removed anytime</li>
         </ul>
-    
+
         <h3>🧠 Final Recommendation</h3>
-    
+
         <blockquote class="success">
             ✅ Skip phpMyAdmin for now<br>
             ✅ Focus on Django → MySQL<br>
             ✅ Learn SQL & backend concepts<br>
             ❌ Do not worry about PHP at all
         </blockquote>
-    
+
         <h3>🔑 One-Line Summary (Remember This)</h3>
-    
+
         <blockquote class="success">
             PHP is the tool’s language, not your job.<br>
             <strong>Django + Python is your job.</strong>
         </blockquote>
-    
+
         <h3>🏁 Status After This Section</h3>
         <ul class="list">
             <li><span class="status done"></span>Tooling confusion removed</li>
@@ -3756,53 +3766,53 @@
     <!-- OPTION B: PHPMYADMIN VIA DOCKER (NO PHP KNOWLEDGE REQUIRED) -->
     <div class="card full" id="phpmyadmin-docker">
         <h2>🧩 Option B: phpMyAdmin via Docker (No PHP Knowledge Required)</h2>
-    
+
         <p class="muted">
             This section documents the optional setup of <strong>phpMyAdmin</strong>
             using Docker. No PHP coding is involved. phpMyAdmin is used purely as a
             <strong>browser-based UI</strong> for managing MySQL.
         </p>
-    
+
         <blockquote class="success">
             ✔ Zero PHP coding<br>
             ✔ Runs fully inside Docker<br>
             ✔ Safe for development & learning
         </blockquote>
-    
+
         <h3>🧠 What Is Being Done (1-Line Summary)</h3>
         <blockquote class="success">
             phpMyAdmin is run in Docker and connected to the existing MySQL container.
         </blockquote>
-    
+
         <h3>1️⃣ Go to the Correct Folder (Critical)</h3>
         <p class="muted">
             Docker Compose commands must be executed from the directory that contains
             <code>docker-compose.yml</code>.
         </p>
-    
+
         <div class="folder">
             cd ~/dev/docker/mysql
             ls
         </div>
-    
+
         <p class="muted">
             You must see:
         </p>
-    
+
         <div class="folder">
             docker-compose.yml
         </div>
-    
+
         <h3>2️⃣ Edit <code>docker-compose.yml</code></h3>
         <div class="folder">
             nano docker-compose.yml
         </div>
-    
+
         <p class="muted">
             Replace the file contents with the following
             <strong>MySQL + phpMyAdmin combined setup</strong>:
         </p>
-    
+
         <div class="folder">
             services:
             mysql:
@@ -3818,7 +3828,7 @@
             MYSQL_PASSWORD: ShopEase123!
             volumes:
             - mysql_data:/var/lib/mysql
-    
+
             phpmyadmin:
             image: phpmyadmin/phpmyadmin
             container_name: phpmyadmin
@@ -3831,68 +3841,68 @@
             MYSQL_ROOT_PASSWORD: Root123!
             depends_on:
             - mysql
-    
+
             volumes:
             mysql_data:
         </div>
-    
+
         <p class="muted">
             Save and exit:
         </p>
-    
+
         <ul class="list">
             <li><span class="status done"></span>Ctrl + O → Enter</li>
             <li><span class="status done"></span>Ctrl + X</li>
         </ul>
-    
+
         <h3>3️⃣ Restart Containers Cleanly</h3>
         <div class="folder">
             docker compose down
             docker compose up -d
         </div>
-    
+
         <div class="folder">
             docker ps
         </div>
-    
+
         <p class="muted">
             Expected containers:
         </p>
-    
+
         <ul class="list">
             <li><span class="status done"></span><code>mysql-dev</code></li>
             <li><span class="status done"></span><code>phpmyadmin</code></li>
         </ul>
-    
+
         <h3>4️⃣ Open phpMyAdmin in Browser 🌐</h3>
         <p class="muted">
             On your local machine browser:
         </p>
-    
+
         <div class="folder">
             http://72.61.251.2:8080
         </div>
-    
+
         <blockquote class="success">
             phpMyAdmin login page should appear
         </blockquote>
-    
+
         <h3>5️⃣ Login (No PHP Knowledge Needed)</h3>
-    
+
         <h4>🔐 Login as Root</h4>
         <ul class="list">
             <li><span class="status info"></span>Server: <code>mysql</code></li>
             <li><span class="status info"></span>Username: <code>root</code></li>
             <li><span class="status info"></span>Password: <code>Root123!</code></li>
         </ul>
-    
+
         <h4>👤 Login as Application User (Recommended)</h4>
         <ul class="list">
             <li><span class="status info"></span>Server: <code>mysql</code></li>
             <li><span class="status info"></span>Username: <code>shopease_user</code></li>
             <li><span class="status info"></span>Password: <code>ShopEase123!</code></li>
         </ul>
-    
+
         <h3>🧠 What You Can Do in phpMyAdmin</h3>
         <ul class="list">
             <li><span class="status done"></span>View <code>shopease_db</code></li>
@@ -3902,39 +3912,39 @@
             <li><span class="status done"></span>Import / export database</li>
             <li><span class="status done"></span>Debug Django DB issues visually</li>
         </ul>
-    
+
         <blockquote class="success">
             ✔ All via clicks & forms<br>
             ✔ No PHP coding involved
         </blockquote>
-    
+
         <h3>🔒 Security Note (Important)</h3>
         <p class="muted">
             Current state:
         </p>
-    
+
         <ul class="list">
             <li><span class="status info"></span>phpMyAdmin exposed on port 8080</li>
             <li><span class="status info"></span>Acceptable for development & learning</li>
         </ul>
-    
+
         <p class="muted">
             Future production options:
         </p>
-    
+
         <ul class="list">
             <li><span class="status info"></span>Restrict IP access</li>
             <li><span class="status info"></span>Add authentication</li>
             <li><span class="status info"></span>Remove phpMyAdmin entirely</li>
         </ul>
-    
+
         <h3>❌ What Not To Do</h3>
         <ul class="list">
             <li><span class="status danger"></span>Do NOT install PHP on Ubuntu</li>
             <li><span class="status danger"></span>Do NOT write PHP code</li>
             <li><span class="status danger"></span>Do NOT expose MySQL directly</li>
         </ul>
-    
+
         <h3>🏁 Final Status After This Step</h3>
         <ul class="list">
             <li><span class="status done"></span>MySQL running in Docker</li>
@@ -3942,7 +3952,7 @@
             <li><span class="status done"></span>No PHP knowledge required</li>
             <li><span class="status done"></span>Browser-based DB management ready</li>
         </ul>
-    
+
         <blockquote class="success">
             ✔ Clean Docker architecture<br>
             ✔ Optional UI enabled<br>
@@ -3952,19 +3962,19 @@
     <!-- PHPMYADMIN ROOT ACCESS DENIED (EXPECTED DOCKER SECURITY BEHAVIOR) -->
     <div class="card full" id="phpmyadmin-access-denied">
         <h2>🔐 phpMyAdmin Root Access Denied (Expected Docker Security)</h2>
-    
+
         <p class="muted">
             While logging into phpMyAdmin, the following error appeared:
             <strong>Access denied for user 'root'</strong>.
             This section explains why this happened, why it is
             <strong>correct behavior</strong>, and how it was fixed properly.
         </p>
-    
+
         <h3>❌ Error Observed</h3>
         <div class="folder">
             Access denied for user 'root'@'172.18.0.3'
         </div>
-    
+
         <h3>🔍 What This Error REALLY Means</h3>
         <ul class="list">
             <li><span class="status info"></span><code>172.18.0.3</code> = phpMyAdmin container IP</li>
@@ -3972,87 +3982,87 @@
             <li><span class="status info"></span>MySQL root user is restricted to <code>localhost</code></li>
             <li><span class="status done"></span>MySQL correctly blocked remote root access</li>
         </ul>
-    
+
         <blockquote class="success">
             ✔ Nothing is broken<br>
             ✔ This is expected security behavior<br>
             ✔ MySQL is doing the right thing
         </blockquote>
-    
+
         <h3>🚫 Why Root Login Should NOT Be Used in phpMyAdmin</h3>
         <p class="muted">
             In real-world systems, the MySQL root user:
         </p>
-    
+
         <ul class="list">
             <li><span class="status danger"></span>Is restricted to local access</li>
             <li><span class="status danger"></span>Must not be exposed via web tools</li>
             <li><span class="status done"></span>Is used only for maintenance via terminal</li>
         </ul>
-    
+
         <blockquote class="danger">
             ❌ phpMyAdmin + root login is NOT best practice
         </blockquote>
-    
+
         <h3>✅ Correct Solution (Best Practice)</h3>
         <blockquote class="success">
             Use the application database user:<br>
             <strong><code>shopease_user</code></strong>
         </blockquote>
-    
+
         <h3>1️⃣ Login as Root via Terminal (Already Working)</h3>
         <div class="folder">
             docker exec -it mysql-dev mysql -u root -p
         </div>
-    
+
         <p>Password:</p>
         <div class="folder">Root123!</div>
-    
+
         <blockquote class="success">
             mysql>
         </blockquote>
-    
+
         <h3>2️⃣ Fix <code>shopease_user</code> for Docker Network Access</h3>
         <p class="muted">
             Inside the MySQL shell, run <strong>exactly</strong> the following:
         </p>
-    
+
         <div class="folder">
             DROP USER IF EXISTS 'shopease_user'@'%';
             CREATE USER 'shopease_user'@'%' IDENTIFIED BY 'ShopEase123!';
             GRANT ALL PRIVILEGES ON shopease_db.* TO 'shopease_user'@'%';
             FLUSH PRIVILEGES;
         </div>
-    
+
         <h4>Verify:</h4>
         <div class="folder">
             SELECT user, host FROM mysql.user WHERE user='shopease_user';
         </div>
-    
+
         <p class="muted">
             You must see:
         </p>
-    
+
         <div class="folder">
             shopease_user | %
         </div>
-    
+
         <div class="folder">
             exit;
         </div>
-    
+
         <h3>3️⃣ Login to phpMyAdmin (This WILL Work)</h3>
-    
+
         <p class="muted">
             Open in browser:
         </p>
-    
+
         <div class="folder">
             http://72.61.251.2:8080
         </div>
-    
+
         <h4>✅ phpMyAdmin Login (Correct Values)</h4>
-    
+
         <table class="table">
             <thead>
                 <tr>
@@ -4075,13 +4085,13 @@
                 </tr>
             </tbody>
         </table>
-    
+
         <blockquote class="success">
             🎉 phpMyAdmin dashboard opens successfully
         </blockquote>
-    
+
         <h3>🚨 Why Root Login Fails (Important Lesson)</h3>
-    
+
         <table class="table">
             <thead>
                 <tr>
@@ -4103,29 +4113,29 @@
                 </tr>
             </tbody>
         </table>
-    
+
         <blockquote class="success">
             ✔ Root is protected<br>
             ✔ Web access is restricted<br>
             ✔ Security is correct
         </blockquote>
-    
+
         <h3>❓ Can Root Be Allowed Anyway?</h3>
         <p class="muted">
             Technically yes, but <strong>strongly discouraged</strong> on a VPS.
         </p>
-    
+
         <div class="folder">
             CREATE USER 'root'@'%' IDENTIFIED BY 'Root123!';
             GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' WITH GRANT OPTION;
             FLUSH PRIVILEGES;
         </div>
-    
+
         <blockquote class="danger">
             ⚠️ NOT recommended<br>
             ⚠️ Security risk on public servers
         </blockquote>
-    
+
         <h3>🏁 Final Status After This Fix</h3>
         <ul class="list">
             <li><span class="status done"></span>MySQL working</li>
@@ -4134,7 +4144,7 @@
             <li><span class="status done"></span>No PHP coding required</li>
             <li><span class="status done"></span>Correct production practice followed</li>
         </ul>
-    
+
         <h3>🧠 One-Line Takeaway</h3>
         <blockquote class="success">
             phpMyAdmin ≠ root login<br>
@@ -4144,18 +4154,18 @@
     <!-- PHPMYADMIN SUCCESS CONFIRMATION -->
     <div class="card full" id="phpmyadmin-success">
         <h2>🎉 phpMyAdmin Connected Successfully (Verified)</h2>
-    
+
         <p class="muted">
             This section confirms that phpMyAdmin is fully working and securely connected
             to the MySQL Docker container — without writing a single line of PHP.
         </p>
-    
+
         <blockquote class="success">
             ✔ Database access verified<br>
             ✔ Docker networking confirmed<br>
             ✔ Correct user permissions applied
         </blockquote>
-    
+
         <h3>✅ What the Dashboard Confirms</h3>
         <ul class="list">
             <li><span class="status done"></span>phpMyAdmin login successful</li>
@@ -4164,7 +4174,7 @@
             <li><span class="status done"></span><code>shopease_db</code> database visible</li>
             <li><span class="status done"></span>No PHP knowledge required</li>
         </ul>
-    
+
         <h3>🔍 What Each Part of the Screen Means</h3>
         <table class="table">
             <thead>
@@ -4196,31 +4206,31 @@
                 </tr>
             </tbody>
         </table>
-    
+
         <blockquote class="success">
             ✔ Not logged in as root (this is GOOD security practice)
         </blockquote>
-    
+
         <h3>🔒 Security Status</h3>
         <p class="muted">
             phpMyAdmin is currently accessible at:
         </p>
-    
+
         <div class="folder">
             http://72.61.251.2:8080
         </div>
-    
+
         <ul class="list">
             <li><span class="status info"></span>Strong database password enabled</li>
             <li><span class="status info"></span>Root user not exposed</li>
             <li><span class="status info"></span>Acceptable for development & learning</li>
         </ul>
-    
+
         <blockquote class="warning">
             🔐 Note: For production, phpMyAdmin should be IP-restricted,
             protected with auth, or removed after setup.
         </blockquote>
-    
+
         <h3>🏁 Current System Status</h3>
         <ul class="list">
             <li><span class="status done"></span>VPS online</li>
@@ -4229,7 +4239,7 @@
             <li><span class="status done"></span>phpMyAdmin verified</li>
             <li><span class="status done"></span>Ready for Django database migrations</li>
         </ul>
-    
+
         <h3>🧠 Key Takeaway</h3>
         <blockquote class="success">
             phpMyAdmin is just a dashboard.<br>
@@ -4239,98 +4249,98 @@
     <!-- STEP 3: SECURE PHPMYADMIN -->
     <div class="card full" id="phpmyadmin-security">
         <h2>🔒 Step 3: Securing phpMyAdmin (Production-Style)</h2>
-    
+
         <p class="muted">
             After confirming phpMyAdmin was working, the next step was to
             <strong>secure it properly</strong>.
             By default, phpMyAdmin login pages are visible to the internet —
             this is unsafe on a VPS.
         </p>
-    
+
         <h3>⚠️ Initial Risk</h3>
         <blockquote class="warning">
             Anyone on the internet could reach the phpMyAdmin login page
             and attempt brute-force attacks.
         </blockquote>
-    
+
         <ul class="list">
             <li><span class="status warn"></span>Public login page exposed</li>
             <li><span class="status warn"></span>Target for automated bots</li>
             <li><span class="status warn"></span>Not suitable for long-term use</li>
         </ul>
-    
+
         <hr />
-    
+
         <h3>🟢 Layer 1: Lock phpMyAdmin to Localhost (Recommended)</h3>
-    
+
         <p>
             The container port mapping was modified so phpMyAdmin is no longer
             accessible from the public internet.
         </p>
-    
+
         <h4>Docker Configuration Change</h4>
         <pre class="code">
     ports:
       - "127.0.0.1:18080:80"
       </pre>
-    
+
         <ul class="list">
             <li><span class="status done"></span>Public access blocked</li>
             <li><span class="status done"></span>Only accessible from VPS localhost</li>
             <li><span class="status done"></span>Port changed to avoid scanners</li>
         </ul>
-    
+
         <blockquote class="success">
             ✔ phpMyAdmin is no longer reachable from the internet
         </blockquote>
-    
+
         <hr />
-    
+
         <h3>🔐 Secure Access via SSH Tunnel</h3>
-    
+
         <p class="muted">
             phpMyAdmin is now accessed securely using an SSH tunnel.
             This is how real production servers handle admin tools.
         </p>
-    
+
         <pre class="code">
     ssh -L 18080:127.0.0.1:18080 devuser@72.61.251.2
       </pre>
-    
+
         <p>
             After connecting, phpMyAdmin is available locally at:
         </p>
-    
+
         <div class="folder">
             http://localhost:18080
         </div>
-    
+
         <ul class="list">
             <li><span class="status done"></span>Encrypted SSH connection</li>
             <li><span class="status done"></span>No public login page</li>
             <li><span class="status done"></span>Developer-only access</li>
         </ul>
-    
+
         <hr />
-    
+
         <h3>🟡 Layer 2: Restrict Root User (Optional Hardening)</h3>
-    
+
         <p>
             Root database access is restricted to CLI usage only.
             Application users are used for all admin tasks.
         </p>
-    
+
         <pre class="code">
     DROP USER IF EXISTS 'root'@'%';
     FLUSH PRIVILEGES;
       </pre>
-    
+
         <blockquote class="success">
             ✔ Root user not exposed to web tools
         </blockquote>
-    
+
         <hr />
-    
+
         <h3>🚫 Security Rules Followed</h3>
         <ul class="list">
             <li><span class="status done"></span>No public phpMyAdmin</li>
@@ -4338,7 +4348,7 @@
             <li><span class="status done"></span>No PHP installed on host OS</li>
             <li><span class="status done"></span>All DB tools containerized</li>
         </ul>
-    
+
         <h3>📊 Final Security Status</h3>
         <table class="table">
             <thead>
@@ -4366,7 +4376,7 @@
                 </tr>
             </tbody>
         </table>
-    
+
         <blockquote class="success">
             This setup matches real-world VPS and cloud server practices.
         </blockquote>
@@ -4374,47 +4384,47 @@
     <!-- PUBLIC PHPMYADMIN ACCESS (SAFE WAY) -->
     <div class="card full" id="phpmyadmin-public-access">
         <h2>🌍 phpMyAdmin Internet Access (Safe Configuration)</h2>
-    
+
         <p class="muted">
             After securing phpMyAdmin locally, the decision was made to allow
             <strong>controlled public internet access</strong> for development
             and remote administration.
         </p>
-    
+
         <h3>🔍 Understanding Docker Port Mapping</h3>
-    
+
         <p>
             Docker uses the format:
         </p>
-    
+
         <pre class="code">
     HOST_PORT : CONTAINER_PORT
       </pre>
-    
+
         <p>
             Example:
         </p>
-    
+
         <pre class="code">
     ports:
       - "18080:80"
       </pre>
-    
+
         <ul class="list">
             <li><span class="status done"></span><strong>18080</strong> → Public VPS port</li>
             <li><span class="status done"></span><strong>80</strong> → phpMyAdmin inside container</li>
         </ul>
-    
+
         <p class="muted">
             This makes phpMyAdmin available at:
         </p>
-    
+
         <div class="folder">
             http://72.61.251.2:18080
         </div>
-    
+
         <hr />
-    
+
         <h3>🟢 Why Public Access Was Enabled</h3>
         <ul class="list">
             <li><span class="status done"></span>Remote database management</li>
@@ -4422,11 +4432,11 @@
             <li><span class="status done"></span>Container-only exposure</li>
             <li><span class="status done"></span>Learning & development use</li>
         </ul>
-    
+
         <hr />
-    
+
         <h3>🛠 Docker Compose Configuration</h3>
-    
+
         <pre class="code">
     phpmyadmin:
       image: phpmyadmin/phpmyadmin
@@ -4440,16 +4450,16 @@
       depends_on:
         - mysql
       </pre>
-    
+
         <blockquote class="success">
             ✔ phpMyAdmin accessible from the internet
             ✔ Still isolated inside Docker
         </blockquote>
-    
+
         <hr />
-    
+
         <h3>🔐 Login Rules Enforced</h3>
-    
+
         <table class="table">
             <thead>
                 <tr>
@@ -4476,9 +4486,9 @@
                 </tr>
             </tbody>
         </table>
-    
+
         <hr />
-    
+
         <h3>🚫 Security Rules Followed</h3>
         <ul class="list">
             <li><span class="status done"></span>No port 80 / 8080 exposure</li>
@@ -4486,20 +4496,20 @@
             <li><span class="status done"></span>No PHP on VPS host</li>
             <li><span class="status done"></span>Docker isolation preserved</li>
         </ul>
-    
+
         <hr />
-    
+
         <h3>🛡 Optional Hardening (Future Plan)</h3>
-    
+
         <p class="muted">
             IP-based firewall restrictions can be added later using UFW:
         </p>
-    
+
         <pre class="code">
     sudo ufw allow from YOUR_IP to any port 18080
     sudo ufw deny 18080
       </pre>
-    
+
         <blockquote class="success">
             phpMyAdmin is now public, controlled, and safe for development use.
         </blockquote>
@@ -4507,15 +4517,15 @@
     <!-- HOW TO FIND YOUR PUBLIC IP FOR FIREWALL RULES -->
     <div class="card full" id="finding-your-ip">
         <h2>🌐 Finding <code>YOUR_IP</code> (Firewall Access Control)</h2>
-    
+
         <p class="muted">
             When restricting phpMyAdmin or other services using a firewall,
             <code>YOUR_IP</code> refers to the <strong>public internet IP address</strong>
             of the developer’s local machine — not the VPS.
         </p>
-    
+
         <h3>❓ What <code>YOUR_IP</code> Is (And Is Not)</h3>
-    
+
         <table class="table">
             <thead>
                 <tr>
@@ -4542,95 +4552,95 @@
                 </tr>
             </tbody>
         </table>
-    
+
         <hr />
-    
+
         <h3>✅ Method 1: Browser (Easiest)</h3>
         <p>
             On your <strong>local computer</strong> (Windows / Laptop),
             open a browser and visit:
         </p>
-    
+
         <div class="folder">
             https://whatismyipaddress.com
         </div>
-    
+
         <p>
             Or simply search in Google:
         </p>
-    
+
         <div class="folder">
             what is my ip
         </div>
-    
+
         <blockquote class="success">
             ✔ The displayed IPv4 address is <code>YOUR_IP</code>
         </blockquote>
-    
+
         <hr />
-    
+
         <h3>✅ Method 2: Windows Command Line</h3>
-    
+
         <p>
             Open <strong>CMD or PowerShell</strong> on your local machine:
         </p>
-    
+
         <pre class="code">
     curl ifconfig.me
       </pre>
-    
+
         <p class="muted">
             Output example:
         </p>
-    
+
         <pre class="code">
     152.58.28.8
       </pre>
-    
+
         <hr />
-    
+
         <h3>✅ Method 3: From VPS Terminal</h3>
-    
+
         <p>
             Even when connected to the VPS, you can still determine
             your public IP:
         </p>
-    
+
         <pre class="code">
     curl ifconfig.me
       </pre>
-    
+
         <p class="muted">
             This shows the same public IP used by your local internet connection.
         </p>
-    
+
         <hr />
-    
+
         <h3>⚠️ Important Notes</h3>
         <ul class="list">
             <li><span class="status warn"></span>Mobile data IPs may change frequently</li>
             <li><span class="status warn"></span>Wi-Fi IPs are usually more stable</li>
             <li><span class="status warn"></span>Firewall rules may need updates if IP changes</li>
         </ul>
-    
+
         <hr />
-    
+
         <h3>🔐 Using <code>YOUR_IP</code> in Firewall Rules</h3>
-    
+
         <p>
             Example (replace with your real IP):
         </p>
-    
+
         <pre class="code">
     sudo ufw allow from 152.58.28.8 to any port 18080
     sudo ufw deny 18080
       </pre>
-    
+
         <ul class="list">
             <li><span class="status done"></span>Only your IP can access phpMyAdmin</li>
             <li><span class="status done"></span>All other IPs are blocked</li>
         </ul>
-    
+
         <blockquote class="success">
             phpMyAdmin is now accessible only to the developer’s network.
         </blockquote>
@@ -4638,106 +4648,106 @@
     <!-- POWERSHELL CURL WARNING EXPLANATION -->
     <div class="card full" id="powershell-curl-warning">
         <h2>🪟 PowerShell <code>curl</code> Security Warning (Clarified)</h2>
-    
+
         <p class="muted">
             While checking the public IP address from a Windows machine,
             PowerShell displayed a security warning related to script execution.
             This section explains why the warning appeared and how it was handled safely.
         </p>
-    
+
         <h3>⚠️ What Happened</h3>
-    
+
         <p>
             Running the following command in <strong>Windows PowerShell</strong>:
         </p>
-    
+
         <pre class="code">
     curl ifconfig.me
       </pre>
-    
+
         <p>
             Triggered this message:
         </p>
-    
+
         <blockquote class="warning">
             Invoke-WebRequest parses the content of the web page.
             Script code in the web page might be run when the page is parsed.
         </blockquote>
-    
+
         <p class="muted">
             This is a <strong>PowerShell-specific behavior</strong>, not an error
             and not a security issue with the VPS.
         </p>
-    
+
         <hr />
-    
+
         <h3>🟢 Safe & Correct Command (PowerShell)</h3>
-    
+
         <p>
             To avoid script parsing completely, the following command was used:
         </p>
-    
+
         <pre class="code">
     curl ifconfig.me -UseBasicParsing
       </pre>
-    
+
         <blockquote class="success">
             ✔ Script execution disabled<br>
             ✔ Safe output only
         </blockquote>
-    
+
         <hr />
-    
+
         <h3>✅ Recommended PowerShell Method</h3>
-    
+
         <p>
             PowerShell provides a native web request command.
             This is the cleanest approach:
         </p>
-    
+
         <pre class="code">
     (Invoke-WebRequest ifconfig.me).Content
       </pre>
-    
+
         <p class="muted">
             Short version:
         </p>
-    
+
         <pre class="code">
     iwr ifconfig.me | Select-Object -ExpandProperty Content
       </pre>
-    
+
         <p>
             Example output:
         </p>
-    
+
         <pre class="code">
     152.58.28.8
       </pre>
-    
+
         <blockquote class="success">
             ✔ This value is the developer’s public IP (<code>YOUR_IP</code>)
         </blockquote>
-    
+
         <hr />
-    
+
         <h3>🟡 Browser-Based Alternative</h3>
-    
+
         <p>
             If command-line access is not required, a browser can be used:
         </p>
-    
+
         <div class="folder">
             https://whatismyipaddress.com
         </div>
-    
+
         <ul class="list">
             <li><span class="status done"></span>No terminal required</li>
             <li><span class="status done"></span>Works on any OS</li>
         </ul>
-    
+
         <hr />
-    
+
         <h3>🧠 Key Takeaway</h3>
         <ul class="list">
             <li><span class="status done"></span>This was a warning, not an error</li>
@@ -4745,7 +4755,7 @@
             <li><span class="status done"></span>PowerShell behaves differently than Linux</li>
             <li><span class="status done"></span>Public IP was retrieved safely</li>
         </ul>
-    
+
         <blockquote class="success">
             PowerShell safety checks were respected while maintaining correct workflow.
         </blockquote>
@@ -4753,15 +4763,15 @@
     <!-- FIREWALL ALLOW-LIST DEFERRED DECISION -->
     <div class="card full" id="firewall-decision">
         <h2>🧭 Firewall IP Allow-List (Deferred Decision)</h2>
-    
+
         <p class="muted">
             During the VPS setup, the firewall IP allow-list for phpMyAdmin
             was intentionally postponed.
             This section documents the reasoning, current state, and future plan.
         </p>
-    
+
         <h3>✅ Current State (Acceptable for Development)</h3>
-    
+
         <ul class="list">
             <li><span class="status done"></span>MySQL running inside Docker</li>
             <li><span class="status done"></span>phpMyAdmin running inside Docker</li>
@@ -4769,59 +4779,59 @@
             <li><span class="status done"></span>Login restricted to <code>shopease_user</code></li>
             <li><span class="status done"></span>No root login via web UI</li>
         </ul>
-    
+
         <blockquote class="success">
             This setup is safe enough for learning and development.
         </blockquote>
-    
+
         <hr />
-    
+
         <h3>⚠️ What Risk Still Exists</h3>
-    
+
         <p>
             Without the firewall IP allow-list:
         </p>
-    
+
         <ul class="list">
             <li><span class="status warn"></span>phpMyAdmin login page is visible publicly</li>
             <li><span class="status warn"></span>Automated scanners can detect the page</li>
             <li><span class="status warn"></span>Brute-force attempts are possible</li>
         </ul>
-    
+
         <p class="muted">
             However:
         </p>
-    
+
         <ul class="list">
             <li><span class="status done"></span>No access without credentials</li>
             <li><span class="status done"></span>Strong, non-default passwords in use</li>
             <li><span class="status done"></span>Database not exposed directly</li>
         </ul>
-    
+
         <hr />
-    
+
         <h3>🕒 Why This Was Deferred</h3>
-    
+
         <ul class="list">
             <li><span class="status done"></span>Active testing and frequent access required</li>
             <li><span class="status done"></span>IP may change (Wi-Fi / mobile network)</li>
             <li><span class="status done"></span>Focus was on functional setup first</li>
             <li><span class="status done"></span>Firewall rule is an extra hardening layer</li>
         </ul>
-    
+
         <blockquote class="success">
             This is a deliberate and reasonable trade-off during early setup.
         </blockquote>
-    
+
         <hr />
-    
+
         <h3>📌 Planned Hardening (To Be Applied Later)</h3>
-    
+
         <p class="muted">
             When testing is complete or real data is added,
             the firewall allow-list will be enabled.
         </p>
-    
+
         <pre class="code">
     # allow only developer IP
     sudo ufw allow from YOUR_IP to any port 18080
@@ -4829,15 +4839,15 @@
     # block everyone else
     sudo ufw deny 18080
       </pre>
-    
+
         <p class="muted">
             (<code>YOUR_IP</code> refers to the developer’s public internet IP.)
         </p>
-    
+
         <hr />
-    
+
         <h3>🧠 Decision Summary</h3>
-    
+
         <table class="table">
             <thead>
                 <tr>
@@ -4864,7 +4874,7 @@
                 </tr>
             </tbody>
         </table>
-    
+
         <blockquote class="success">
             No critical security step was skipped — only postponed intentionally.
         </blockquote>
@@ -4872,50 +4882,50 @@
     <!-- PRE-DEPLOYMENT SAFETY CHECK: GIT REPO CONFIRMATION -->
     <div class="card full" id="pre-deployment-check">
         <h2>🧩 Pre-Deployment Safety Check (Git Repository Confirmation)</h2>
-    
+
         <p class="muted">
             Before proceeding with any Django or database integration,
             a strict safety checkpoint was enforced.
             No actions were taken without explicit repository confirmation.
         </p>
-    
+
         <h3>🔐 Why This Check Exists</h3>
-    
+
         <ul class="list">
             <li><span class="status done"></span>Prevent accidental file overwrite</li>
             <li><span class="status done"></span>Avoid guessing project structure</li>
             <li><span class="status done"></span>Ensure correct Django entry point</li>
             <li><span class="status done"></span>Maintain full control over deployment steps</li>
         </ul>
-    
+
         <blockquote class="success">
             No repo = no action. Safety comes first.
         </blockquote>
-    
+
         <hr />
-    
+
         <h3>📌 Required Input</h3>
-    
+
         <p>
             One of the following must be provided before continuing:
         </p>
-    
+
         <pre class="code">
     https://github.com/USERNAME/REPO.git
       </pre>
-    
+
         <p class="muted">
             OR confirmation:
         </p>
-    
+
         <blockquote class="info">
             “Repo is private, authentication will be provided”
         </blockquote>
-    
+
         <hr />
-    
+
         <h3>🚀 Planned Execution Order (Once Repo Is Confirmed)</h3>
-    
+
         <ol class="list">
             <li><span class="status done"></span>Clone repository into <code>~/dev/projects/</code></li>
             <li><span class="status done"></span>Verify Django project structure</li>
@@ -4925,24 +4935,24 @@
             <li><span class="status done"></span>Run migrations</li>
             <li><span class="status done"></span>Verify tables in phpMyAdmin</li>
         </ol>
-    
+
         <hr />
-    
+
         <h3>🧠 Guarantees Provided</h3>
-    
+
         <ul class="list">
             <li><span class="status done"></span>No files overwritten</li>
             <li><span class="status done"></span>No assumptions made</li>
             <li><span class="status done"></span>No destructive commands executed</li>
             <li><span class="status done"></span>Every step verified before continuing</li>
         </ul>
-    
+
         <blockquote class="success">
             This checkpoint ensures controlled, repeatable, and safe deployment.
         </blockquote>
-    
+
         <hr />
-    
+
         <h3>🏁 Status</h3>
         <table class="table">
             <thead>
@@ -4966,7 +4976,7 @@
                 </tr>
             </tbody>
         </table>
-    
+
         <blockquote class="success">
             Deployment proceeded only after this checkpoint was satisfied.
         </blockquote>
@@ -4974,60 +4984,60 @@
     <!-- SHOP EASE REPOSITORY CLONED & VERIFIED -->
     <div class="card full" id="repository-cloned">
         <h2>🧬 ShopEase Repository Cloned & Verified</h2>
-    
+
         <p class="muted">
             After repository confirmation, the ShopEase project was cloned into
             the correct development directory on the VPS.
             All steps were executed in a controlled and verifiable manner.
         </p>
-    
+
         <h3>📍 Target Project Directory</h3>
-    
+
         <p>
             The standard development directory structure was used:
         </p>
-    
+
         <pre class="code">
     /home/devuser/dev/projects
       </pre>
-    
+
         <blockquote class="success">
             ✔ Correct base directory confirmed
         </blockquote>
-    
+
         <hr />
-    
+
         <h3>🚀 Step 1: Clone the Repository</h3>
-    
+
         <p>
             The official ShopEase GitHub repository was cloned:
         </p>
-    
+
         <pre class="code">
     git clone https://github.com/PrathameshB59/ShopEase.git
       </pre>
-    
+
         <p class="muted">
             Git completed successfully with all objects received and checked out.
         </p>
-    
+
         <blockquote class="success">
             ✔ Repository cloned successfully
         </blockquote>
-    
+
         <hr />
-    
+
         <h3>📂 Step 2: Enter Project Folder</h3>
-    
+
         <pre class="code">
     cd ShopEase
     ls
       </pre>
-    
+
         <p>
             The following structure was verified:
         </p>
-    
+
         <ul class="list">
             <li><span class="status done"></span><code>shopease/</code> (main Django project)</li>
             <li><span class="status done"></span><code>apps/</code> (Django applications)</li>
@@ -5035,26 +5045,26 @@
             <li><span class="status done"></span><code>docs/</code> / <code>shopeasedocs/</code></li>
             <li><span class="status done"></span><code>requirements.txt</code></li>
         </ul>
-    
+
         <blockquote class="success">
             ✔ Django project structure confirmed
         </blockquote>
-    
+
         <hr />
-    
+
         <h3>🧠 What This Confirms</h3>
-    
+
         <ul class="list">
             <li><span class="status done"></span>Correct repository was used</li>
             <li><span class="status done"></span>No files were overwritten</li>
             <li><span class="status done"></span>Project is ready for environment setup</li>
             <li><span class="status done"></span>Safe to proceed with Python virtual environment</li>
         </ul>
-    
+
         <hr />
-    
+
         <h3>🗺 Planned Next Steps (Locked)</h3>
-    
+
         <ol class="list">
             <li><span class="status done"></span>Create Python virtual environment</li>
             <li><span class="status done"></span>Install project requirements</li>
@@ -5062,13 +5072,13 @@
             <li><span class="status done"></span>Run initial migrations</li>
             <li><span class="status done"></span>Verify tables via phpMyAdmin</li>
         </ol>
-    
+
         <blockquote class="success">
             No PHP, no guessing, no skipped steps — controlled Django deployment path.
         </blockquote>
-    
+
         <hr />
-    
+
         <h3>🏁 Status</h3>
         <table class="table">
             <thead>
@@ -5092,7 +5102,7 @@
                 </tr>
             </tbody>
         </table>
-    
+
         <blockquote class="success">
             Project is ready for environment configuration.
         </blockquote>
@@ -5100,19 +5110,19 @@
     <!-- DJANGO PROJECT STRUCTURE & INITIAL VERIFICATION -->
     <div class="card full" id="django-structure">
         <h2>🧪 Django Project Structure & Initial Verification</h2>
-    
+
         <p class="muted">
             After cloning the repository, the next step was to clearly understand
             the project layout and verify Django in a safe, non-destructive way.
             No database changes were performed at this stage.
         </p>
-    
+
         <h3>📂 Understanding the Repository Structure</h3>
-    
+
         <p>
             The ShopEase repository is structured as follows:
         </p>
-    
+
         <pre class="code">
     ShopEase/
     ├── shopease/        ← Main Django project (core)
@@ -5127,108 +5137,108 @@
     ├── venv/            ← Python virtual environment
     ├── install.cmd      ← Windows-only (ignored on VPS)
       </pre>
-    
+
         <blockquote class="success">
             ✔ Django entry point identified correctly
             ✔ No confusion between root and project directory
         </blockquote>
-    
+
         <hr />
-    
+
         <h3>🐍 Activating the Python Virtual Environment</h3>
-    
+
         <p>
             The existing virtual environment bundled with the repository
             was activated to ensure isolated Python dependencies.
         </p>
-    
+
         <pre class="code">
     cd ~/dev/projects/ShopEase
     source venv/bin/activate
       </pre>
-    
+
         <p class="muted">
             Expected prompt:
         </p>
-    
+
         <pre class="code">
     (venv) devuser@srv1310730:~/dev/projects/ShopEase$
       </pre>
-    
+
         <blockquote class="success">
             ✔ Virtual environment active
             ✔ System Python untouched
         </blockquote>
-    
+
         <hr />
-    
+
         <h3>📦 Dependency Presence Check</h3>
-    
+
         <p>
             Before installing anything, the location of dependency files
             was verified:
         </p>
-    
+
         <pre class="code">
     find . -maxdepth 2 -name requirements.txt
       </pre>
-    
+
         <ul class="list">
             <li><span class="status done"></span>Requirements file located</li>
             <li><span class="status done"></span>No blind installations performed</li>
         </ul>
-    
+
         <hr />
-    
+
         <h3>🧪 Django Sanity Check (Without Database)</h3>
-    
+
         <p>
             Django was tested in isolation to confirm that:
         </p>
-    
+
         <ul class="list">
             <li><span class="status done"></span>Django is installed correctly</li>
             <li><span class="status done"></span>Project imports resolve properly</li>
             <li><span class="status done"></span>No syntax or configuration errors exist</li>
         </ul>
-    
+
         <pre class="code">
     cd shopease
     python manage.py check
       </pre>
-    
+
         <p class="muted">
             Database-related warnings were expected at this stage,
             as MySQL had not yet been connected.
         </p>
-    
+
         <blockquote class="success">
             ✔ Django core verified successfully
             ✔ Safe to proceed with database configuration
         </blockquote>
-    
+
         <hr />
-    
+
         <h3>🧠 Why This Step Matters</h3>
-    
+
         <ul class="list">
             <li><span class="status done"></span>Separates framework errors from DB errors</li>
             <li><span class="status done"></span>Prevents destructive migrations</li>
             <li><span class="status done"></span>Confirms correct working directory</li>
             <li><span class="status done"></span>Establishes a clean baseline</li>
         </ul>
-    
+
         <hr />
-    
+
         <h3>🗺 Locked Next Steps</h3>
-    
+
         <ol class="list">
             <li><span class="status done"></span>Configure <code>.env</code> values</li>
             <li><span class="status done"></span>Connect Django → Docker MySQL</li>
             <li><span class="status done"></span>Run initial migrations</li>
             <li><span class="status done"></span>Verify tables in phpMyAdmin</li>
         </ol>
-    
+
         <blockquote class="success">
             Django verified first — database comes second.
             This order prevents cascading failures.
@@ -5237,153 +5247,153 @@
     <!-- UNIVERSAL VPS VENV RESET (UBUNTU 24.04 / PYTHON 3.12) -->
     <div class="card full" id="python-venv-reset">
         <h2>🐍 Universal Python Virtual Environment Reset (VPS)</h2>
-    
+
         <p class="muted">
             During the Django setup, a blocking issue was encountered related to
             Python package installation. This section documents the root cause
             and the correct, universal solution for Ubuntu 24.04.
         </p>
-    
+
         <h3>❗ Problem Encountered</h3>
-    
+
         <p>
             While installing dependencies, the following error appeared:
         </p>
-    
+
         <pre class="code">
     error: externally-managed-environment
       </pre>
-    
+
         <p class="muted">
             This occurred even though a virtual environment appeared to be active.
         </p>
-    
+
         <hr />
-    
+
         <h3>🧠 Root Cause (Not a User Mistake)</h3>
-    
+
         <ul class="list">
             <li><span class="status warn"></span>Ubuntu 24.04 enforces <strong>PEP 668</strong></li>
             <li><span class="status warn"></span>System Python is protected from pip installs</li>
             <li><span class="status warn"></span>Existing <code>venv/</code> was created on another OS</li>
             <li><span class="status warn"></span>That virtual environment was invalid on this VPS</li>
         </ul>
-    
+
         <blockquote class="warning">
             Reusing a virtual environment from Windows or another Linux system
             is not safe on Ubuntu 24.04.
         </blockquote>
-    
+
         <hr />
-    
+
         <h3>🧹 Step 1: Remove Broken Virtual Environment</h3>
-    
+
         <pre class="code">
     cd ~/dev/projects/ShopEase
     rm -rf venv
       </pre>
-    
+
         <ul class="list">
             <li><span class="status done"></span>No source code deleted</li>
             <li><span class="status done"></span>Only environment files removed</li>
         </ul>
-    
+
         <hr />
-    
+
         <h3>📦 Step 2: Install Required Python System Packages</h3>
-    
+
         <pre class="code">
     sudo apt update
     sudo apt install -y python3-full python3-venv python3-pip
       </pre>
-    
+
         <p class="muted">
             These packages are mandatory for Python development on Ubuntu 24.04.
         </p>
-    
+
         <hr />
-    
+
         <h3>🟢 Step 3: Create a Fresh VPS-Native Virtual Environment</h3>
-    
+
         <pre class="code">
     cd ~/dev/projects/ShopEase
     python3 -m venv venv
     source venv/bin/activate
       </pre>
-    
+
         <p class="muted">
             Expected prompt:
         </p>
-    
+
         <pre class="code">
     (venv) devuser@srv1310730:~/dev/projects/ShopEase$
       </pre>
-    
+
         <blockquote class="success">
             ✔ Virtual environment created on the VPS itself
             ✔ Fully compatible with Ubuntu 24.04
         </blockquote>
-    
+
         <hr />
-    
+
         <h3>⬆️ Step 4: Upgrade Packaging Tools Inside Venv</h3>
-    
+
         <pre class="code">
     pip install --upgrade pip setuptools wheel
       </pre>
-    
+
         <p class="muted">
             This prevents build and dependency resolution issues.
         </p>
-    
+
         <hr />
-    
+
         <h3>📥 Step 5: Install Project Dependencies</h3>
-    
+
         <p>
             The correct requirements file location was used:
         </p>
-    
+
         <pre class="code">
     pip install -r shopease/requirements.txt
       </pre>
-    
+
         <blockquote class="success">
             ✔ Dependencies installed successfully
             ✔ No system Python modified
         </blockquote>
-    
+
         <hr />
-    
+
         <h3>🧪 Step 6: Verify Django Installation</h3>
-    
+
         <pre class="code">
     cd shopease
     python3 manage.py check
       </pre>
-    
+
         <p class="muted">
             Database warnings were expected at this stage and are acceptable.
         </p>
-    
+
         <blockquote class="success">
             ✔ Django core verified
             ✔ Environment is stable and production-correct
         </blockquote>
-    
+
         <hr />
-    
+
         <h3>📌 Golden Rules Established</h3>
-    
+
         <ul class="list">
             <li><span class="status done"></span>One project = one virtual environment</li>
             <li><span class="status done"></span>Never reuse venv from another OS</li>
             <li><span class="status done"></span>Always use <code>python3</code> on Ubuntu</li>
             <li><span class="status done"></span>Never install pip packages system-wide</li>
         </ul>
-    
+
         <hr />
-    
+
         <h3>🏁 Current Status</h3>
         <table class="table">
             <thead>
@@ -5411,7 +5421,7 @@
                 </tr>
             </tbody>
         </table>
-    
+
         <blockquote class="success">
             Environment reset completed correctly — safe to continue.
         </blockquote>
@@ -5419,144 +5429,144 @@
     <!-- REQUIREMENTS INSTALL FIX & UNIVERSAL REQUIREMENTS STRATEGY -->
     <div class="card full" id="requirements-fix">
         <h2>📦 Requirements Installation Fix & Universal Strategy</h2>
-    
+
         <p class="muted">
             After recreating the virtual environment, a dependency installation
             issue appeared. This section documents what went wrong, why it was
             expected, and how it was fixed cleanly and permanently.
         </p>
-    
+
         <h3>❌ What Went Wrong (Not a Failure)</h3>
-    
+
         <p>
             While inside the <code>shopease/</code> directory, the following command
             was executed:
         </p>
-    
+
         <pre class="code">
     pip install -r shopease/requirements.txt
       </pre>
-    
+
         <blockquote class="warning">
             The path was incorrect because the command was run
             <strong>from inside the shopease directory</strong>.
         </blockquote>
-    
+
         <p class="muted">
             The file <code>shopease/requirements.txt</code> does exist — but relative
             paths matter.
         </p>
-    
+
         <hr />
-    
+
         <h3>🧠 Why the Django Error Appeared</h3>
-    
+
         <p>
             The following error was shown:
         </p>
-    
+
         <pre class="code">
     ModuleNotFoundError: No module named 'django'
       </pre>
-    
+
         <p class="muted">
             This simply meant:
         </p>
-    
+
         <ul class="list">
             <li><span class="status warn"></span>Dependencies were not installed yet</li>
             <li><span class="status done"></span>No project files were broken</li>
             <li><span class="status done"></span>Virtual environment was working correctly</li>
         </ul>
-    
+
         <blockquote class="success">
             This error was expected and harmless at this stage.
         </blockquote>
-    
+
         <hr />
-    
+
         <h3>✅ Correct Installation (Immediate Fix)</h3>
-    
+
         <p>
             While already inside the <code>shopease/</code> directory,
             the correct command was:
         </p>
-    
+
         <pre class="code">
     pip install -r requirements.txt
       </pre>
-    
+
         <ul class="list">
             <li><span class="status done"></span>Django installed successfully</li>
             <li><span class="status done"></span>All dependencies resolved</li>
         </ul>
-    
+
         <hr />
-    
+
         <h3>🧪 Django Verification After Install</h3>
-    
+
         <pre class="code">
     python3 manage.py check
       </pre>
-    
+
         <blockquote class="success">
             ✔ Django system check passed
             ✔ Database warnings acceptable (MySQL not wired yet)
         </blockquote>
-    
+
         <hr />
-    
+
         <h3>🧾 Decision: Create a Universal <code>requirements.txt</code></h3>
-    
+
         <p class="muted">
             To avoid path confusion and ensure portability across environments,
             a single universal requirements file was created at the repository root.
         </p>
-    
+
         <h4>Step: Generate Universal Requirements</h4>
-    
+
         <pre class="code">
     cd ~/dev/projects/ShopEase
     pip freeze > requirements.txt
       </pre>
-    
+
         <blockquote class="success">
             ✔ Universal requirements file created
             ✔ Works on VPS, WSL, Linux, CI/CD
         </blockquote>
-    
+
         <hr />
-    
+
         <h3>🌍 Industry-Standard Usage Going Forward</h3>
-    
+
         <p>
             From now on, the project can be set up anywhere using:
         </p>
-    
+
         <pre class="code">
     python3 -m venv venv
     source venv/bin/activate
     pip install -r requirements.txt
       </pre>
-    
+
         <ul class="list">
             <li><span class="status done"></span>Single source of truth</li>
             <li><span class="status done"></span>No path ambiguity</li>
             <li><span class="status done"></span>CI/CD friendly</li>
         </ul>
-    
+
         <hr />
-    
+
         <h3>🧹 Cleanup Plan (Optional)</h3>
-    
+
         <p class="muted">
             Once the project is fully running, the nested
             <code>shopease/requirements.txt</code> can be treated as legacy or removed
             to prevent future confusion.
         </p>
-    
+
         <hr />
-    
+
         <h3>🏁 Current Status</h3>
         <table class="table">
             <thead>
@@ -5584,7 +5594,7 @@
                 </tr>
             </tbody>
         </table>
-    
+
         <blockquote class="success">
             Dependency management is now clean, portable, and production-ready.
         </blockquote>
@@ -5592,52 +5602,52 @@
     <!-- MYSQLCLIENT BUILD FIX & SYSTEM DEPENDENCIES -->
     <div class="card full" id="mysql-client-build">
         <h2>🛠️ MySQL Client Build Fix (Linux System Dependencies)</h2>
-    
+
         <p class="muted">
             During dependency installation, a build failure occurred while installing
             <code>mysqlclient</code>. This section documents why the issue happened,
             why it is expected on Linux, and the correct professional fix.
         </p>
-    
+
         <h3>❌ Error Encountered</h3>
-    
+
         <p>
             While running <code>pip install</code>, the following error appeared:
         </p>
-    
+
         <pre class="code">
     pkg-config: not found
     Exception: Can not find valid pkg-config name
     ERROR: Failed to build 'mysqlclient'
       </pre>
-    
+
         <blockquote class="warning">
             This is a common and expected Linux error — not a Python or virtualenv issue.
         </blockquote>
-    
+
         <hr />
-    
+
         <h3>🧠 Why This Happens (Important)</h3>
-    
+
         <ul class="list">
             <li><span class="status warn"></span><code>mysqlclient</code> is a C-extension</li>
             <li><span class="status warn"></span>It must be compiled during installation</li>
             <li><span class="status warn"></span>Compilation requires MySQL/MariaDB headers</li>
             <li><span class="status warn"></span>Pip alone cannot provide system libraries</li>
         </ul>
-    
+
         <blockquote class="info">
             Python dependencies and OS-level dependencies are two different layers.
         </blockquote>
-    
+
         <hr />
-    
+
         <h3>🟢 Step 1: Install Required System Packages (Once)</h3>
-    
+
         <p>
             The following packages were installed on the VPS:
         </p>
-    
+
         <pre class="code">
     sudo apt install -y \
       build-essential \
@@ -5645,81 +5655,81 @@
       default-libmysqlclient-dev \
       libssl-dev
       </pre>
-    
+
         <ul class="list">
             <li><span class="status done"></span>Compiler toolchain installed</li>
             <li><span class="status done"></span><code>pkg-config</code> available</li>
             <li><span class="status done"></span>MySQL client headers installed</li>
         </ul>
-    
+
         <blockquote class="success">
             System is now capable of compiling <code>mysqlclient</code>.
         </blockquote>
-    
+
         <hr />
-    
+
         <h3>🟢 Step 2: Retry Python Dependency Installation</h3>
-    
+
         <pre class="code">
     cd ~/dev/projects/ShopEase
     source venv/bin/activate
     pip install -r shopease/requirements.txt
       </pre>
-    
+
         <blockquote class="success">
             ✔ <code>mysqlclient</code> compiled successfully
             ✔ All Python dependencies installed
         </blockquote>
-    
+
         <hr />
-    
+
         <h3>🧪 Step 3: Verify Django After Fix</h3>
-    
+
         <pre class="code">
     cd shopease
     python3 manage.py check
       </pre>
-    
+
         <p class="muted">
             Database warnings are acceptable at this stage because MySQL
             has not yet been connected.
         </p>
-    
+
         <blockquote class="success">
             ✔ Django system check passed
             ✔ Environment fully stable
         </blockquote>
-    
+
         <hr />
-    
+
         <h3>📦 Universal Requirements Strategy (Important)</h3>
-    
+
         <p class="muted">
             It is not possible to make <code>mysqlclient</code> purely pip-universal
             across operating systems. The correct professional approach is:
         </p>
-    
+
         <ul class="list">
             <li><span class="status done"></span>Python deps → <code>requirements.txt</code></li>
             <li><span class="status done"></span>OS deps → documented separately</li>
         </ul>
-    
+
         <blockquote class="success">
             This is how real production Django projects are structured.
         </blockquote>
-    
+
         <hr />
-    
+
         <h3>🧾 System Dependencies Documentation</h3>
-    
+
         <p>
             A dedicated file was created to document OS-level requirements:
         </p>
-    
+
         <pre class="code">
     SYSTEM_REQUIREMENTS.md
       </pre>
-    
+
         <pre class="code">
     ## System dependencies (Ubuntu / Linux)
     
@@ -5736,27 +5746,27 @@
     - python3-venv
     - python3-full
       </pre>
-    
+
         <blockquote class="success">
             ✔ Project is now truly portable across Linux, VPS, WSL, CI/CD
         </blockquote>
-    
+
         <hr />
-    
+
         <h3>❓ Why <code>mysqlclient</code> Was Kept</h3>
-    
+
         <ul class="list">
             <li><span class="status done"></span>Recommended by Django for production</li>
             <li><span class="status done"></span>Faster than pure-Python drivers</li>
             <li><span class="status done"></span>Industry-standard choice</li>
         </ul>
-    
+
         <p class="muted">
             Alternatives like <code>mysql-connector-python</code> were intentionally not used.
         </p>
-    
+
         <hr />
-    
+
         <h3>🏁 Current Status</h3>
         <table class="table">
             <thead>
@@ -5784,7 +5794,7 @@
                 </tr>
             </tbody>
         </table>
-    
+
         <blockquote class="success">
             Dependency layer separation complete — safe to proceed.
         </blockquote>
@@ -5792,66 +5802,66 @@
     <!-- DJANGO SECRET_KEY ERROR (EXPECTED & FIXED) -->
     <div class="card full" id="django-secret-key">
         <h2>🔐 Django Environment Variables & SECRET_KEY Resolution</h2>
-    
+
         <p class="muted">
             After completing dependency installation, Django failed to start with a
             <code>SECRET_KEY not found</code> error. This section documents why this
             happened, why it is correct behavior, and how it was fixed properly.
         </p>
-    
+
         <h3>❌ Error Observed</h3>
-    
+
         <pre class="code">
     decouple.UndefinedValueError: SECRET_KEY not found.
     Declare it as envvar or define a default value.
       </pre>
-    
+
         <blockquote class="info">
             This is not a bug — it is Django enforcing secure configuration.
         </blockquote>
-    
+
         <hr />
-    
+
         <h3>🧠 What This Means (Important)</h3>
-    
+
         <ul class="list">
             <li><span class="status done"></span>Django is installed correctly</li>
             <li><span class="status done"></span>Virtual environment is valid</li>
             <li><span class="status done"></span>All dependencies loaded successfully</li>
             <li><span class="status done"></span>Project uses environment-based settings</li>
         </ul>
-    
+
         <p class="muted">
             The project uses <strong>python-decouple</strong>, which enforces:
         </p>
-    
+
         <ul class="list">
             <li><span class="status done"></span>No secrets in source code</li>
             <li><span class="status done"></span>Secrets must come from <code>.env</code> or OS variables</li>
         </ul>
-    
+
         <blockquote class="success">
             This is secure, production-grade Django architecture.
         </blockquote>
-    
+
         <hr />
-    
+
         <h3>🟢 Fix: Create a Proper <code>.env</code> File (Universal)</h3>
-    
+
         <h4>Step 1: Navigate to Project Root</h4>
-    
+
         <pre class="code">
     cd ~/dev/projects/ShopEase
       </pre>
-    
+
         <h4>Step 2: Create <code>.env</code></h4>
-    
+
         <pre class="code">
     nano .env
       </pre>
-    
+
         <p>Minimum required configuration:</p>
-    
+
         <pre class="code">
     # Django
     SECRET_KEY=django-insecure-change-this-later
@@ -5865,37 +5875,37 @@
     DB_HOST=127.0.0.1
     DB_PORT=3306
       </pre>
-    
+
         <blockquote class="success">
             ✔ Secrets externalized<br />
             ✔ Compatible with VPS, WSL, CI/CD
         </blockquote>
-    
+
         <hr />
-    
+
         <h3>🧠 Why This Works</h3>
-    
+
         <p>
             The Django settings file contains:
         </p>
-    
+
         <pre class="code">
     SECRET_KEY = config('SECRET_KEY')
       </pre>
-    
+
         <p class="muted">
             <code>python-decouple</code> automatically loads values from:
         </p>
-    
+
         <ul class="list">
             <li><span class="status done"></span><code>.env</code> file</li>
             <li><span class="status done"></span>OS environment variables</li>
         </ul>
-    
+
         <hr />
-    
+
         <h3>⚠️ Important Path Clarification</h3>
-    
+
         <table class="table">
             <thead>
                 <tr>
@@ -5914,38 +5924,38 @@
                 </tr>
             </tbody>
         </table>
-    
+
         <blockquote class="warning">
             Running Django commands outside the <code>shopease/</code> directory
             will fail because <code>manage.py</code> lives there.
         </blockquote>
-    
+
         <hr />
-    
+
         <h3>🧪 Final Verification</h3>
-    
+
         <pre class="code">
     cd ~/dev/projects/ShopEase/shopease
     python3 manage.py check
       </pre>
-    
+
         <p class="muted">
             Expected output:
         </p>
-    
+
         <pre class="code">
     System check identified no issues (0 silenced).
       </pre>
-    
+
         <blockquote class="success">
             ✔ Django loads settings correctly<br />
             ✔ Environment configuration complete
         </blockquote>
-    
+
         <hr />
-    
+
         <h3>📌 Architecture Checkpoint Reached</h3>
-    
+
         <ul class="list">
             <li><span class="status done"></span>Docker MySQL running</li>
             <li><span class="status done"></span>phpMyAdmin accessible</li>
@@ -5955,20 +5965,20 @@
             <li><span class="status done"></span>Secrets externalized</li>
             <li><span class="status done"></span>Django settings loaded</li>
         </ul>
-    
+
         <blockquote class="success">
             This marks the end of infrastructure setup and the start of application wiring.
         </blockquote>
-    
+
         <hr />
-    
+
         <h3>🚀 Next Phase</h3>
-    
+
         <p class="muted">
             The next step is to connect Django to the Dockerized MySQL database,
             run migrations, and verify tables in phpMyAdmin.
         </p>
-    
+
         <blockquote class="success">
             Infrastructure complete → Application data layer begins.
         </blockquote>
@@ -5976,44 +5986,44 @@
     <!-- GITIGNORE HARDENING & REPO SAFETY -->
     <div class="card full" id="gitignore-update">
         <h2>🧾 Repository Hardening: <code>.gitignore</code> Update</h2>
-    
+
         <p class="muted">
             After stabilizing the environment and secrets configuration,
             the repository <code>.gitignore</code> was reviewed and updated.
             This step prevents accidental commits of sensitive, generated,
             or machine-specific files.
         </p>
-    
+
         <h3>⚠️ Why This Update Was Required</h3>
-    
+
         <ul class="list">
             <li><span class="status warn"></span><code>.env</code> file now exists (contains secrets)</li>
             <li><span class="status warn"></span>VPS-native <code>venv/</code> created</li>
             <li><span class="status warn"></span>Django runtime files generated</li>
             <li><span class="status warn"></span>Temporary folders created during setup</li>
         </ul>
-    
+
         <blockquote class="warning">
             Without updating <code>.gitignore</code>, secrets and system files
             could be pushed to GitHub accidentally.
         </blockquote>
-    
+
         <hr />
-    
+
         <h3>✅ What Must Never Be Committed</h3>
-    
+
         <h4>🔐 Secrets</h4>
         <ul class="list">
             <li><span class="status done"></span><code>.env</code></li>
         </ul>
-    
+
         <h4>🐍 Python / Virtual Environment</h4>
         <ul class="list">
             <li><span class="status done"></span><code>venv/</code></li>
             <li><span class="status done"></span><code>__pycache__/</code></li>
             <li><span class="status done"></span><code>*.pyc</code>, <code>*.pyo</code></li>
         </ul>
-    
+
         <h4>🧠 Django Runtime</h4>
         <ul class="list">
             <li><span class="status done"></span><code>staticfiles/</code></li>
@@ -6021,23 +6031,23 @@
             <li><span class="status done"></span><code>*.sqlite3</code></li>
             <li><span class="status done"></span><code>db_docs.sqlite3</code></li>
         </ul>
-    
+
         <h4>🧪 Temporary & Tool Artifacts</h4>
         <ul class="list">
             <li><span class="status done"></span><code>tmpclaude-*</code></li>
             <li><span class="status done"></span><code>*.tmp</code>, <code>*.bak</code></li>
         </ul>
-    
+
         <h4>🧰 IDE / OS Files</h4>
         <ul class="list">
             <li><span class="status done"></span><code>.vscode/</code>, <code>.idea/</code></li>
             <li><span class="status done"></span><code>.DS_Store</code>, <code>Thumbs.db</code></li>
         </ul>
-    
+
         <hr />
-    
+
         <h3>📝 Final <code>.gitignore</code> (Production-Ready)</h3>
-    
+
         <pre class="code">
     # =========================
     # Environment & Secrets
@@ -6085,46 +6095,46 @@
     .DS_Store
     Thumbs.db
       </pre>
-    
+
         <blockquote class="success">
             ✔ Repository protected from secrets and noise
             ✔ Safe for GitHub, VPS, WSL, and CI/CD
         </blockquote>
-    
+
         <hr />
-    
+
         <h3>🔍 Verification Step (Mandatory)</h3>
-    
+
         <pre class="code">
     git status
       </pre>
-    
+
         <p class="muted">
             The following items must <strong>not</strong> appear:
         </p>
-    
+
         <ul class="list">
             <li><span class="status done"></span><code>venv/</code></li>
             <li><span class="status done"></span><code>.env</code></li>
             <li><span class="status done"></span><code>db_docs.sqlite3</code></li>
             <li><span class="status done"></span><code>tmpclaude-*</code></li>
         </ul>
-    
+
         <blockquote class="success">
             If they do not appear, the repository is clean and safe to commit.
         </blockquote>
-    
+
         <hr />
-    
+
         <h3>🧠 Why This Matters</h3>
-    
+
         <ul class="list">
             <li><span class="status done"></span>Prevents secret leakage</li>
             <li><span class="status done"></span>Avoids OS-specific noise</li>
             <li><span class="status done"></span>Makes repo portable across environments</li>
             <li><span class="status done"></span>Matches real production standards</li>
         </ul>
-    
+
         <blockquote class="success">
             Repository hygiene complete — safe to proceed with database integration.
         </blockquote>
@@ -6132,71 +6142,71 @@
     <!-- ENV FILE CLEANUP & STANDARDIZATION -->
     <div class="card full" id="env-cleanup">
         <h2>🧩 Environment Configuration Cleanup & Standardization</h2>
-    
+
         <p class="muted">
             After stabilizing Django and securing the repository, the project
             <code>.env</code> file was reviewed, cleaned, and standardized.
             This step ensures correct Django behavior, avoids subtle bugs,
             and prepares the project for production-style configuration.
         </p>
-    
+
         <h3>❌ Issues Found in the Original <code>.env</code></h3>
-    
+
         <h4>1️⃣ Duplicate <code>ALLOWED_HOSTS</code> Definitions</h4>
-    
+
         <pre class="code">
     ALLOWED_HOSTS=
     ALLOWED_HOSTS=localhost,127.0.0.1,.ngrok-free.app,.ngrok-free.dev
     ALLOWED_HOSTS=*
       </pre>
-    
+
         <ul class="list">
             <li><span class="status warn"></span>Django only reads the <strong>last</strong> value</li>
             <li><span class="status warn"></span>Earlier values were silently ignored</li>
             <li><span class="status warn"></span>High risk of confusion and misconfiguration</li>
         </ul>
-    
+
         <blockquote class="warning">
             Environment variables must be defined once — duplicates are dangerous.
         </blockquote>
-    
+
         <hr />
-    
+
         <h4>2️⃣ Mixed Active & Commented Configuration</h4>
-    
+
         <ul class="list">
             <li><span class="status warn"></span>Old commented secrets mixed with active ones</li>
             <li><span class="status warn"></span>Legacy Windows values included</li>
             <li><span class="status warn"></span>Multiple database styles in one file</li>
         </ul>
-    
+
         <p class="muted">
             This made debugging and long-term maintenance harder than necessary.
         </p>
-    
+
         <hr />
-    
+
         <h4>3️⃣ Sensitive Credentials Present</h4>
-    
+
         <ul class="list">
             <li><span class="status warn"></span>MongoDB credentials</li>
             <li><span class="status warn"></span>Email SMTP app password</li>
             <li><span class="status warn"></span>Payment gateway keys</li>
         </ul>
-    
+
         <blockquote class="info">
             This is acceptable locally, but only when <code>.env</code> is ignored by Git.
         </blockquote>
-    
+
         <hr />
-    
+
         <h3>✅ Clean, Professional <code>.env</code> (Final Version)</h3>
-    
+
         <p class="muted">
             The <code>.env</code> file was rewritten completely to act as a
             single, clear source of truth.
         </p>
-    
+
         <pre class="code">
     # ==================================================
     # DJANGO CORE
@@ -6247,61 +6257,61 @@
     DEFAULT_FROM_EMAIL=ShopEase <noreplyshopease@gmail.com>
     ADMIN_EMAIL=noreplyshopease@gmail.com
       </pre>
-    
+
         <blockquote class="success">
             ✔ Single source of truth<br />
             ✔ No duplicates<br />
             ✔ Works with <code>python-decouple</code>
         </blockquote>
-    
+
         <hr />
-    
+
         <h3>🧠 Why This Version Is Correct</h3>
-    
+
         <ul class="list">
             <li><span class="status done"></span>Each variable defined exactly once</li>
             <li><span class="status done"></span>Compatible with VPS, WSL, Docker, CI/CD</li>
             <li><span class="status done"></span>Clear separation of concerns</li>
             <li><span class="status done"></span>Easy to harden for production later</li>
         </ul>
-    
+
         <hr />
-    
+
         <h3>🔐 Security Rules Enforced</h3>
-    
+
         <ul class="list">
             <li><span class="status done"></span><code>.env</code> ignored via <code>.gitignore</code></li>
             <li><span class="status done"></span>No secrets committed to GitHub</li>
             <li><span class="status done"></span>Secrets injectable via environment variables</li>
         </ul>
-    
+
         <blockquote class="warning">
             If this repository ever becomes public, all credentials must be rotated.
         </blockquote>
-    
+
         <hr />
-    
+
         <h3>🧪 Final Verification</h3>
-    
+
         <pre class="code">
     cd ~/dev/projects/ShopEase/shopease
     python3 manage.py check
       </pre>
-    
+
         <p class="muted">
             Expected output:
         </p>
-    
+
         <pre class="code">
     System check identified no issues (0 silenced).
       </pre>
-    
+
         <blockquote class="success">
             Environment configuration validated successfully.
         </blockquote>
-    
+
         <hr />
-    
+
         <h3>🏁 Status</h3>
         <table class="table">
             <thead>
@@ -6329,7 +6339,7 @@
                 </tr>
             </tbody>
         </table>
-    
+
         <blockquote class="success">
             Configuration layer complete — application wiring can begin.
         </blockquote>
@@ -6337,28 +6347,28 @@
     <!-- VPS AS PERSONAL DESKTOP DECISION -->
     <div class="card full" id="vps-as-desktop-decision">
         <h2>🖥️ VPS as Personal Desktop — Decision & Rationale</h2>
-    
+
         <p class="muted">
             During VPS setup, an important question was evaluated:
             <strong>Can this VPS be used as a personal daily desktop?</strong>
         </p>
-    
+
         <hr />
-    
+
         <h3>❌ Short Answer</h3>
         <blockquote class="warning">
             No — a VPS should NOT be used like a normal personal desktop.
         </blockquote>
-    
+
         <hr />
-    
+
         <h3>🧠 Correct & Professional Usage Model</h3>
-    
+
         <p>
             The VPS is designed to act as a <strong>remote backend engine</strong>,
             not as a GUI-based personal computer.
         </p>
-    
+
         <ul class="list">
             <li><span class="status done"></span>Backend application hosting</li>
             <li><span class="status done"></span>Django & API runtime</li>
@@ -6366,11 +6376,11 @@
             <li><span class="status done"></span>Remote development via SSH</li>
             <li><span class="status done"></span>Production-like Linux environment</li>
         </ul>
-    
+
         <hr />
-    
+
         <h3>❌ What a VPS is NOT suitable for</h3>
-    
+
         <ul class="list">
             <li><span class="status warn"></span>Daily web browsing</li>
             <li><span class="status warn"></span>Video streaming</li>
@@ -6378,15 +6388,15 @@
             <li><span class="status warn"></span>Windows replacement</li>
             <li><span class="status warn"></span>Long interactive GUI sessions</li>
         </ul>
-    
+
         <p class="muted">
             Reasons: no GPU, limited RAM, no display server, higher security risk.
         </p>
-    
+
         <hr />
-    
+
         <h3>✅ Recommended Professional Workflow</h3>
-    
+
         <table class="table">
             <thead>
                 <tr>
@@ -6421,36 +6431,113 @@
                 </tr>
             </tbody>
         </table>
-    
+
         <blockquote class="success">
             This is the same workflow used in real production environments.
         </blockquote>
-    
+
         <hr />
-    
+
         <h3>⚠️ Optional (Not Recommended)</h3>
-    
+
         <p class="muted">
             A desktop-like experience <em>can</em> be created using:
         </p>
-    
+
         <ul class="list">
             <li><span class="status warn"></span>XFCE / LXDE</li>
             <li><span class="status warn"></span>VNC / RDP</li>
         </ul>
-    
+
         <blockquote class="warning">
             This wastes VPS resources, reduces security, and is not industry practice.
         </blockquote>
-    
+
         <hr />
-    
+
         <h3>🏁 Final Decision</h3>
-    
+
         <blockquote class="success">
             ✔ VPS will be used as a backend development & hosting server<br />
             ✔ Local machine remains the daily desktop<br />
             ✔ Architecture aligns with professional standards
+        </blockquote>
+    </div>
+
+    <!-- MALWARE SCANNER & AUTO REMOVAL -->
+    <div class="card full" id="malware-scanner">
+        <h2>🛡️ VPS Malware Scanner & Auto-Removal</h2>
+
+        <p class="muted">
+            After stabilizing Docker, Django, and database services,
+            VPS-level malware protection was reviewed and finalized.
+        </p>
+
+        <hr />
+
+        <h3>📊 Scan Status</h3>
+
+        <ul class="list">
+            <li><span class="status done"></span>Scanner: ACTIVE</li>
+            <li><span class="status done"></span>Files scanned: 360,201</li>
+            <li><span class="status done"></span>Malicious files: 0</li>
+            <li><span class="status done"></span>Compromised files: 0</li>
+        </ul>
+
+        <hr />
+
+        <h3>⚙️ Automatic Malware Removal</h3>
+
+        <p>
+            Automatic malware removal was enabled to provide real-time
+            protection against malicious uploads, exploits, and injected files.
+        </p>
+
+        <ul class="list">
+            <li><span class="status done"></span>Quarantine enabled</li>
+            <li><span class="status done"></span>No active threats detected</li>
+            <li><span class="status done"></span>No impact on Docker or Django</li>
+        </ul>
+
+        <blockquote>
+            The scanner does not interfere with Docker containers,
+            Python virtual environments, or application code.
+        </blockquote>
+
+        <hr />
+
+        <h3>🔐 Security Posture</h3>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Layer</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>VPS Malware Scan</td>
+                    <td>Enabled</td>
+                </tr>
+                <tr>
+                    <td>Automatic Removal</td>
+                    <td>Enabled</td>
+                </tr>
+                <tr>
+                    <td>Docker Isolation</td>
+                    <td>Active</td>
+                </tr>
+                <tr>
+                    <td>.env Protection</td>
+                    <td>Git Ignored</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <blockquote>
+            ✔ VPS security baseline complete.<br />
+            Safe for backend development and production use.
         </blockquote>
     </div>
 

@@ -65,6 +65,10 @@
 - [.gitignore Update](#gitignore-update)
 - [Environment Configuration Cleanup](#environment-configuration-cleanup)
 
+### Security
+
+- [VPS Malware Scanner & Auto-Removal](#vps-malware-scanner--auto-removal)
+
 ---
 
 ## What We Have Done
@@ -692,6 +696,41 @@ Expected output:
 ```
 System check identified no issues (0 silenced).
 ```
+
+---
+
+## VPS Malware Scanner & Auto-Removal
+
+After stabilizing Docker, Django, and database services, VPS-level malware protection was reviewed and finalized.
+
+### Scan Status
+
+- [x] Scanner: ACTIVE
+- [x] Files scanned: 360,201
+- [x] Malicious files: 0
+- [x] Compromised files: 0
+
+### Automatic Malware Removal
+
+Automatic malware removal was enabled to provide real-time protection against malicious uploads, exploits, and injected files.
+
+- [x] Quarantine enabled
+- [x] No active threats detected
+- [x] No impact on Docker or Django
+
+> The scanner does not interfere with Docker containers, Python virtual environments, or application code.
+
+### Security Posture
+
+| Layer | Status |
+|-------|--------|
+| VPS Malware Scan | Enabled |
+| Automatic Removal | Enabled |
+| Docker Isolation | Active |
+| .env Protection | Git Ignored |
+
+> ✔ VPS security baseline complete.
+> Safe for backend development and production use.
 
 ---
 
