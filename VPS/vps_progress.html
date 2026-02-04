@@ -110,8 +110,10 @@
                     <a href="#dev-journal" class="nav-link">Dev-Journal ▾</a>
                     <div class="dropdown-menu">
                         <a href="#dev-journal-done" class="dropdown-link">✅ What We Have Done</a>
+                        <a href="#dev-journal-uiux" class="dropdown-link">🎨 UI/UX Enhancements</a>
                         <a href="#dev-journal-setup" class="dropdown-link">🛠 How We Set It Up</a>
                         <a href="#dev-journal-next" class="dropdown-link">📌 What We Will Do Next</a>
+                        <a href="#dev-journal-upcoming" class="dropdown-link">🎯 Upcoming Features</a>
                         <a href="#dev-journal-structure" class="dropdown-link">📁 Folder Structure</a>
                     </div>
                 </li>
@@ -119,12 +121,18 @@
                     <a href="#stackpilot" class="nav-link">StackPilot ▾</a>
                     <div class="dropdown-menu">
                         <a href="#stackpilot-done" class="dropdown-link">✅ What We Have Done</a>
+                        <a href="#stackpilot-uiux" class="dropdown-link">🎨 UI/UX Enhancements</a>
                         <a href="#stackpilot-setup" class="dropdown-link">🛠 How We Set It Up</a>
+<<<<<<< HEAD
                         <a href="#stackpilot-mongodb" class="dropdown-link">🗄 MongoDB Atlas</a>
                         <a href="#stackpilot-clone" class="dropdown-link">🚀 Cloning & Running</a>
                         <a href="#stackpilot-ngrok" class="dropdown-link">🌐 ngrok Usage</a>
                         <a href="#stackpilot-deploy" class="dropdown-link">🔁 Deployment Flow</a>
                         <a href="#stackpilot-roadmap" class="dropdown-link">📌 Roadmap</a>
+=======
+                        <a href="#stackpilot-next" class="dropdown-link">📌 What We Will Do Next</a>
+                        <a href="#stackpilot-upcoming" class="dropdown-link">🎯 Upcoming Features</a>
+>>>>>>> 94ee78b (file exploler vibe)
                         <a href="#stackpilot-structure" class="dropdown-link">📁 Folder Structure</a>
                     </div>
                 </li>
@@ -6925,6 +6933,22 @@ pm2 unstartup systemd</code></pre>
         </ul>
     </div>
 
+    <div class="card" id="dev-journal-uiux">
+        <h2>🎨 UI/UX Enhancements (Completed)</h2>
+        <ul class="list">
+            <li><span class="status done"></span>Mobile responsive design implemented</li>
+            <li><span class="status done"></span>Hamburger menu for mobile navigation</li>
+            <li><span class="status done"></span>5 responsive breakpoints (320px to 1280px+)</li>
+            <li><span class="status done"></span>CSS variables system for design tokens</li>
+            <li><span class="status done"></span>44px minimum touch targets for accessibility</li>
+            <li><span class="status done"></span>Enhanced dark theme with gradients</li>
+            <li><span class="status done"></span>Improved typography with font-smoothing</li>
+            <li><span class="status done"></span>Shadow system for depth (sm, md, lg, xl)</li>
+            <li><span class="status done"></span>Smooth transitions and hover effects</li>
+            <li><span class="status done"></span>Entry cards with gradient borders on hover</li>
+        </ul>
+    </div>
+
     <div class="card" id="dev-journal-setup">
         <h2>🛠 How We Set It Up</h2>
         <ul class="list">
@@ -6950,10 +6974,36 @@ pm2 unstartup systemd</code></pre>
             <li><span class="status done"></span>Install SSL certificate (Let's Encrypt)</li>
             <li><span class="status done"></span>Start PM2 production server</li>
             <li><span class="status done"></span>Verify https://stackpilot.in is live</li>
+            <li><span class="status done"></span>Mobile responsive UI with hamburger menu</li>
+            <li><span class="status done"></span>CSS variables system for design tokens</li>
         </ul>
 
         <blockquote class="success">
             🎉 All deployment tasks completed! Dev-Journal is now live at https://stackpilot.in
+        </blockquote>
+    </div>
+
+    <div class="card" id="dev-journal-upcoming">
+        <h2>🎯 Upcoming Features (Roadmap)</h2>
+        <ul class="list">
+            <li><span class="status todo"></span>Auto-detect code blocks in content with copy button</li>
+            <li><span class="status todo"></span>File explorer style UI for managing entries</li>
+            <li><span class="status todo"></span>Tree-view sidebar navigation</li>
+            <li><span class="status todo"></span>List view option with file icons</li>
+            <li><span class="status todo"></span>Breadcrumb navigation (Home > Category > Entry)</li>
+            <li><span class="status todo"></span>Markdown live preview while editing</li>
+            <li><span class="status todo"></span>Syntax highlighting with Prism.js</li>
+            <li><span class="status todo"></span>Export entries to Markdown/PDF</li>
+            <li><span class="status todo"></span>Keyboard shortcuts for quick actions</li>
+            <li><span class="status todo"></span>Entry templates for different categories</li>
+            <li><span class="status todo"></span>Version history for entries</li>
+            <li><span class="status todo"></span>GitHub Gist backup integration</li>
+            <li><span class="status todo"></span>Dark/Light mode toggle</li>
+            <li><span class="status todo"></span>Statistics dashboard with activity heatmap</li>
+        </ul>
+
+        <blockquote class="info">
+            🚀 These features will transform Dev-Journal into a full-featured file explorer-style documentation system!
         </blockquote>
     </div>
 
@@ -7015,6 +7065,22 @@ pm2 unstartup systemd</code></pre>
             <li><span class="status done"></span>PM2 production server started</li>
             <li><span class="status done"></span>PM2 systemd startup enabled (auto-boot)</li>
             <li><span class="status done"></span>🎉 https://stackpilot.in is LIVE!</li>
+        </ul>
+    </div>
+
+    <div class="card" id="stackpilot-uiux">
+        <h2>🎨 UI/UX Enhancements (Completed)</h2>
+        <ul class="list">
+            <li><span class="status done"></span>Mobile responsive design implemented</li>
+            <li><span class="status done"></span>Hamburger menu for mobile navigation</li>
+            <li><span class="status done"></span>5 responsive breakpoints (320px to 1280px+)</li>
+            <li><span class="status done"></span>CSS variables system for design tokens</li>
+            <li><span class="status done"></span>44px minimum touch targets for accessibility</li>
+            <li><span class="status done"></span>Enhanced dark theme with gradients</li>
+            <li><span class="status done"></span>Improved typography with font-smoothing</li>
+            <li><span class="status done"></span>Shadow system for depth (sm, md, lg, xl)</li>
+            <li><span class="status done"></span>Smooth transitions and hover effects</li>
+            <li><span class="status done"></span>Entry cards with gradient borders on hover</li>
         </ul>
     </div>
 
@@ -7110,11 +7176,40 @@ docker compose up -d</pre>
             <li><span class="status done"></span>Start PM2 production server</li>
             <li><span class="status done"></span>Enable PM2 systemd startup (auto-boot)</li>
             <li><span class="status done"></span>Verify https://stackpilot.in is live</li>
+<<<<<<< HEAD
 >>>>>>> 99946d2 (app is started)
+=======
+            <li><span class="status done"></span>Mobile responsive UI with hamburger menu</li>
+            <li><span class="status done"></span>CSS variables system for design tokens</li>
+>>>>>>> 94ee78b (file exploler vibe)
         </ul>
 
         <blockquote class="success">
             🎉 All deployment tasks completed! StackPilot Dev-Journal is now live at https://stackpilot.in
+        </blockquote>
+    </div>
+
+    <div class="card" id="stackpilot-upcoming">
+        <h2>🎯 Upcoming Features (Roadmap)</h2>
+        <ul class="list">
+            <li><span class="status todo"></span>Auto-detect code blocks in content with copy button</li>
+            <li><span class="status todo"></span>File explorer style UI for managing entries</li>
+            <li><span class="status todo"></span>Tree-view sidebar navigation</li>
+            <li><span class="status todo"></span>List view option with file icons</li>
+            <li><span class="status todo"></span>Breadcrumb navigation (Home > Category > Entry)</li>
+            <li><span class="status todo"></span>Markdown live preview while editing</li>
+            <li><span class="status todo"></span>Syntax highlighting with Prism.js</li>
+            <li><span class="status todo"></span>Export entries to Markdown/PDF</li>
+            <li><span class="status todo"></span>Keyboard shortcuts for quick actions</li>
+            <li><span class="status todo"></span>Entry templates for different categories</li>
+            <li><span class="status todo"></span>Version history for entries</li>
+            <li><span class="status todo"></span>GitHub Gist backup integration</li>
+            <li><span class="status todo"></span>Dark/Light mode toggle</li>
+            <li><span class="status todo"></span>Statistics dashboard with activity heatmap</li>
+        </ul>
+
+        <blockquote class="info">
+            🚀 These features will transform StackPilot into a full-featured file explorer-style documentation system!
         </blockquote>
     </div>
 

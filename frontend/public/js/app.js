@@ -41,6 +41,72 @@ const truncateText = (text, maxLength = 150) => {
     return text.substring(0, maxLength) + '...';
 };
 
+// HTML Escape function to prevent XSS
+const escapeHtml = (text) => {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+};
+
+// Auto-detect and render code blocks in content
+const detectAndRenderCode = (content) => {
+    // Detect ```language code blocks (fenced code blocks)
+    content = content.replace(/```(\w*)\n?([\s\S]*?)```/g, (match, lang, code) => {
+        const language = lang || 'code';
+        const escapedCode = escapeHtml(code.trim());
+        return `<div class="code-block-wrapper">
+            <div class="code-header">
+                <span class="code-lang">${language}</span>
+                <button class="copy-btn" onclick="copyCodeBlock(this)" data-code="${btoa(encodeURIComponent(code.trim()))}">&#128203; Copy</button>
+            </div>
+            <pre class="code-block"><code class="language-${language}">${escapedCode}</code></pre>
+        </div>`;
+    });
+
+    // Detect inline `code` (but not inside code blocks)
+    content = content.replace(/`([^`\n]+)`/g, '<code class="inline-code">$1</code>');
+
+    return content;
+};
+
+// Copy code block to clipboard
+const copyCodeBlock = (btn) => {
+    try {
+        const encodedCode = btn.getAttribute('data-code');
+        const code = decodeURIComponent(atob(encodedCode));
+        navigator.clipboard.writeText(code).then(() => {
+            btn.innerHTML = '&#10003; Copied!';
+            btn.classList.add('copied');
+            setTimeout(() => {
+                btn.innerHTML = '&#128203; Copy';
+                btn.classList.remove('copied');
+            }, 2000);
+        });
+    } catch (error) {
+        console.error('Failed to copy code:', error);
+    }
+};
+
+// Make copyCodeBlock globally available
+window.copyCodeBlock = copyCodeBlock;
+
+// Render content with markdown-like formatting
+const renderContent = (content) => {
+    // First detect and render code blocks
+    let rendered = detectAndRenderCode(content);
+
+    // Convert line breaks to paragraphs (for non-code content)
+    rendered = rendered.split('\n').map(line => {
+        // Skip if it's inside a code block wrapper
+        if (line.includes('code-block-wrapper') || line.includes('</pre>') || line.includes('<pre')) {
+            return line;
+        }
+        return line.trim() ? `<p>${line}</p>` : '';
+    }).join('');
+
+    return rendered;
+};
+
 // API Functions
 const fetchEntries = async (params = {}) => {
     const queryString = new URLSearchParams(params).toString();
@@ -441,10 +507,10 @@ const setupEntryView = () => {
                 getElement('entryTitle').innerHTML = `<span class="logo-icon">${getCategoryIcon(entry.category)}</span> ${entry.title}`;
                 getElement('entryMeta').textContent = `${getCategoryLabel(entry.category)} - ${formatDate(entry.createdAt)}`;
 
-                // Update content
+                // Update content with auto-detected code blocks
                 entryContent.innerHTML = `
                     <div class="content-body">
-                        ${entry.content.split('\n').map(p => p.trim() ? `<p>${p}</p>` : '').join('')}
+                        ${renderContent(entry.content)}
                     </div>
                 `;
 
@@ -546,9 +612,155 @@ const setupDeleteModal = (entryId) => {
     });
 };
 
+// Mobile Menu Toggle
+const setupMobileMenu = () => {
+    const mobileMenuBtn = getElement('mobileMenuBtn');
+    const navActions = getElement('navActions');
+
+    if (!mobileMenuBtn || !navActions) return;
+
+    mobileMenuBtn.addEventListener('click', () => {
+        mobileMenuBtn.classList.toggle('active');
+        navActions.classList.toggle('open');
+    });
+
+    // Close menu when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!mobileMenuBtn.contains(e.target) && !navActions.contains(e.target)) {
+            mobileMenuBtn.classList.remove('active');
+            navActions.classList.remove('open');
+        }
+    });
+
+    // Close menu when window is resized above mobile breakpoint
+    window.addEventListener('resize', () => {
+        if (window.innerWidth > 768) {
+            mobileMenuBtn.classList.remove('active');
+            navActions.classList.remove('open');
+        }
+    });
+};
+
+// File Explorer: Tree Toggle
+const setupTreeToggle = () => {
+    const toggles = document.querySelectorAll('.tree-toggle');
+    toggles.forEach(toggle => {
+        toggle.addEventListener('click', () => {
+            const targetId = toggle.getAttribute('data-target');
+            const target = document.getElementById(targetId);
+            if (target) {
+                target.classList.toggle('collapsed');
+                toggle.classList.toggle('expanded');
+                toggle.textContent = toggle.classList.contains('expanded') ? '\u25BC' : '\u25B6';
+            }
+        });
+    });
+};
+
+// File Explorer: View Toggle (Grid/List)
+let currentViewMode = 'grid';
+const setupViewToggle = () => {
+    const gridBtn = getElement('gridViewBtn');
+    const listBtn = getElement('listViewBtn');
+    const entriesGrid = getElement('entriesGrid');
+
+    if (!gridBtn || !listBtn || !entriesGrid) return;
+
+    gridBtn.addEventListener('click', () => {
+        currentViewMode = 'grid';
+        entriesGrid.classList.remove('list-view');
+        entriesGrid.classList.add('grid-view');
+        gridBtn.classList.add('active');
+        listBtn.classList.remove('active');
+    });
+
+    listBtn.addEventListener('click', () => {
+        currentViewMode = 'list';
+        entriesGrid.classList.remove('grid-view');
+        entriesGrid.classList.add('list-view');
+        listBtn.classList.add('active');
+        gridBtn.classList.remove('active');
+    });
+};
+
+// File Explorer: Breadcrumb Update
+const updateBreadcrumb = (category) => {
+    const breadcrumbCurrent = getElement('breadcrumbCurrent');
+    if (!breadcrumbCurrent) return;
+
+    if (category) {
+        breadcrumbCurrent.textContent = getCategoryLabel(category);
+    } else {
+        breadcrumbCurrent.textContent = 'All Entries';
+    }
+};
+
+// File Explorer: Update Category Counts
+const updateCategoryCounts = (stats) => {
+    if (!stats) return;
+
+    stats.forEach(stat => {
+        const countEl = document.getElementById(`count-${stat._id}`);
+        if (countEl) {
+            countEl.textContent = stat.count;
+        }
+    });
+};
+
+// File Explorer: Setup Tree Navigation
+const setupTreeNavigation = () => {
+    const fileTree = document.querySelector('.file-tree');
+    if (!fileTree) return;
+
+    fileTree.addEventListener('click', (e) => {
+        e.preventDefault();
+        const link = e.target.closest('.tree-label');
+        if (!link) return;
+
+        // Update active state
+        fileTree.querySelectorAll('.tree-label').forEach(a => a.classList.remove('active'));
+        link.classList.add('active');
+
+        // Load entries for category
+        const category = link.dataset.category;
+        loadEntries(category);
+        updateBreadcrumb(category);
+    });
+};
+
+// Render Entry Card (supports both grid and list view)
+const renderEntryCardEnhanced = (entry) => {
+    const tagsHtml = entry.tags && entry.tags.length > 0
+        ? entry.tags.slice(0, 3).map(tag => `<span class="entry-tag">${tag}</span>`).join('')
+        : '';
+
+    // Calculate word count for list view
+    const wordCount = entry.content.split(/\s+/).length;
+    const readTime = Math.ceil(wordCount / 200); // ~200 words per minute
+
+    return `
+        <a href="/entry/${entry._id}" class="entry-card">
+            <div class="entry-card-header">
+                <span class="entry-icon">${getCategoryIcon(entry.category)}</span>
+                <span class="entry-category ${entry.category}">${getCategoryLabel(entry.category)}</span>
+            </div>
+            <h3>${entry.title}</h3>
+            <p class="entry-preview">${truncateText(entry.content)}</p>
+            <div class="entry-card-footer">
+                <span class="entry-date">${formatDate(entry.createdAt)}</span>
+                <span class="entry-meta">${wordCount} words · ${readTime} min read</span>
+                <div class="entry-tags">${tagsHtml}</div>
+            </div>
+        </a>
+    `;
+};
+
 // Initialize based on current page
 document.addEventListener('DOMContentLoaded', () => {
     const path = window.location.pathname;
+
+    // Setup mobile menu on all pages
+    setupMobileMenu();
 
     if (path === '/' || path === '/index.html') {
         // Index page
@@ -557,6 +769,16 @@ document.addEventListener('DOMContentLoaded', () => {
         loadStats();
         setupCategoryFilter();
         setupSearch();
+        setupTreeToggle();
+        setupViewToggle();
+        setupTreeNavigation();
+
+        // Load stats for category counts
+        fetchStats().then(result => {
+            if (result.success) {
+                updateCategoryCounts(result.data);
+            }
+        });
     } else if (path === '/new' || path === '/new-entry.html') {
         // Create entry page
         setupCreateForm();

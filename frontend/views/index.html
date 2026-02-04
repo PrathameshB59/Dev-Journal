@@ -17,7 +17,12 @@
     <nav>
         <div class="nav-container">
             <a href="/" class="nav-brand">&#128218; Dev Journal</a>
-            <div class="nav-actions">
+            <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle menu">
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+            </button>
+            <div class="nav-actions" id="navActions">
                 <div class="search-box">
                     <input type="text" id="searchInput" placeholder="Search entries...">
                     <button id="searchBtn">&#128269;</button>
@@ -29,16 +34,42 @@
 
     <main class="container">
         <aside class="sidebar">
-            <div class="sidebar-section">
-                <h3>Categories</h3>
-                <ul class="category-list">
-                    <li><a href="#" data-category="" class="active">All Entries</a></li>
-                    <li><a href="#" data-category="daily-learning">&#128218; Daily Learning</a></li>
-                    <li><a href="#" data-category="project-note">&#128196; Project Notes</a></li>
-                    <li><a href="#" data-category="bug-fix">&#128027; Bug Fixes</a></li>
-                    <li><a href="#" data-category="code-snippet">&#128187; Code Snippets</a></li>
-                    <li><a href="#" data-category="concept">&#128161; Concepts</a></li>
-                </ul>
+            <div class="sidebar-section file-tree-section">
+                <h3>&#128193; Explorer</h3>
+                <div class="file-tree">
+                    <div class="tree-item root">
+                        <span class="tree-toggle expanded" data-target="all-entries">&#9660;</span>
+                        <span class="tree-icon">&#128194;</span>
+                        <a href="#" data-category="" class="tree-label active">Dev-Journal</a>
+                    </div>
+                    <ul class="tree-children" id="all-entries">
+                        <li class="tree-item">
+                            <span class="tree-icon">&#128218;</span>
+                            <a href="#" data-category="daily-learning" class="tree-label">Daily Learning</a>
+                            <span class="tree-count" id="count-daily-learning">0</span>
+                        </li>
+                        <li class="tree-item">
+                            <span class="tree-icon">&#128196;</span>
+                            <a href="#" data-category="project-note" class="tree-label">Project Notes</a>
+                            <span class="tree-count" id="count-project-note">0</span>
+                        </li>
+                        <li class="tree-item">
+                            <span class="tree-icon">&#128027;</span>
+                            <a href="#" data-category="bug-fix" class="tree-label">Bug Fixes</a>
+                            <span class="tree-count" id="count-bug-fix">0</span>
+                        </li>
+                        <li class="tree-item">
+                            <span class="tree-icon">&#128187;</span>
+                            <a href="#" data-category="code-snippet" class="tree-label">Code Snippets</a>
+                            <span class="tree-count" id="count-code-snippet">0</span>
+                        </li>
+                        <li class="tree-item">
+                            <span class="tree-icon">&#128161;</span>
+                            <a href="#" data-category="concept" class="tree-label">Concepts</a>
+                            <span class="tree-count" id="count-concept">0</span>
+                        </li>
+                    </ul>
+                </div>
             </div>
 
             <div class="sidebar-section">
@@ -57,9 +88,22 @@
         </aside>
 
         <section class="content">
+            <!-- Breadcrumb Navigation -->
+            <nav class="breadcrumb" id="breadcrumb">
+                <a href="#" class="breadcrumb-item" data-category="">&#127968; Home</a>
+                <span class="breadcrumb-separator">&#8250;</span>
+                <span class="breadcrumb-current" id="breadcrumbCurrent">All Entries</span>
+            </nav>
+
             <div class="content-header">
-                <h2 id="contentTitle">All Entries</h2>
-                <span id="entryCount" class="entry-count">0 entries</span>
+                <div class="content-title-wrapper">
+                    <h2 id="contentTitle">All Entries</h2>
+                    <span id="entryCount" class="entry-count">0 entries</span>
+                </div>
+                <div class="view-toggle">
+                    <button id="gridViewBtn" class="view-btn active" title="Grid View">&#9638;</button>
+                    <button id="listViewBtn" class="view-btn" title="List View">&#9776;</button>
+                </div>
             </div>
 
             <div id="entriesGrid" class="entries-grid">
