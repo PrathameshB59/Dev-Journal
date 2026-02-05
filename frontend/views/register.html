@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - Dev Journal</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <h1><span class="logo-icon">&#128100;</span> Register</h1>
+            <p>Create your Dev Journal account</p>
+        </div>
+    </header>
+
+    <nav>
+        <div class="nav-container">
+            <a href="/login" class="nav-brand">&#128218; Dev Journal</a>
+        </div>
+    </nav>
+
+    <main class="container">
+        <div class="auth-container">
+            <form id="registerForm" class="entry-form auth-form">
+                <div id="formMessage" class="form-message" style="display: none;"></div>
+
+                <div class="form-group">
+                    <label for="name">Name (optional)</label>
+                    <input type="text" id="name" name="name" maxlength="100"
+                           placeholder="Enter your name..." autocomplete="name">
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email *</label>
+                    <input type="email" id="email" name="email" required
+                           placeholder="Enter your email..." autocomplete="email">
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password *</label>
+                    <input type="password" id="password" name="password" required
+                           minlength="8" placeholder="Min 8 characters..." autocomplete="new-password">
+                    <div id="passwordStrength" aria-live="polite"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="confirmPassword">Confirm Password *</label>
+                    <input type="password" id="confirmPassword" name="confirmPassword" required
+                           minlength="8" placeholder="Confirm your password..." autocomplete="new-password">
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn-primary btn-full">&#10003; Create Account</button>
+                </div>
+
+                <p class="auth-link">
+                    Already have an account? <a href="/login">Sign in here</a>
+                </p>
+            </form>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <p>Dev Journal - Personal Developer Documentation System</p>
+        </div>
+    </footer>
+
+    <script src="/js/auth.js"></script>
+    <script src="/js/passwordStrength.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Redirect if already logged in
+            if (Auth.redirectIfAuthenticated()) return;
+
+            // Initialize password strength meter
+            PasswordStrength.init('password', 'passwordStrength');
+
+            const form = document.getElementById('registerForm');
+            const formMessage = document.getElementById('formMessage');
+
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                formMessage.style.display = 'none';
+
+                const name = document.getElementById('name').value.trim();
+                const email = document.getElementById('email').value.trim();
+                const password = document.getElementById('password').value;
+                const confirmPassword = document.getElementById('confirmPassword').value;
+
+                // Validate passwords match
+                if (password !== confirmPassword) {
+                    formMessage.className = 'form-message error';
+                    formMessage.textContent = 'Passwords do not match';
+                    formMessage.style.display = 'block';
+                    return;
+                }
+
+                // Disable submit button
+                const submitBtn = form.querySelector('button[type="submit"]');
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '&#8987; Creating account...';
+
+                try {
+                    const result = await AuthAPI.register(email, password, name || undefined);
+
+                    if (result.success) {
+                        Auth.setAuth(result.data.token, result.data.user);
+                        formMessage.className = 'form-message success';
+                        formMessage.textContent = 'Account created! Redirecting...';
+                        formMessage.style.display = 'block';
+
+                        setTimeout(() => {
+                            window.location.href = '/';
+                        }, 1000);
+                    } else {
+                        formMessage.className = 'form-message error';
+                        formMessage.textContent = result.error || 'Registration failed';
+                        formMessage.style.display = 'block';
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = '&#10003; Create Account';
+                    }
+                } catch (error) {
+                    formMessage.className = 'form-message error';
+                    formMessage.textContent = 'Registration failed: ' + error.message;
+                    formMessage.style.display = 'block';
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = '&#10003; Create Account';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

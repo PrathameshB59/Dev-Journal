@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Management - Dev Journal Admin</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <header>
+        <div class="header-content">
+            <h1><span class="logo-icon">&#128101;</span> User Management</h1>
+            <p>Manage all registered users</p>
+        </div>
+    </header>
+
+    <nav role="navigation" aria-label="Main navigation">
+        <div class="nav-container">
+            <a href="/" class="nav-brand">&#128218; Dev Journal</a>
+            <button class="mobile-menu-btn" aria-label="Toggle menu" aria-expanded="false">
+                <span class="hamburger"></span>
+            </button>
+            <div class="nav-content">
+                <div class="nav-links">
+                    <a href="/" class="nav-link">&#128196; Entries</a>
+                    <a href="/dashboard" class="nav-link">&#128202; Dashboard</a>
+                    <a href="/admin" class="nav-link">&#9881; Admin</a>
+                    <a href="/admin/users" class="nav-link active">&#128101; Users</a>
+                </div>
+                <div class="nav-actions">
+                    <span id="userDisplay" class="user-display"></span>
+                    <span class="admin-badge">Admin</span>
+                    <button id="logoutBtn" class="btn-secondary btn-sm" aria-label="Logout">Logout</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container" id="main-content" role="main">
+        <div id="accessDenied" class="access-denied" style="display: none;">
+            <h2>&#128683; Access Denied</h2>
+            <p>You do not have permission to access user management.</p>
+            <a href="/" class="btn-primary">Return to Home</a>
+        </div>
+
+        <div id="adminContent" style="display: none;">
+            <section class="admin-section">
+                <h2>&#128269; Filter Users</h2>
+                <div class="user-filters">
+                    <select id="roleFilter" aria-label="Filter by role">
+                        <option value="">All Roles</option>
+                        <option value="user">Users</option>
+                        <option value="moderator">Moderators</option>
+                        <option value="admin">Admins</option>
+                    </select>
+                    <select id="statusFilter" aria-label="Filter by status">
+                        <option value="">All Status</option>
+                        <option value="true">Active</option>
+                        <option value="false">Inactive</option>
+                    </select>
+                    <input type="text" id="searchInput" placeholder="Search by name or email..." aria-label="Search users">
+                </div>
+            </section>
+
+            <section class="admin-section">
+                <h2>&#128101; All Users</h2>
+                <div class="admin-table-container">
+                    <table class="admin-table" role="grid">
+                        <thead>
+                            <tr>
+                                <th scope="col">Name</th>
+                                <th scope="col">Email</th>
+                                <th scope="col">Role</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Entries</th>
+                                <th scope="col">Last Login</th>
+                                <th scope="col">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersTable">
+                            <tr><td colspan="7" class="loading">Loading users...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div id="pagination" class="pagination"></div>
+            </section>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <p>Dev Journal - Admin Panel</p>
+        </div>
+    </footer>
+
+    <script src="/js/auth.js"></script>
+    <script src="/js/admin.js"></script>
+</body>
+</html>

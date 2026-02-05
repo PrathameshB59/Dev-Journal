@@ -30,7 +30,7 @@ My personal developer journal where I document daily learnings, project notes, b
 
 ```bash
 cd backend
-cp .env.example .env
+cp .env
 # Edit .env with your MongoDB connection string
 ```
 

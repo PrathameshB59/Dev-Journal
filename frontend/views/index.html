@@ -5,8 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dev Journal - Personal Developer Documentation</title>
     <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/win11-explorer.css">
+    <link rel="stylesheet" href="/css/animations.css">
 </head>
 <body>
+    <!-- Skip Link for Accessibility -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <!-- Header -->
     <header>
         <div class="header-content">
             <h1><span class="logo-icon">&#128221;</span> Dev Journal</h1>
@@ -14,112 +20,317 @@
         </div>
     </header>
 
+    <!-- Windows 11 Style Navigation -->
     <nav>
         <div class="nav-container">
             <a href="/" class="nav-brand">&#128218; Dev Journal</a>
+
+            <!-- Windows 11 Style Nav Links -->
+            <div class="win11-nav-links" id="navLinks">
+                <a href="/" class="win11-nav-link active">&#127968; Home</a>
+                <a href="/dashboard" class="win11-nav-link">&#128202; Dashboard</a>
+                <a href="/admin" class="win11-nav-link" id="adminNavLink" style="display: none;">
+                    &#9881; Admin <span class="admin-badge">Admin</span>
+                </a>
+            </div>
+
             <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle menu">
                 <span class="hamburger-line"></span>
                 <span class="hamburger-line"></span>
                 <span class="hamburger-line"></span>
             </button>
+
             <div class="nav-actions" id="navActions">
-                <div class="search-box">
-                    <input type="text" id="searchInput" placeholder="Search entries...">
-                    <button id="searchBtn">&#128269;</button>
-                </div>
-                <a href="/new" class="btn-new">+ New Entry</a>
+                <span id="userDisplay" class="user-display"></span>
+                <button id="logoutBtn" class="btn-logout">Logout</button>
             </div>
         </div>
     </nav>
 
-    <main class="container">
-        <aside class="sidebar">
-            <div class="sidebar-section file-tree-section">
-                <h3>&#128193; Explorer</h3>
-                <div class="file-tree">
-                    <div class="tree-item root">
-                        <span class="tree-toggle expanded" data-target="all-entries">&#9660;</span>
-                        <span class="tree-icon">&#128194;</span>
-                        <a href="#" data-category="" class="tree-label active">Dev-Journal</a>
+    <!-- Windows 11 File Explorer Main Content -->
+    <main class="win11-explorer" id="main-content">
+        <!-- Toolbar -->
+        <div class="win11-toolbar">
+            <div class="toolbar-left">
+                <a href="/new" class="toolbar-btn primary" id="newEntryBtn">
+                    <span class="btn-icon">&#10133;</span>
+                    <span class="btn-label">New</span>
+                </a>
+                <div class="toolbar-separator"></div>
+                <button class="toolbar-btn" id="refreshBtn" title="Refresh">
+                    <span class="btn-icon">&#128260;</span>
+                </button>
+                <button class="toolbar-btn" id="favoriteBtn" title="Add to Favorites" disabled>
+                    <span class="btn-icon">&#9733;</span>
+                </button>
+                <div class="toolbar-separator"></div>
+                <button class="toolbar-btn danger" id="deleteBtn" title="Delete" disabled>
+                    <span class="btn-icon">&#128465;</span>
+                </button>
+            </div>
+            <div class="toolbar-right">
+                <div class="toolbar-dropdown-container" style="position: relative;">
+                    <button class="toolbar-dropdown" id="sortDropdown">
+                        <span>Sort</span>
+                        <span class="dropdown-arrow">&#9660;</span>
+                    </button>
+                    <div class="dropdown-menu" id="sortMenu">
+                        <div class="dropdown-item active" data-sort="date-desc">
+                            <span class="check-icon">&#10003;</span>
+                            <span>Date (Newest)</span>
+                        </div>
+                        <div class="dropdown-item" data-sort="date-asc">
+                            <span class="check-icon">&#10003;</span>
+                            <span>Date (Oldest)</span>
+                        </div>
+                        <div class="dropdown-item" data-sort="title-asc">
+                            <span class="check-icon">&#10003;</span>
+                            <span>Name (A-Z)</span>
+                        </div>
+                        <div class="dropdown-item" data-sort="title-desc">
+                            <span class="check-icon">&#10003;</span>
+                            <span>Name (Z-A)</span>
+                        </div>
+                        <div class="dropdown-item" data-sort="category-asc">
+                            <span class="check-icon">&#10003;</span>
+                            <span>Category</span>
+                        </div>
                     </div>
-                    <ul class="tree-children" id="all-entries">
-                        <li class="tree-item">
-                            <span class="tree-icon">&#128218;</span>
-                            <a href="#" data-category="daily-learning" class="tree-label">Daily Learning</a>
-                            <span class="tree-count" id="count-daily-learning">0</span>
-                        </li>
-                        <li class="tree-item">
-                            <span class="tree-icon">&#128196;</span>
-                            <a href="#" data-category="project-note" class="tree-label">Project Notes</a>
-                            <span class="tree-count" id="count-project-note">0</span>
-                        </li>
-                        <li class="tree-item">
-                            <span class="tree-icon">&#128027;</span>
-                            <a href="#" data-category="bug-fix" class="tree-label">Bug Fixes</a>
-                            <span class="tree-count" id="count-bug-fix">0</span>
-                        </li>
-                        <li class="tree-item">
-                            <span class="tree-icon">&#128187;</span>
-                            <a href="#" data-category="code-snippet" class="tree-label">Code Snippets</a>
-                            <span class="tree-count" id="count-code-snippet">0</span>
-                        </li>
-                        <li class="tree-item">
-                            <span class="tree-icon">&#128161;</span>
-                            <a href="#" data-category="concept" class="tree-label">Concepts</a>
-                            <span class="tree-count" id="count-concept">0</span>
-                        </li>
-                    </ul>
+                </div>
+                <div class="toolbar-dropdown-container" style="position: relative;">
+                    <button class="toolbar-dropdown" id="viewDropdown">
+                        <span>View</span>
+                        <span class="dropdown-arrow">&#9660;</span>
+                    </button>
+                    <div class="dropdown-menu" id="viewMenu">
+                        <div class="dropdown-item active" data-view="details">
+                            <span class="check-icon">&#10003;</span>
+                            <span>&#9776; Details</span>
+                        </div>
+                        <div class="dropdown-item" data-view="tiles">
+                            <span class="check-icon">&#10003;</span>
+                            <span>&#9638; Tiles</span>
+                        </div>
+                    </div>
                 </div>
             </div>
+        </div>
 
-            <div class="sidebar-section">
-                <h3>Tags</h3>
-                <div id="tagCloud" class="tag-cloud">
-                    <!-- Tags loaded dynamically -->
+        <!-- Address Bar -->
+        <div class="win11-addressbar">
+            <div class="nav-buttons">
+                <button class="nav-btn" id="backBtn" title="Back" disabled>&#9664;</button>
+                <button class="nav-btn" id="forwardBtn" title="Forward" disabled>&#9654;</button>
+                <button class="nav-btn" id="upBtn" title="Up">&#9650;</button>
+                <button class="nav-btn" id="sidebarToggle" title="Toggle Sidebar">&#9776;</button>
+            </div>
+            <div class="breadcrumb-container">
+                <div class="breadcrumb-path" id="breadcrumbPath">
+                    <a href="#" class="breadcrumb-item" data-path="home">&#127968; Home</a>
+                    <span class="breadcrumb-separator">&#8250;</span>
+                    <span class="breadcrumb-current" id="breadcrumbCurrent">All Entries</span>
                 </div>
             </div>
+            <div class="win11-search">
+                <input type="text" id="searchInput" placeholder="Search Dev-Journal" aria-label="Search entries">
+                <button class="search-btn" id="searchBtn">&#128269;</button>
+            </div>
+        </div>
 
-            <div class="sidebar-section stats-section">
-                <h3>Statistics</h3>
-                <div id="categoryStats" class="stats-grid">
-                    <!-- Stats loaded dynamically -->
+        <!-- Tabs -->
+        <div class="win11-tabs">
+            <button class="win11-tab active" data-tab="recent">
+                <span class="tab-icon">&#128337;</span>
+                <span>Recent</span>
+            </button>
+            <button class="win11-tab" data-tab="favorites">
+                <span class="tab-icon">&#9733;</span>
+                <span>Favorites</span>
+            </button>
+            <button class="win11-tab" data-tab="all">
+                <span class="tab-icon">&#128193;</span>
+                <span>All Entries</span>
+            </button>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="win11-main">
+            <!-- Sidebar -->
+            <aside class="win11-sidebar" id="win11Sidebar">
+                <!-- Home Section -->
+                <div class="sidebar-section">
+                    <a href="/" class="sidebar-item active" data-path="home">
+                        <span class="item-icon">&#127968;</span>
+                        <span class="item-text">Home</span>
+                    </a>
+                    <a href="/dashboard" class="sidebar-item">
+                        <span class="item-icon">&#128202;</span>
+                        <span class="item-text">Dashboard</span>
+                    </a>
+                    <a href="/new" class="sidebar-item">
+                        <span class="item-icon">&#10133;</span>
+                        <span class="item-text">New Entry</span>
+                    </a>
+                </div>
+
+                <!-- Quick Access (Categories) -->
+                <div class="sidebar-section">
+                    <div class="section-header" data-collapse="quickaccess">
+                        <span class="collapse-arrow">&#9660;</span>
+                        <span class="section-title">Quick Access</span>
+                    </div>
+                    <div class="section-content" id="quickaccess">
+                        <a href="#" class="sidebar-item" data-category="daily-learning">
+                            <span class="item-icon folder-icon blue">&#128193;</span>
+                            <span class="item-text">Daily Learning</span>
+                            <span class="item-count" id="count-daily-learning">0</span>
+                        </a>
+                        <a href="#" class="sidebar-item" data-category="project-note">
+                            <span class="item-icon folder-icon green">&#128193;</span>
+                            <span class="item-text">Project Notes</span>
+                            <span class="item-count" id="count-project-note">0</span>
+                        </a>
+                        <a href="#" class="sidebar-item" data-category="bug-fix">
+                            <span class="item-icon folder-icon red">&#128193;</span>
+                            <span class="item-text">Bug Fixes</span>
+                            <span class="item-count" id="count-bug-fix">0</span>
+                        </a>
+                        <a href="#" class="sidebar-item" data-category="code-snippet">
+                            <span class="item-icon folder-icon purple">&#128193;</span>
+                            <span class="item-text">Code Snippets</span>
+                            <span class="item-count" id="count-code-snippet">0</span>
+                        </a>
+                        <a href="#" class="sidebar-item" data-category="concept">
+                            <span class="item-icon folder-icon yellow">&#128193;</span>
+                            <span class="item-text">Concepts</span>
+                            <span class="item-count" id="count-concept">0</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Favorites -->
+                <div class="sidebar-section">
+                    <div class="section-header" data-collapse="favorites-section">
+                        <span class="collapse-arrow">&#9660;</span>
+                        <span class="section-title">Favorites</span>
+                    </div>
+                    <div class="section-content" id="favorites-section">
+                        <div id="favoritesList">
+                            <div class="sidebar-item" style="color: var(--win11-text-muted); font-style: italic;">
+                                No favorites yet
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tags -->
+                <div class="sidebar-section">
+                    <div class="section-header" data-collapse="tags-section">
+                        <span class="collapse-arrow collapsed">&#9660;</span>
+                        <span class="section-title">Tags</span>
+                    </div>
+                    <div class="section-content collapsed" id="tags-section">
+                        <div id="tagsList">
+                            <!-- Tags loaded dynamically -->
+                        </div>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Sidebar Overlay for Mobile -->
+            <div class="win11-sidebar-overlay" id="sidebarOverlay"></div>
+
+            <!-- Content Area -->
+            <section class="win11-content">
+                <!-- Quick Access Grid (Home View) -->
+                <div class="quick-access-grid" id="quickAccessGrid">
+                    <h3>&#9733; Pinned</h3>
+                    <div class="pinned-folders" id="pinnedFolders">
+                        <a href="#" class="pinned-folder" data-category="daily-learning">
+                            <span class="folder-icon-lg" style="color: var(--folder-blue);">&#128193;</span>
+                            <span class="folder-name">Daily Learning</span>
+                            <span class="folder-count" id="pinned-daily-learning">0 items</span>
+                        </a>
+                        <a href="#" class="pinned-folder" data-category="project-note">
+                            <span class="folder-icon-lg" style="color: var(--folder-green);">&#128193;</span>
+                            <span class="folder-name">Project Notes</span>
+                            <span class="folder-count" id="pinned-project-note">0 items</span>
+                        </a>
+                        <a href="#" class="pinned-folder" data-category="bug-fix">
+                            <span class="folder-icon-lg" style="color: var(--folder-red);">&#128193;</span>
+                            <span class="folder-name">Bug Fixes</span>
+                            <span class="folder-count" id="pinned-bug-fix">0 items</span>
+                        </a>
+                        <a href="#" class="pinned-folder" data-category="code-snippet">
+                            <span class="folder-icon-lg" style="color: var(--folder-purple);">&#128193;</span>
+                            <span class="folder-name">Code Snippets</span>
+                            <span class="folder-count" id="pinned-code-snippet">0 items</span>
+                        </a>
+                        <a href="#" class="pinned-folder" data-category="concept">
+                            <span class="folder-icon-lg" style="color: var(--folder-yellow);">&#128193;</span>
+                            <span class="folder-name">Concepts</span>
+                            <span class="folder-count" id="pinned-concept">0 items</span>
+                        </a>
+                    </div>
+                    <h3>&#128337; Recent</h3>
+                </div>
+
+                <!-- File List Container -->
+                <div class="file-list-container" id="fileListContainer">
+                    <!-- File List Header -->
+                    <div class="file-list-header" id="fileListHeader">
+                        <div class="col-header sorted" data-sort="title">
+                            <span>Name</span>
+                            <span class="sort-icon">&#9660;</span>
+                        </div>
+                        <div class="col-header" data-sort="date">
+                            <span>Date Modified</span>
+                            <span class="sort-icon">&#9660;</span>
+                        </div>
+                        <div class="col-header" data-sort="category">
+                            <span>Category</span>
+                            <span class="sort-icon">&#9660;</span>
+                        </div>
+                        <div class="col-header">
+                            <span>Tags</span>
+                        </div>
+                    </div>
+
+                    <!-- File List -->
+                    <div class="file-list" id="fileList">
+                        <!-- Entries loaded dynamically -->
+                    </div>
+
+                    <!-- Loading State -->
+                    <div class="win11-loading" id="loadingState" style="display: none;">
+                        <div class="win11-spinner"></div>
+                        <p style="margin-top: var(--space-md); color: var(--win11-text-secondary);">Loading entries...</p>
+                    </div>
+
+                    <!-- Empty State -->
+                    <div class="empty-state" id="emptyState" style="display: none;">
+                        <span class="empty-icon">&#128466;</span>
+                        <h3 class="empty-title">No entries found</h3>
+                        <p class="empty-text">Create your first journal entry to get started</p>
+                        <a href="/new" class="empty-action">+ New Entry</a>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Status Bar -->
+        <div class="win11-statusbar">
+            <div class="statusbar-left">
+                <span id="itemCount">0 items</span>
+                <span id="selectedCount"></span>
+            </div>
+            <div class="statusbar-right">
+                <div class="view-mode-toggle">
+                    <button class="view-mode-btn active" id="detailsViewBtn" title="Details">&#9776;</button>
+                    <button class="view-mode-btn" id="tilesViewBtn" title="Tiles">&#9638;</button>
                 </div>
             </div>
-        </aside>
-
-        <section class="content">
-            <!-- Breadcrumb Navigation -->
-            <nav class="breadcrumb" id="breadcrumb">
-                <a href="#" class="breadcrumb-item" data-category="">&#127968; Home</a>
-                <span class="breadcrumb-separator">&#8250;</span>
-                <span class="breadcrumb-current" id="breadcrumbCurrent">All Entries</span>
-            </nav>
-
-            <div class="content-header">
-                <div class="content-title-wrapper">
-                    <h2 id="contentTitle">All Entries</h2>
-                    <span id="entryCount" class="entry-count">0 entries</span>
-                </div>
-                <div class="view-toggle">
-                    <button id="gridViewBtn" class="view-btn active" title="Grid View">&#9638;</button>
-                    <button id="listViewBtn" class="view-btn" title="List View">&#9776;</button>
-                </div>
-            </div>
-
-            <div id="entriesGrid" class="entries-grid">
-                <!-- Entries loaded dynamically -->
-            </div>
-
-            <div id="loadingIndicator" class="loading">
-                <div class="spinner"></div>
-                <p>Loading entries...</p>
-            </div>
-
-            <div id="noEntries" class="no-entries" style="display: none;">
-                <p>&#128466; No entries found</p>
-                <a href="/new" class="btn-primary">Create your first entry</a>
-            </div>
-        </section>
+        </div>
     </main>
 
     <footer>
@@ -129,6 +340,8 @@
         </div>
     </footer>
 
+    <script src="/js/auth.js"></script>
     <script src="/js/app.js"></script>
+    <script src="/js/fileExplorer.js"></script>
 </body>
 </html>

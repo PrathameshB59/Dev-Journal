@@ -5,7 +5,8 @@ exports.getAllEntries = async (req, res) => {
     try {
         const { category, tag, sort = '-createdAt', limit = 50, page = 1 } = req.query;
 
-        const query = {};
+        // Scope by authenticated user
+        const query = { userId: req.user._id };
 
         if (category) {
             query.category = category;
@@ -42,7 +43,8 @@ exports.getAllEntries = async (req, res) => {
 // Get single entry by ID
 exports.getEntry = async (req, res) => {
     try {
-        const entry = await Entry.findById(req.params.id);
+        // Find entry owned by authenticated user
+        const entry = await Entry.findOne({ _id: req.params.id, userId: req.user._id });
 
         if (!entry) {
             return res.status(404).json({ success: false, error: 'Entry not found' });
@@ -65,7 +67,8 @@ exports.createEntry = async (req, res) => {
             content,
             tags: tags || [],
             codeLanguage: codeLanguage || '',
-            codeBlock: codeBlock || ''
+            codeBlock: codeBlock || '',
+            userId: req.user._id
         });
 
         res.status(201).json({ success: true, data: entry });
@@ -83,8 +86,9 @@ exports.updateEntry = async (req, res) => {
     try {
         const { title, category, content, tags, codeLanguage, codeBlock } = req.body;
 
-        const entry = await Entry.findByIdAndUpdate(
-            req.params.id,
+        // Update only if owned by authenticated user
+        const entry = await Entry.findOneAndUpdate(
+            { _id: req.params.id, userId: req.user._id },
             { title, category, content, tags, codeLanguage, codeBlock },
             { new: true, runValidators: true }
         );
@@ -106,7 +110,8 @@ exports.updateEntry = async (req, res) => {
 // Delete entry
 exports.deleteEntry = async (req, res) => {
     try {
-        const entry = await Entry.findByIdAndDelete(req.params.id);
+        // Delete only if owned by authenticated user
+        const entry = await Entry.findOneAndDelete({ _id: req.params.id, userId: req.user._id });
 
         if (!entry) {
             return res.status(404).json({ success: false, error: 'Entry not found' });
@@ -127,8 +132,9 @@ exports.searchEntries = async (req, res) => {
             return res.status(400).json({ success: false, error: 'Search query is required' });
         }
 
+        // Search only within user's entries
         const entries = await Entry.find(
-            { $text: { $search: q } },
+            { $text: { $search: q }, userId: req.user._id },
             { score: { $meta: 'textScore' } }
         ).sort({ score: { $meta: 'textScore' } }).limit(20);
 
@@ -141,7 +147,8 @@ exports.searchEntries = async (req, res) => {
 // Get all unique tags
 exports.getAllTags = async (req, res) => {
     try {
-        const tags = await Entry.distinct('tags');
+        // Get tags only from user's entries
+        const tags = await Entry.distinct('tags', { userId: req.user._id });
         res.json({ success: true, data: tags.filter(t => t) });
     } catch (error) {
         res.status(500).json({ success: false, error: error.message });
@@ -151,7 +158,9 @@ exports.getAllTags = async (req, res) => {
 // Get category stats
 exports.getCategoryStats = async (req, res) => {
     try {
+        // Get stats only from user's entries
         const stats = await Entry.aggregate([
+            { $match: { userId: req.user._id } },
             {
                 $group: {
                     _id: '$category',

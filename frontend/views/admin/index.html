@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Dev Journal</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <header>
+        <div class="header-content">
+            <h1><span class="logo-icon">&#9881;</span> Admin Panel</h1>
+            <p>System administration and user management</p>
+        </div>
+    </header>
+
+    <nav role="navigation" aria-label="Main navigation">
+        <div class="nav-container">
+            <a href="/" class="nav-brand">&#128218; Dev Journal</a>
+            <button class="mobile-menu-btn" aria-label="Toggle menu" aria-expanded="false">
+                <span class="hamburger"></span>
+            </button>
+            <div class="nav-content">
+                <div class="nav-links">
+                    <a href="/" class="nav-link">&#128196; Entries</a>
+                    <a href="/dashboard" class="nav-link">&#128202; Dashboard</a>
+                    <a href="/admin" class="nav-link active">&#9881; Admin</a>
+                    <a href="/admin/users" class="nav-link">&#128101; Users</a>
+                </div>
+                <div class="nav-actions">
+                    <span id="userDisplay" class="user-display"></span>
+                    <span class="admin-badge">Admin</span>
+                    <button id="logoutBtn" class="btn-secondary btn-sm" aria-label="Logout">Logout</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container" id="main-content" role="main">
+        <div id="accessDenied" class="access-denied" style="display: none;">
+            <h2>&#128683; Access Denied</h2>
+            <p>You do not have permission to access the admin panel.</p>
+            <a href="/" class="btn-primary">Return to Home</a>
+        </div>
+
+        <div id="adminContent" style="display: none;">
+            <section class="admin-section" aria-labelledby="overview-heading">
+                <h2 id="overview-heading">&#128202; System Overview</h2>
+                <div class="admin-stats-grid">
+                    <div class="admin-stat-card">
+                        <span class="stat-icon">&#128101;</span>
+                        <span class="stat-value" id="totalUsers">-</span>
+                        <span class="stat-label">Total Users</span>
+                    </div>
+                    <div class="admin-stat-card">
+                        <span class="stat-icon">&#9989;</span>
+                        <span class="stat-value" id="activeUsers">-</span>
+                        <span class="stat-label">Active Users</span>
+                    </div>
+                    <div class="admin-stat-card">
+                        <span class="stat-icon">&#128196;</span>
+                        <span class="stat-value" id="totalEntries">-</span>
+                        <span class="stat-label">Total Entries</span>
+                    </div>
+                    <div class="admin-stat-card">
+                        <span class="stat-icon">&#128081;</span>
+                        <span class="stat-value" id="adminCount">-</span>
+                        <span class="stat-label">Admins</span>
+                    </div>
+                </div>
+            </section>
+
+            <section class="admin-section" aria-labelledby="actions-heading">
+                <h2 id="actions-heading">&#9889; Quick Actions</h2>
+                <div class="admin-actions">
+                    <a href="/admin/users" class="admin-action-btn">
+                        <span class="action-icon">&#128101;</span>
+                        <span class="action-text">Manage Users</span>
+                    </a>
+                    <button id="refreshStats" class="admin-action-btn">
+                        <span class="action-icon">&#128260;</span>
+                        <span class="action-text">Refresh Stats</span>
+                    </button>
+                </div>
+            </section>
+
+            <div class="admin-two-column">
+                <section class="admin-section" aria-labelledby="roles-heading">
+                    <h2 id="roles-heading">&#128101; Users by Role</h2>
+                    <div class="role-breakdown" id="roleBreakdown"></div>
+                </section>
+
+                <section class="admin-section" aria-labelledby="categories-heading">
+                    <h2 id="categories-heading">&#128193; Entries by Category</h2>
+                    <div class="category-breakdown" id="categoryBreakdown"></div>
+                </section>
+            </div>
+
+            <section class="admin-section" aria-labelledby="activity-heading">
+                <h2 id="activity-heading">&#128200; Activity (Last 7 Days)</h2>
+                <div class="chart-container">
+                    <canvas id="activityChart" role="img" aria-label="Activity chart"></canvas>
+                </div>
+            </section>
+
+            <section class="admin-section" aria-labelledby="recent-users-heading">
+                <h2 id="recent-users-heading">&#128101; Recent Users</h2>
+                <div class="admin-table-container">
+                    <table class="admin-table" role="grid">
+                        <thead>
+                            <tr>
+                                <th scope="col">Name</th>
+                                <th scope="col">Email</th>
+                                <th scope="col">Role</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Joined</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recentUsersTable"></tbody>
+                    </table>
+                </div>
+                <a href="/admin/users" class="view-all-link">View all users &rarr;</a>
+            </section>
+
+            <section class="admin-section" aria-labelledby="recent-entries-heading">
+                <h2 id="recent-entries-heading">&#128196; Recent Entries</h2>
+                <div class="admin-table-container">
+                    <table class="admin-table" role="grid">
+                        <thead>
+                            <tr>
+                                <th scope="col">Title</th>
+                                <th scope="col">Author</th>
+                                <th scope="col">Category</th>
+                                <th scope="col">Created</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recentEntriesTable"></tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <p>Dev Journal - Admin Panel</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="/js/auth.js"></script>
+    <script src="/js/admin.js"></script>
+</body>
+</html>

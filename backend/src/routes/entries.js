@@ -1,6 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const entryController = require('../controllers/entryController');
+const { protect } = require('../middleware/auth');
+
+// Apply authentication to all routes
+router.use(protect);
 
 // GET /api/entries - Get all entries (with optional filters)
 router.get('/', entryController.getAllEntries);

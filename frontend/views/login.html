@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Dev Journal</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <h1><span class="logo-icon">&#128274;</span> Login</h1>
+            <p>Sign in to your Dev Journal account</p>
+        </div>
+    </header>
+
+    <nav>
+        <div class="nav-container">
+            <a href="/login" class="nav-brand">&#128218; Dev Journal</a>
+        </div>
+    </nav>
+
+    <main class="container">
+        <div class="auth-container">
+            <form id="loginForm" class="entry-form auth-form">
+                <div id="formMessage" class="form-message" style="display: none;"></div>
+
+                <div class="form-group">
+                    <label for="email">Email *</label>
+                    <input type="email" id="email" name="email" required
+                           placeholder="Enter your email..." autocomplete="email">
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password *</label>
+                    <input type="password" id="password" name="password" required
+                           minlength="8" placeholder="Enter your password..." autocomplete="current-password">
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn-primary btn-full">&#10003; Sign In</button>
+                </div>
+
+                <p class="auth-link">
+                    Don't have an account? <a href="/register">Register here</a>
+                </p>
+            </form>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <p>Dev Journal - Personal Developer Documentation System</p>
+        </div>
+    </footer>
+
+    <script src="/js/auth.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Redirect if already logged in
+            if (Auth.redirectIfAuthenticated()) return;
+
+            const form = document.getElementById('loginForm');
+            const formMessage = document.getElementById('formMessage');
+
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                formMessage.style.display = 'none';
+
+                const email = document.getElementById('email').value.trim();
+                const password = document.getElementById('password').value;
+
+                // Disable submit button
+                const submitBtn = form.querySelector('button[type="submit"]');
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '&#8987; Signing in...';
+
+                try {
+                    const result = await AuthAPI.login(email, password);
+
+                    if (result.success) {
+                        Auth.setAuth(result.data.token, result.data.user);
+                        formMessage.className = 'form-message success';
+                        formMessage.textContent = 'Login successful! Redirecting...';
+                        formMessage.style.display = 'block';
+
+                        setTimeout(() => {
+                            window.location.href = '/';
+                        }, 1000);
+                    } else {
+                        formMessage.className = 'form-message error';
+                        formMessage.textContent = result.error || 'Login failed';
+                        formMessage.style.display = 'block';
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = '&#10003; Sign In';
+                    }
+                } catch (error) {
+                    formMessage.className = 'form-message error';
+                    formMessage.textContent = 'Login failed: ' + error.message;
+                    formMessage.style.display = 'block';
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = '&#10003; Sign In';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -32,6 +32,12 @@ const entrySchema = new mongoose.Schema({
     codeBlock: {
         type: String,
         default: ''
+    },
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true,
+        index: true
     }
 }, {
     timestamps: true
@@ -45,5 +51,9 @@ entrySchema.index({ category: 1 });
 
 // Index for date sorting
 entrySchema.index({ createdAt: -1 });
+
+// Compound indexes for user-scoped queries
+entrySchema.index({ userId: 1, createdAt: -1 });
+entrySchema.index({ userId: 1, category: 1 });
 
 module.exports = mongoose.model('Entry', entrySchema);

@@ -107,23 +107,30 @@ const renderContent = (content) => {
     return rendered;
 };
 
-// API Functions
+// API Functions (with authentication)
 const fetchEntries = async (params = {}) => {
     const queryString = new URLSearchParams(params).toString();
     const url = queryString ? `${API_BASE}?${queryString}` : API_BASE;
-    const response = await fetch(url);
+    const response = await fetch(url, {
+        headers: Auth.getAuthHeader()
+    });
     return response.json();
 };
 
 const fetchEntry = async (id) => {
-    const response = await fetch(`${API_BASE}/${id}`);
+    const response = await fetch(`${API_BASE}/${id}`, {
+        headers: Auth.getAuthHeader()
+    });
     return response.json();
 };
 
 const createEntry = async (data) => {
     const response = await fetch(API_BASE, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+            'Content-Type': 'application/json',
+            ...Auth.getAuthHeader()
+        },
         body: JSON.stringify(data)
     });
     return response.json();
@@ -132,7 +139,10 @@ const createEntry = async (data) => {
 const updateEntry = async (id, data) => {
     const response = await fetch(`${API_BASE}/${id}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+            'Content-Type': 'application/json',
+            ...Auth.getAuthHeader()
+        },
         body: JSON.stringify(data)
     });
     return response.json();
@@ -140,23 +150,30 @@ const updateEntry = async (id, data) => {
 
 const deleteEntry = async (id) => {
     const response = await fetch(`${API_BASE}/${id}`, {
-        method: 'DELETE'
+        method: 'DELETE',
+        headers: Auth.getAuthHeader()
     });
     return response.json();
 };
 
 const searchEntries = async (query) => {
-    const response = await fetch(`${API_BASE}/search?q=${encodeURIComponent(query)}`);
+    const response = await fetch(`${API_BASE}/search?q=${encodeURIComponent(query)}`, {
+        headers: Auth.getAuthHeader()
+    });
     return response.json();
 };
 
 const fetchTags = async () => {
-    const response = await fetch(`${API_BASE}/tags`);
+    const response = await fetch(`${API_BASE}/tags`, {
+        headers: Auth.getAuthHeader()
+    });
     return response.json();
 };
 
 const fetchStats = async () => {
-    const response = await fetch(`${API_BASE}/stats`);
+    const response = await fetch(`${API_BASE}/stats`, {
+        headers: Auth.getAuthHeader()
+    });
     return response.json();
 };
 
@@ -755,6 +772,511 @@ const renderEntryCardEnhanced = (entry) => {
     `;
 };
 
+// Setup logout button
+const setupLogout = () => {
+    const logoutBtn = document.getElementById('logoutBtn');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            Auth.logout();
+        });
+    }
+
+    // Display user info
+    const userDisplay = document.getElementById('userDisplay');
+    if (userDisplay) {
+        const user = Auth.getUser();
+        if (user) {
+            userDisplay.textContent = user.name || user.email;
+        }
+    }
+
+    // Show admin link if user is admin
+    const adminNavLink = document.getElementById('adminNavLink');
+    if (adminNavLink) {
+        const user = Auth.getUser();
+        if (user && user.role === 'admin') {
+            adminNavLink.style.display = '';
+        }
+    }
+};
+
+// ========================================
+// WINDOWS 11 FILE EXPLORER FUNCTIONALITY
+// ========================================
+
+// Windows 11 Explorer State
+const Win11State = {
+    currentTab: 'recent',
+    currentCategory: '',
+    sortBy: 'date',
+    sortOrder: 'desc',
+    viewMode: 'details',
+    selectedItems: [],
+    history: ['/'],
+    historyIndex: 0
+};
+
+// Format relative date like Windows 11
+const formatRelativeDate = (dateString) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffMs = now - date;
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMs / 3600000);
+    const diffDays = Math.floor(diffMs / 86400000);
+
+    if (diffMins < 1) return 'Just now';
+    if (diffMins < 60) return `${diffMins} min ago`;
+    if (diffHours < 24) return `${diffHours} hours ago`;
+    if (diffDays < 7) return `${diffDays} days ago`;
+
+    return date.toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: date.getFullYear() !== now.getFullYear() ? 'numeric' : undefined
+    });
+};
+
+// Render Windows 11 style file item
+const renderFileItem = (entry) => {
+    const tagsHtml = entry.tags && entry.tags.length > 0
+        ? entry.tags.slice(0, 2).map(tag => `<span class="entry-tag">${escapeHtml(tag)}</span>`).join('')
+        : '<span style="color: var(--win11-text-muted);">-</span>';
+
+    return `
+        <a href="/entry/${entry._id}" class="file-item" data-entry-id="${entry._id}">
+            <div class="file-name">
+                <input type="checkbox" class="file-checkbox" onclick="event.stopPropagation(); Win11.toggleSelect('${entry._id}')">
+                <span class="file-icon">${getCategoryIcon(entry.category)}</span>
+                <span class="file-title">${escapeHtml(entry.title)}</span>
+            </div>
+            <span class="file-date">${formatRelativeDate(entry.updatedAt || entry.createdAt)}</span>
+            <span class="file-category">
+                <span class="category-badge ${entry.category}">
+                    <span class="badge-dot"></span>
+                    ${getCategoryLabel(entry.category)}
+                </span>
+            </span>
+            <span class="file-tags">${tagsHtml}</span>
+        </a>
+    `;
+};
+
+// Windows 11 Explorer Module
+const Win11 = {
+    // Load entries for Windows 11 file list
+    async loadFileList(category = '', tab = 'recent') {
+        const fileList = document.getElementById('fileList');
+        const loadingState = document.getElementById('loadingState');
+        const emptyState = document.getElementById('emptyState');
+        const itemCount = document.getElementById('itemCount');
+
+        if (!fileList) return;
+
+        loadingState.style.display = 'flex';
+        emptyState.style.display = 'none';
+        fileList.innerHTML = '';
+
+        try {
+            const params = {};
+            if (category) params.category = category;
+
+            // Sort based on current settings
+            params.sort = Win11State.sortBy;
+            params.order = Win11State.sortOrder;
+
+            const result = await fetchEntries(params);
+
+            loadingState.style.display = 'none';
+
+            if (result.success && result.data.length > 0) {
+                let entries = result.data;
+
+                // Filter by tab
+                if (tab === 'favorites' && window.FileExplorer) {
+                    const favIds = window.FileExplorer.favorites.map(f => f.id);
+                    entries = entries.filter(e => favIds.includes(e._id));
+                }
+
+                fileList.innerHTML = entries.map(renderFileItem).join('');
+                itemCount.textContent = `${entries.length} items`;
+
+                // Update pinned folder counts
+                this.updateFolderCounts(result.data);
+            } else {
+                emptyState.style.display = 'flex';
+                itemCount.textContent = '0 items';
+            }
+        } catch (error) {
+            loadingState.style.display = 'none';
+            fileList.innerHTML = `<p class="error" style="padding: var(--space-lg);">Error loading entries: ${error.message}</p>`;
+        }
+    },
+
+    // Update folder counts in pinned folders and sidebar
+    updateFolderCounts(entries) {
+        const counts = {
+            'daily-learning': 0,
+            'project-note': 0,
+            'bug-fix': 0,
+            'code-snippet': 0,
+            'concept': 0
+        };
+
+        entries.forEach(entry => {
+            if (counts[entry.category] !== undefined) {
+                counts[entry.category]++;
+            }
+        });
+
+        // Update sidebar counts
+        Object.keys(counts).forEach(cat => {
+            const countEl = document.getElementById(`count-${cat}`);
+            if (countEl) countEl.textContent = counts[cat];
+
+            const pinnedCount = document.getElementById(`pinned-${cat}`);
+            if (pinnedCount) pinnedCount.textContent = `${counts[cat]} items`;
+        });
+    },
+
+    // Setup sidebar toggle (mobile)
+    setupSidebarToggle() {
+        const toggleBtn = document.getElementById('sidebarToggle');
+        const sidebar = document.getElementById('win11Sidebar');
+        const overlay = document.getElementById('sidebarOverlay');
+
+        if (!toggleBtn || !sidebar) return;
+
+        toggleBtn.addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+            if (overlay) overlay.classList.toggle('show');
+        });
+
+        if (overlay) {
+            overlay.addEventListener('click', () => {
+                sidebar.classList.remove('open');
+                overlay.classList.remove('show');
+            });
+        }
+    },
+
+    // Setup collapsible sections
+    setupCollapsibleSections() {
+        document.querySelectorAll('.section-header').forEach(header => {
+            header.addEventListener('click', () => {
+                const targetId = header.dataset.collapse;
+                const content = document.getElementById(targetId);
+                const arrow = header.querySelector('.collapse-arrow');
+
+                if (content && arrow) {
+                    content.classList.toggle('collapsed');
+                    arrow.classList.toggle('collapsed');
+                }
+            });
+        });
+    },
+
+    // Setup tabs
+    setupTabs() {
+        document.querySelectorAll('.win11-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                const tabName = tab.dataset.tab;
+
+                // Don't do anything if clicking the same tab
+                if (tabName === Win11State.currentTab) return;
+
+                Win11State.currentTab = tabName;
+
+                // Update active state
+                document.querySelectorAll('.win11-tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+
+                // Update breadcrumb
+                const breadcrumbCurrent = document.getElementById('breadcrumbCurrent');
+                if (breadcrumbCurrent) {
+                    const labels = { recent: 'Recent', favorites: 'Favorites', all: 'All Entries' };
+                    breadcrumbCurrent.textContent = labels[tabName] || 'All Entries';
+                }
+
+                // Animated tab content switch
+                const fileList = document.getElementById('fileList');
+                if (fileList) {
+                    // Fade out current content
+                    fileList.style.opacity = '0';
+                    fileList.style.transform = 'translateY(10px)';
+                    fileList.style.transition = 'opacity 150ms ease, transform 150ms ease';
+
+                    // After fade out, load new content and fade in
+                    setTimeout(() => {
+                        this.loadFileList(Win11State.currentCategory, tabName);
+                        // Fade in happens automatically via CSS animation on new items
+                        fileList.style.opacity = '1';
+                        fileList.style.transform = 'translateY(0)';
+                    }, 150);
+                } else {
+                    // Fallback: just reload
+                    this.loadFileList(Win11State.currentCategory, tabName);
+                }
+            });
+        });
+    },
+
+    // Setup category navigation
+    setupCategoryNavigation() {
+        // Sidebar items
+        document.querySelectorAll('.sidebar-item[data-category]').forEach(item => {
+            item.addEventListener('click', (e) => {
+                e.preventDefault();
+                const category = item.dataset.category;
+                this.navigateToCategory(category);
+            });
+        });
+
+        // Pinned folders
+        document.querySelectorAll('.pinned-folder[data-category]').forEach(folder => {
+            folder.addEventListener('click', (e) => {
+                e.preventDefault();
+                const category = folder.dataset.category;
+                this.navigateToCategory(category);
+            });
+        });
+    },
+
+    // Navigate to category
+    navigateToCategory(category) {
+        Win11State.currentCategory = category;
+
+        // Update active state in sidebar
+        document.querySelectorAll('.sidebar-item[data-category]').forEach(item => {
+            item.classList.toggle('active', item.dataset.category === category);
+        });
+
+        // Update breadcrumb
+        const breadcrumbCurrent = document.getElementById('breadcrumbCurrent');
+        if (breadcrumbCurrent) {
+            breadcrumbCurrent.textContent = category ? getCategoryLabel(category) : 'All Entries';
+        }
+
+        // Add to history
+        Win11State.history = Win11State.history.slice(0, Win11State.historyIndex + 1);
+        Win11State.history.push(category || '/');
+        Win11State.historyIndex = Win11State.history.length - 1;
+        this.updateNavButtons();
+
+        // Load entries
+        this.loadFileList(category, Win11State.currentTab);
+    },
+
+    // Setup navigation buttons (back/forward/up)
+    setupNavButtons() {
+        const backBtn = document.getElementById('backBtn');
+        const forwardBtn = document.getElementById('forwardBtn');
+        const upBtn = document.getElementById('upBtn');
+
+        if (backBtn) {
+            backBtn.addEventListener('click', () => {
+                if (Win11State.historyIndex > 0) {
+                    Win11State.historyIndex--;
+                    const category = Win11State.history[Win11State.historyIndex];
+                    Win11State.currentCategory = category === '/' ? '' : category;
+                    this.loadFileList(Win11State.currentCategory, Win11State.currentTab);
+                    this.updateNavButtons();
+                    this.updateBreadcrumbForCategory(Win11State.currentCategory);
+                }
+            });
+        }
+
+        if (forwardBtn) {
+            forwardBtn.addEventListener('click', () => {
+                if (Win11State.historyIndex < Win11State.history.length - 1) {
+                    Win11State.historyIndex++;
+                    const category = Win11State.history[Win11State.historyIndex];
+                    Win11State.currentCategory = category === '/' ? '' : category;
+                    this.loadFileList(Win11State.currentCategory, Win11State.currentTab);
+                    this.updateNavButtons();
+                    this.updateBreadcrumbForCategory(Win11State.currentCategory);
+                }
+            });
+        }
+
+        if (upBtn) {
+            upBtn.addEventListener('click', () => {
+                if (Win11State.currentCategory) {
+                    this.navigateToCategory('');
+                }
+            });
+        }
+    },
+
+    updateNavButtons() {
+        const backBtn = document.getElementById('backBtn');
+        const forwardBtn = document.getElementById('forwardBtn');
+        const upBtn = document.getElementById('upBtn');
+
+        if (backBtn) backBtn.disabled = Win11State.historyIndex <= 0;
+        if (forwardBtn) forwardBtn.disabled = Win11State.historyIndex >= Win11State.history.length - 1;
+        if (upBtn) upBtn.disabled = !Win11State.currentCategory;
+    },
+
+    updateBreadcrumbForCategory(category) {
+        const breadcrumbCurrent = document.getElementById('breadcrumbCurrent');
+        if (breadcrumbCurrent) {
+            breadcrumbCurrent.textContent = category ? getCategoryLabel(category) : 'All Entries';
+        }
+    },
+
+    // Setup dropdown menus
+    setupDropdowns() {
+        // Sort dropdown
+        const sortDropdown = document.getElementById('sortDropdown');
+        const sortMenu = document.getElementById('sortMenu');
+
+        if (sortDropdown && sortMenu) {
+            sortDropdown.addEventListener('click', (e) => {
+                e.stopPropagation();
+                sortMenu.classList.toggle('show');
+                document.getElementById('viewMenu')?.classList.remove('show');
+            });
+
+            sortMenu.querySelectorAll('.dropdown-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    const [sortBy, sortOrder] = item.dataset.sort.split('-');
+                    Win11State.sortBy = sortBy;
+                    Win11State.sortOrder = sortOrder;
+
+                    // Update active state
+                    sortMenu.querySelectorAll('.dropdown-item').forEach(i => i.classList.remove('active'));
+                    item.classList.add('active');
+                    sortMenu.classList.remove('show');
+
+                    // Reload
+                    this.loadFileList(Win11State.currentCategory, Win11State.currentTab);
+                });
+            });
+        }
+
+        // View dropdown
+        const viewDropdown = document.getElementById('viewDropdown');
+        const viewMenu = document.getElementById('viewMenu');
+
+        if (viewDropdown && viewMenu) {
+            viewDropdown.addEventListener('click', (e) => {
+                e.stopPropagation();
+                viewMenu.classList.toggle('show');
+                document.getElementById('sortMenu')?.classList.remove('show');
+            });
+
+            viewMenu.querySelectorAll('.dropdown-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    Win11State.viewMode = item.dataset.view;
+
+                    // Update active state
+                    viewMenu.querySelectorAll('.dropdown-item').forEach(i => i.classList.remove('active'));
+                    item.classList.add('active');
+                    viewMenu.classList.remove('show');
+
+                    // Update view mode buttons
+                    const detailsBtn = document.getElementById('detailsViewBtn');
+                    const tilesBtn = document.getElementById('tilesViewBtn');
+                    if (detailsBtn) detailsBtn.classList.toggle('active', Win11State.viewMode === 'details');
+                    if (tilesBtn) tilesBtn.classList.toggle('active', Win11State.viewMode === 'tiles');
+                });
+            });
+        }
+
+        // Close dropdowns on outside click
+        document.addEventListener('click', () => {
+            sortMenu?.classList.remove('show');
+            viewMenu?.classList.remove('show');
+        });
+    },
+
+    // Setup view mode toggle buttons
+    setupViewModeToggle() {
+        const detailsBtn = document.getElementById('detailsViewBtn');
+        const tilesBtn = document.getElementById('tilesViewBtn');
+
+        if (detailsBtn) {
+            detailsBtn.addEventListener('click', () => {
+                Win11State.viewMode = 'details';
+                detailsBtn.classList.add('active');
+                tilesBtn?.classList.remove('active');
+            });
+        }
+
+        if (tilesBtn) {
+            tilesBtn.addEventListener('click', () => {
+                Win11State.viewMode = 'tiles';
+                tilesBtn.classList.add('active');
+                detailsBtn?.classList.remove('active');
+            });
+        }
+    },
+
+    // Setup toolbar buttons
+    setupToolbarButtons() {
+        const refreshBtn = document.getElementById('refreshBtn');
+        if (refreshBtn) {
+            refreshBtn.addEventListener('click', () => {
+                this.loadFileList(Win11State.currentCategory, Win11State.currentTab);
+            });
+        }
+    },
+
+    // Toggle item selection
+    toggleSelect(entryId) {
+        const item = document.querySelector(`.file-item[data-entry-id="${entryId}"]`);
+        if (!item) return;
+
+        const index = Win11State.selectedItems.indexOf(entryId);
+        if (index > -1) {
+            Win11State.selectedItems.splice(index, 1);
+            item.classList.remove('selected');
+        } else {
+            Win11State.selectedItems.push(entryId);
+            item.classList.add('selected');
+        }
+
+        // Update toolbar buttons
+        const favoriteBtn = document.getElementById('favoriteBtn');
+        const deleteBtn = document.getElementById('deleteBtn');
+        const hasSelection = Win11State.selectedItems.length > 0;
+
+        if (favoriteBtn) favoriteBtn.disabled = !hasSelection;
+        if (deleteBtn) deleteBtn.disabled = !hasSelection;
+
+        // Update status bar
+        const selectedCount = document.getElementById('selectedCount');
+        if (selectedCount) {
+            selectedCount.textContent = hasSelection ? `| ${Win11State.selectedItems.length} selected` : '';
+        }
+    },
+
+    // Initialize Windows 11 UI
+    init() {
+        this.setupSidebarToggle();
+        this.setupCollapsibleSections();
+        this.setupTabs();
+        this.setupCategoryNavigation();
+        this.setupNavButtons();
+        this.setupDropdowns();
+        this.setupViewModeToggle();
+        this.setupToolbarButtons();
+
+        // Initial load
+        this.loadFileList();
+
+        // Initialize FileExplorer if available
+        if (window.FileExplorer) {
+            window.FileExplorer.init();
+        }
+    }
+};
+
+// Make Win11 globally available
+window.Win11 = Win11;
+
 // Initialize based on current page
 document.addEventListener('DOMContentLoaded', () => {
     const path = window.location.pathname;
@@ -762,23 +1284,46 @@ document.addEventListener('DOMContentLoaded', () => {
     // Setup mobile menu on all pages
     setupMobileMenu();
 
-    if (path === '/' || path === '/index.html') {
-        // Index page
-        loadEntries();
-        loadTags();
-        loadStats();
-        setupCategoryFilter();
-        setupSearch();
-        setupTreeToggle();
-        setupViewToggle();
-        setupTreeNavigation();
+    // Auth pages don't need protection
+    if (path === '/login' || path === '/register') {
+        return;
+    }
 
-        // Load stats for category counts
-        fetchStats().then(result => {
-            if (result.success) {
-                updateCategoryCounts(result.data);
-            }
-        });
+    // All other pages require authentication
+    if (!Auth.requireAuth()) {
+        return;
+    }
+
+    // Setup logout button
+    setupLogout();
+
+    if (path === '/' || path === '/index.html') {
+        // Index page - Windows 11 File Explorer UI
+        if (document.querySelector('.win11-explorer')) {
+            // Initialize Windows 11 UI
+            Win11.init();
+            setupSearch();
+
+            // Load tags for sidebar
+            loadTagsForSidebar();
+        } else {
+            // Fallback to old UI
+            loadEntries();
+            loadTags();
+            loadStats();
+            setupCategoryFilter();
+            setupSearch();
+            setupTreeToggle();
+            setupViewToggle();
+            setupTreeNavigation();
+
+            // Load stats for category counts
+            fetchStats().then(result => {
+                if (result.success) {
+                    updateCategoryCounts(result.data);
+                }
+            });
+        }
     } else if (path === '/new' || path === '/new-entry.html') {
         // Create entry page
         setupCreateForm();
@@ -790,3 +1335,70 @@ document.addEventListener('DOMContentLoaded', () => {
         setupEditForm();
     }
 });
+
+// Load tags for Windows 11 sidebar
+const loadTagsForSidebar = async () => {
+    const tagsList = document.getElementById('tagsList');
+    if (!tagsList) return;
+
+    try {
+        const result = await fetchTags();
+        if (result.success && result.data.length > 0) {
+            tagsList.innerHTML = result.data.slice(0, 10).map(tag =>
+                `<a href="#" class="sidebar-item" data-tag="${escapeHtml(tag)}">
+                    <span class="item-icon">&#127991;</span>
+                    <span class="item-text">${escapeHtml(tag)}</span>
+                </a>`
+            ).join('');
+
+            // Add click handlers
+            tagsList.querySelectorAll('.sidebar-item').forEach(item => {
+                item.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const tag = item.dataset.tag;
+                    loadEntriesByTagWin11(tag);
+                });
+            });
+        } else {
+            tagsList.innerHTML = '<div class="sidebar-item" style="color: var(--win11-text-muted); font-style: italic;">No tags yet</div>';
+        }
+    } catch (error) {
+        tagsList.innerHTML = '<div class="sidebar-item" style="color: var(--danger);">Error loading tags</div>';
+    }
+};
+
+// Load entries by tag for Windows 11 UI
+const loadEntriesByTagWin11 = async (tag) => {
+    const fileList = document.getElementById('fileList');
+    const loadingState = document.getElementById('loadingState');
+    const emptyState = document.getElementById('emptyState');
+    const itemCount = document.getElementById('itemCount');
+    const breadcrumbCurrent = document.getElementById('breadcrumbCurrent');
+
+    if (!fileList) return;
+
+    loadingState.style.display = 'flex';
+    emptyState.style.display = 'none';
+    fileList.innerHTML = '';
+
+    try {
+        const result = await fetchEntries({ tag });
+
+        loadingState.style.display = 'none';
+
+        if (result.success && result.data.length > 0) {
+            fileList.innerHTML = result.data.map(renderFileItem).join('');
+            itemCount.textContent = `${result.data.length} items`;
+        } else {
+            emptyState.style.display = 'flex';
+            itemCount.textContent = '0 items';
+        }
+
+        if (breadcrumbCurrent) {
+            breadcrumbCurrent.textContent = `Tag: ${tag}`;
+        }
+    } catch (error) {
+        loadingState.style.display = 'none';
+        fileList.innerHTML = `<p class="error" style="padding: var(--space-lg);">Error: ${error.message}</p>`;
+    }
+};

@@ -1,0 +1,1097 @@
+/* Windows 11 File Explorer Styles for Dev-Journal */
+
+/* ========================================
+   WINDOWS 11 CSS VARIABLES
+   ======================================== */
+:root {
+    /* Windows 11 Color Palette */
+    --win11-bg: #202020;
+    --win11-sidebar-bg: #1f1f1f;
+    --win11-toolbar-bg: #2d2d2d;
+    --win11-hover: #3d3d3d;
+    --win11-active: #4d4d4d;
+    --win11-selected: #0078d4;
+    --win11-selected-bg: rgba(0, 120, 212, 0.15);
+    --win11-selected-hover: rgba(0, 120, 212, 0.25);
+    --win11-border: #3d3d3d;
+    --win11-border-light: #4d4d4d;
+    --win11-text: #ffffff;
+    --win11-text-secondary: #9ca3af;
+    --win11-text-muted: #6b7280;
+
+    /* Windows 11 Folder Colors */
+    --folder-default: #ffc107;
+    --folder-blue: #0078d4;
+    --folder-green: #10b981;
+    --folder-red: #ef4444;
+    --folder-purple: #8b5cf6;
+    --folder-yellow: #f59e0b;
+    --folder-orange: #f97316;
+    --folder-cyan: #06b6d4;
+
+    /* Windows 11 Layout Sizes */
+    --win11-toolbar-height: 48px;
+    --win11-addressbar-height: 40px;
+    --win11-tabs-height: 36px;
+    --win11-statusbar-height: 26px;
+    --win11-sidebar-width: 240px;
+    --win11-sidebar-collapsed: 48px;
+
+    /* Windows 11 Specific */
+    --win11-radius: 4px;
+    --win11-radius-lg: 8px;
+}
+
+/* ========================================
+   WINDOWS 11 EXPLORER MAIN CONTAINER
+   ======================================== */
+.win11-explorer {
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 70px); /* Subtract header height */
+    background: var(--win11-bg);
+    overflow: hidden;
+}
+
+/* ========================================
+   WINDOWS 11 TOOLBAR
+   ======================================== */
+.win11-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: var(--win11-toolbar-height);
+    background: var(--win11-toolbar-bg);
+    border-bottom: 1px solid var(--win11-border);
+    padding: 0 var(--space-md);
+    flex-shrink: 0;
+}
+
+.toolbar-left {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+}
+
+.toolbar-right {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+}
+
+.toolbar-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-xs);
+    padding: 6px 12px;
+    background: transparent;
+    border: none;
+    border-radius: var(--win11-radius);
+    color: var(--win11-text);
+    cursor: pointer;
+    font-size: var(--text-sm);
+    min-height: 32px;
+    /* Animation: Hover scale + shadow */
+    transition: background var(--anim-fast, 150ms) var(--anim-easing, ease),
+                transform var(--anim-fast, 150ms) var(--anim-easing, ease),
+                box-shadow var(--anim-fast, 150ms) var(--anim-easing, ease);
+}
+
+.toolbar-btn:hover {
+    background: var(--win11-hover);
+    transform: translateY(-1px);
+}
+
+.toolbar-btn:active {
+    transform: translateY(0) scale(0.98);
+}
+
+.toolbar-btn:active {
+    background: var(--win11-active);
+}
+
+.toolbar-btn.primary {
+    background: var(--win11-selected);
+}
+
+.toolbar-btn.primary:hover {
+    background: #1a86d9;
+}
+
+.toolbar-btn.danger:hover {
+    background: rgba(239, 68, 68, 0.2);
+    color: var(--danger);
+}
+
+.toolbar-btn .btn-icon {
+    font-size: 16px;
+}
+
+.toolbar-btn .btn-label {
+    font-weight: 500;
+}
+
+.toolbar-separator {
+    width: 1px;
+    height: 24px;
+    background: var(--win11-border);
+    margin: 0 var(--space-xs);
+}
+
+/* Toolbar Dropdowns */
+.toolbar-dropdown {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+    padding: 6px 12px;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: var(--win11-radius);
+    color: var(--win11-text-secondary);
+    cursor: pointer;
+    font-size: var(--text-sm);
+    transition: all var(--transition-fast);
+}
+
+.toolbar-dropdown:hover {
+    background: var(--win11-hover);
+    border-color: var(--win11-border);
+    color: var(--win11-text);
+}
+
+.toolbar-dropdown .dropdown-arrow {
+    font-size: 10px;
+    margin-left: 2px;
+}
+
+/* Dropdown Menu */
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: var(--win11-toolbar-bg);
+    border: 1px solid var(--win11-border);
+    border-radius: var(--win11-radius-lg);
+    box-shadow: var(--shadow-lg);
+    min-width: 180px;
+    padding: var(--space-xs) 0;
+    z-index: 100;
+    /* Animation: Fade + Slide */
+    opacity: 0;
+    transform: translateY(-8px);
+    visibility: hidden;
+    transition: opacity var(--anim-fast, 150ms) var(--anim-easing, ease),
+                transform var(--anim-fast, 150ms) var(--anim-easing, ease),
+                visibility 0s linear var(--anim-fast, 150ms);
+}
+
+.dropdown-menu.show {
+    opacity: 1;
+    transform: translateY(0);
+    visibility: visible;
+    transition: opacity var(--anim-fast, 150ms) var(--anim-easing, ease),
+                transform var(--anim-fast, 150ms) var(--anim-easing, ease),
+                visibility 0s linear 0s;
+}
+
+.dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: 8px 16px;
+    color: var(--win11-text);
+    cursor: pointer;
+    transition: background var(--transition-fast);
+}
+
+.dropdown-item:hover {
+    background: var(--win11-hover);
+}
+
+.dropdown-item.active {
+    background: var(--win11-selected-bg);
+    color: var(--win11-selected);
+}
+
+.dropdown-item .check-icon {
+    width: 16px;
+    visibility: hidden;
+}
+
+.dropdown-item.active .check-icon {
+    visibility: visible;
+}
+
+/* ========================================
+   WINDOWS 11 ADDRESS BAR
+   ======================================== */
+.win11-addressbar {
+    display: flex;
+    align-items: center;
+    height: var(--win11-addressbar-height);
+    background: var(--win11-toolbar-bg);
+    border-bottom: 1px solid var(--win11-border);
+    padding: 0 var(--space-md);
+    gap: var(--space-md);
+    flex-shrink: 0;
+}
+
+/* Navigation Buttons */
+.nav-buttons {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+}
+
+.nav-btn {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    border-radius: var(--win11-radius);
+    color: var(--win11-text-secondary);
+    cursor: pointer;
+    font-size: 12px;
+    transition: all var(--transition-fast);
+}
+
+.nav-btn:hover:not(:disabled) {
+    background: var(--win11-hover);
+    color: var(--win11-text);
+}
+
+.nav-btn:active:not(:disabled) {
+    background: var(--win11-active);
+}
+
+.nav-btn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+}
+
+/* Breadcrumb Bar */
+.breadcrumb-container {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    background: var(--win11-bg);
+    border: 1px solid var(--win11-border);
+    border-radius: var(--win11-radius);
+    padding: 0 var(--space-sm);
+    height: 28px;
+    overflow: hidden;
+}
+
+.breadcrumb-container:focus-within {
+    border-color: var(--win11-selected);
+}
+
+.breadcrumb-path {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    flex: 1;
+    overflow: hidden;
+}
+
+.breadcrumb-item {
+    display: flex;
+    align-items: center;
+    padding: 2px 8px;
+    color: var(--win11-text-secondary);
+    font-size: var(--text-sm);
+    cursor: pointer;
+    border-radius: var(--win11-radius);
+    white-space: nowrap;
+    text-decoration: none;
+}
+
+.breadcrumb-item:hover {
+    background: var(--win11-hover);
+    color: var(--win11-text);
+}
+
+.breadcrumb-separator {
+    color: var(--win11-text-muted);
+    font-size: 11px;
+    padding: 0 2px;
+}
+
+.breadcrumb-current {
+    color: var(--win11-text);
+    font-weight: 500;
+}
+
+/* Search Box */
+.win11-search {
+    display: flex;
+    align-items: center;
+    background: var(--win11-bg);
+    border: 1px solid var(--win11-border);
+    border-radius: var(--win11-radius);
+    overflow: hidden;
+    min-width: 220px;
+    height: 28px;
+    /* Animation: Focus expansion + glow */
+    transition: min-width var(--anim-normal, 200ms) var(--anim-easing, ease),
+                border-color var(--anim-fast, 150ms) var(--anim-easing, ease),
+                box-shadow var(--anim-fast, 150ms) var(--anim-easing, ease);
+}
+
+.win11-search:focus-within {
+    border-color: var(--win11-selected);
+    min-width: 280px;
+    box-shadow: 0 0 0 2px rgba(0, 120, 212, 0.2);
+}
+
+.win11-search input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    padding: 0 var(--space-sm);
+    color: var(--win11-text);
+    font-size: var(--text-sm);
+    outline: none;
+}
+
+.win11-search input::placeholder {
+    color: var(--win11-text-muted);
+}
+
+.win11-search .search-btn {
+    width: 28px;
+    height: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    color: var(--win11-text-secondary);
+    cursor: pointer;
+}
+
+.win11-search .search-btn:hover {
+    background: var(--win11-hover);
+    color: var(--win11-text);
+}
+
+/* ========================================
+   WINDOWS 11 TABS
+   ======================================== */
+.win11-tabs {
+    display: flex;
+    align-items: flex-end;
+    height: var(--win11-tabs-height);
+    background: var(--win11-toolbar-bg);
+    border-bottom: 1px solid var(--win11-border);
+    padding: 0 var(--space-md);
+    gap: 4px;
+    flex-shrink: 0;
+}
+
+.win11-tab {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+    padding: 8px 16px;
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: var(--win11-text-secondary);
+    cursor: pointer;
+    font-size: var(--text-sm);
+    font-weight: 500;
+    margin-bottom: -1px;
+    /* Animation: Smooth color and border transitions */
+    transition: color var(--anim-fast, 150ms) var(--anim-easing, ease),
+                background var(--anim-fast, 150ms) var(--anim-easing, ease),
+                border-color var(--anim-normal, 200ms) var(--anim-easing, ease),
+                transform var(--anim-fast, 150ms) var(--anim-easing, ease);
+}
+
+.win11-tab:hover {
+    color: var(--win11-text);
+    background: var(--win11-hover);
+}
+
+.win11-tab:active {
+    transform: scale(0.98);
+}
+
+.win11-tab.active {
+    color: var(--win11-selected);
+    border-bottom-color: var(--win11-selected);
+}
+
+.win11-tab .tab-icon {
+    font-size: 14px;
+}
+
+/* ========================================
+   WINDOWS 11 MAIN CONTENT AREA
+   ======================================== */
+.win11-main {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+}
+
+/* ========================================
+   WINDOWS 11 SIDEBAR
+   ======================================== */
+.win11-sidebar {
+    width: var(--win11-sidebar-width);
+    background: var(--win11-sidebar-bg);
+    border-right: 1px solid var(--win11-border);
+    overflow-y: auto;
+    overflow-x: hidden;
+    flex-shrink: 0;
+    padding: var(--space-sm) 0;
+}
+
+/* Sidebar Scrollbar */
+.win11-sidebar::-webkit-scrollbar {
+    width: 8px;
+}
+
+.win11-sidebar::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.win11-sidebar::-webkit-scrollbar-thumb {
+    background: var(--win11-border);
+    border-radius: 4px;
+}
+
+.win11-sidebar::-webkit-scrollbar-thumb:hover {
+    background: var(--win11-border-light);
+}
+
+/* Sidebar Sections */
+.sidebar-section {
+    margin-bottom: var(--space-xs);
+}
+
+/* Sidebar Section Header (Collapsible) */
+.section-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: 6px var(--space-md);
+    cursor: pointer;
+    user-select: none;
+    transition: background var(--transition-fast);
+}
+
+.section-header:hover {
+    background: var(--win11-hover);
+}
+
+.collapse-arrow {
+    font-size: 10px;
+    color: var(--win11-text-secondary);
+    width: 12px;
+    /* Animation: Smooth rotation */
+    transition: transform var(--anim-fast, 150ms) var(--anim-easing, ease);
+}
+
+.collapse-arrow.collapsed {
+    transform: rotate(-90deg);
+}
+
+.section-title {
+    font-size: var(--text-xs);
+    color: var(--win11-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 600;
+}
+
+/* Section Content */
+.section-content {
+    overflow: hidden;
+    max-height: 500px;
+    opacity: 1;
+    /* Animation: Height + Opacity */
+    transition: max-height var(--anim-slow, 300ms) var(--anim-easing, ease),
+                opacity var(--anim-normal, 200ms) var(--anim-easing, ease);
+}
+
+.section-content.collapsed {
+    max-height: 0 !important;
+    opacity: 0;
+}
+
+/* Sidebar Items */
+.sidebar-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: 6px var(--space-md) 6px 28px;
+    color: var(--win11-text);
+    text-decoration: none;
+    font-size: var(--text-sm);
+    cursor: pointer;
+    border-left: 3px solid transparent;
+    /* Animation: Hover slide + background */
+    transition: background var(--anim-fast, 150ms) var(--anim-easing, ease),
+                border-color var(--anim-fast, 150ms) var(--anim-easing, ease),
+                transform var(--anim-fast, 150ms) var(--anim-easing, ease),
+                padding-left var(--anim-fast, 150ms) var(--anim-easing, ease);
+}
+
+.sidebar-item:hover {
+    background: var(--win11-hover);
+    padding-left: 32px;
+}
+
+.sidebar-item.active {
+    background: var(--win11-selected-bg);
+    border-left-color: var(--win11-selected);
+}
+
+.sidebar-item .item-icon {
+    font-size: 16px;
+    flex-shrink: 0;
+}
+
+.sidebar-item .item-text {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.sidebar-item .item-count {
+    font-size: var(--text-xs);
+    color: var(--win11-text-muted);
+    background: var(--win11-hover);
+    padding: 2px 6px;
+    border-radius: 10px;
+}
+
+/* Colored Folder Icons */
+.folder-icon { color: var(--folder-default); }
+.folder-icon.blue { color: var(--folder-blue); }
+.folder-icon.green { color: var(--folder-green); }
+.folder-icon.red { color: var(--folder-red); }
+.folder-icon.purple { color: var(--folder-purple); }
+.folder-icon.yellow { color: var(--folder-yellow); }
+.folder-icon.orange { color: var(--folder-orange); }
+.folder-icon.cyan { color: var(--folder-cyan); }
+
+/* Cloud/Sync Status Icon */
+.sync-status {
+    font-size: 12px;
+    margin-left: auto;
+}
+
+.sync-status.synced { color: var(--folder-green); }
+.sync-status.syncing { color: var(--folder-blue); }
+.sync-status.offline { color: var(--win11-text-muted); }
+
+/* ========================================
+   WINDOWS 11 CONTENT AREA
+   ======================================== */
+.win11-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: var(--win11-bg);
+}
+
+/* Quick Access Section (Home View) */
+.quick-access-grid {
+    padding: var(--space-lg);
+}
+
+.quick-access-grid h3 {
+    font-size: var(--text-sm);
+    color: var(--win11-text-secondary);
+    margin-bottom: var(--space-md);
+    font-weight: 600;
+}
+
+/* Pinned Folders Grid */
+.pinned-folders {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+    gap: var(--space-md);
+    margin-bottom: var(--space-xl);
+}
+
+.pinned-folder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-xs);
+    padding: var(--space-md);
+    border-radius: var(--win11-radius-lg);
+    cursor: pointer;
+    text-decoration: none;
+    color: var(--win11-text);
+    text-align: center;
+    /* Animation: Entrance + Hover */
+    opacity: 0;
+    transform: scale(0.9);
+    animation: scaleIn var(--anim-slow, 300ms) var(--anim-easing, ease) forwards;
+    transition: transform var(--anim-normal, 200ms) var(--anim-easing, ease),
+                background var(--anim-fast, 150ms) var(--anim-easing, ease),
+                box-shadow var(--anim-normal, 200ms) var(--anim-easing, ease);
+}
+
+/* Staggered entrance for pinned folders */
+.pinned-folder:nth-child(1) { animation-delay: 0ms; }
+.pinned-folder:nth-child(2) { animation-delay: 60ms; }
+.pinned-folder:nth-child(3) { animation-delay: 120ms; }
+.pinned-folder:nth-child(4) { animation-delay: 180ms; }
+.pinned-folder:nth-child(5) { animation-delay: 240ms; }
+
+.pinned-folder:hover {
+    background: var(--win11-hover);
+    transform: translateY(-4px) scale(1.05);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+.pinned-folder .folder-icon-lg {
+    font-size: 42px;
+}
+
+.pinned-folder .folder-name {
+    font-size: var(--text-sm);
+    font-weight: 500;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.pinned-folder .folder-count {
+    font-size: var(--text-xs);
+    color: var(--win11-text-muted);
+}
+
+/* ========================================
+   WINDOWS 11 FILE LIST (DETAILS VIEW)
+   ======================================== */
+.file-list-container {
+    flex: 1;
+    overflow: auto;
+    padding: 0 var(--space-md);
+}
+
+/* File List Header */
+.file-list-header {
+    display: grid;
+    grid-template-columns: minmax(250px, 2fr) 150px 120px 120px;
+    gap: var(--space-md);
+    padding: 8px var(--space-md);
+    background: var(--win11-toolbar-bg);
+    border-bottom: 1px solid var(--win11-border);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.file-list-header .col-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+    font-size: var(--text-xs);
+    color: var(--win11-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    user-select: none;
+    padding: 4px 0;
+}
+
+.file-list-header .col-header:hover {
+    color: var(--win11-text);
+}
+
+.file-list-header .col-header .sort-icon {
+    font-size: 10px;
+    opacity: 0;
+    transition: opacity var(--transition-fast);
+}
+
+.file-list-header .col-header:hover .sort-icon,
+.file-list-header .col-header.sorted .sort-icon {
+    opacity: 1;
+}
+
+.file-list-header .col-header.sorted {
+    color: var(--win11-selected);
+}
+
+/* File List Items */
+.file-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.file-item {
+    display: grid;
+    grid-template-columns: minmax(250px, 2fr) 150px 120px 120px;
+    gap: var(--space-md);
+    padding: 8px var(--space-md);
+    align-items: center;
+    border-bottom: 1px solid var(--win11-border);
+    cursor: pointer;
+    text-decoration: none;
+    color: var(--win11-text);
+    /* Animation: Entrance + Hover */
+    opacity: 0;
+    animation: slideUp var(--anim-normal, 200ms) var(--anim-easing, ease) forwards;
+    transition: background var(--anim-fast, 150ms) var(--anim-easing, ease),
+                transform var(--anim-fast, 150ms) var(--anim-easing, ease);
+}
+
+/* Staggered entrance for file items */
+.file-item:nth-child(1) { animation-delay: 0ms; }
+.file-item:nth-child(2) { animation-delay: 30ms; }
+.file-item:nth-child(3) { animation-delay: 60ms; }
+.file-item:nth-child(4) { animation-delay: 90ms; }
+.file-item:nth-child(5) { animation-delay: 120ms; }
+.file-item:nth-child(6) { animation-delay: 150ms; }
+.file-item:nth-child(7) { animation-delay: 180ms; }
+.file-item:nth-child(8) { animation-delay: 210ms; }
+.file-item:nth-child(9) { animation-delay: 240ms; }
+.file-item:nth-child(10) { animation-delay: 270ms; }
+.file-item:nth-child(n+11) { animation-delay: 300ms; }
+
+.file-item:hover {
+    background: var(--win11-hover);
+    transform: translateX(4px);
+}
+
+.file-item.selected {
+    background: var(--win11-selected-bg);
+}
+
+.file-item.selected:hover {
+    background: var(--win11-selected-hover);
+}
+
+.file-item.focused {
+    outline: 1px solid var(--win11-selected);
+    outline-offset: -1px;
+}
+
+/* File Name Column */
+.file-name {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    overflow: hidden;
+}
+
+.file-name .file-checkbox {
+    width: 16px;
+    height: 16px;
+    opacity: 0;
+    transition: opacity var(--transition-fast);
+}
+
+.file-item:hover .file-checkbox,
+.file-item.selected .file-checkbox {
+    opacity: 1;
+}
+
+.file-name .file-icon {
+    font-size: 20px;
+    flex-shrink: 0;
+}
+
+.file-name .file-title {
+    font-weight: 500;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.file-name .file-subtitle {
+    font-size: var(--text-xs);
+    color: var(--win11-text-muted);
+    margin-left: var(--space-sm);
+}
+
+/* Other Columns */
+.file-date,
+.file-category,
+.file-activity {
+    font-size: var(--text-sm);
+    color: var(--win11-text-secondary);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Category Badge */
+.category-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 8px;
+    background: var(--win11-hover);
+    border-radius: 12px;
+    font-size: var(--text-xs);
+}
+
+.category-badge .badge-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+}
+
+.category-badge.daily-learning .badge-dot { background: var(--folder-blue); }
+.category-badge.project-note .badge-dot { background: var(--folder-green); }
+.category-badge.bug-fix .badge-dot { background: var(--folder-red); }
+.category-badge.code-snippet .badge-dot { background: var(--folder-purple); }
+.category-badge.concept .badge-dot { background: var(--folder-yellow); }
+
+/* ========================================
+   WINDOWS 11 STATUS BAR
+   ======================================== */
+.win11-statusbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: var(--win11-statusbar-height);
+    background: var(--win11-toolbar-bg);
+    border-top: 1px solid var(--win11-border);
+    padding: 0 var(--space-md);
+    font-size: var(--text-xs);
+    color: var(--win11-text-secondary);
+    flex-shrink: 0;
+}
+
+.statusbar-left {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+}
+
+.statusbar-right {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+}
+
+/* View Mode Toggle in Status Bar */
+.view-mode-toggle {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+}
+
+.view-mode-btn {
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    color: var(--win11-text-muted);
+    cursor: pointer;
+    border-radius: var(--win11-radius);
+    font-size: 12px;
+}
+
+.view-mode-btn:hover {
+    background: var(--win11-hover);
+    color: var(--win11-text);
+}
+
+.view-mode-btn.active {
+    color: var(--win11-selected);
+}
+
+/* ========================================
+   WINDOWS 11 EMPTY STATE
+   ======================================== */
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-3xl);
+    text-align: center;
+    color: var(--win11-text-secondary);
+}
+
+.empty-state .empty-icon {
+    font-size: 64px;
+    margin-bottom: var(--space-lg);
+    opacity: 0.5;
+}
+
+.empty-state .empty-title {
+    font-size: var(--text-lg);
+    font-weight: 600;
+    margin-bottom: var(--space-sm);
+    color: var(--win11-text);
+}
+
+.empty-state .empty-text {
+    margin-bottom: var(--space-lg);
+}
+
+.empty-state .empty-action {
+    padding: 10px 24px;
+    background: var(--win11-selected);
+    color: white;
+    border: none;
+    border-radius: var(--win11-radius);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.empty-state .empty-action:hover {
+    background: #1a86d9;
+}
+
+/* ========================================
+   WINDOWS 11 LOADING STATE
+   ======================================== */
+.win11-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-3xl);
+}
+
+.win11-spinner {
+    width: 32px;
+    height: 32px;
+    border: 3px solid var(--win11-border);
+    border-top-color: var(--win11-selected);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* ========================================
+   RESPONSIVE - MOBILE
+   ======================================== */
+@media (max-width: 768px) {
+    .win11-sidebar {
+        position: fixed;
+        left: -100%;
+        top: 0;
+        bottom: 0;
+        z-index: 1000;
+        width: 280px;
+        transition: left var(--transition-normal);
+    }
+
+    .win11-sidebar.open {
+        left: 0;
+    }
+
+    .win11-sidebar-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 999;
+        display: none;
+    }
+
+    .win11-sidebar-overlay.show {
+        display: block;
+    }
+
+    .file-list-header,
+    .file-item {
+        grid-template-columns: 1fr;
+        gap: var(--space-xs);
+    }
+
+    .file-list-header .col-header:not(:first-child),
+    .file-item > *:not(.file-name) {
+        display: none;
+    }
+
+    .win11-search {
+        min-width: 150px;
+    }
+
+    .toolbar-btn .btn-label {
+        display: none;
+    }
+
+    .pinned-folders {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 480px) {
+    .win11-tabs {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .breadcrumb-container {
+        display: none;
+    }
+
+    .pinned-folders {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* ========================================
+   WINDOWS 11 ADMIN BADGE (FOR NAV)
+   ======================================== */
+.admin-badge {
+    background: linear-gradient(135deg, var(--folder-purple), var(--folder-blue));
+    color: white;
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 10px;
+    margin-left: 4px;
+    font-weight: 600;
+}
+
+/* Nav Link Styles for Win11 */
+.win11-nav-links {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+    margin-left: var(--space-lg);
+}
+
+.win11-nav-link {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+    padding: 6px 12px;
+    color: var(--win11-text-secondary);
+    text-decoration: none;
+    font-size: var(--text-sm);
+    border-radius: var(--win11-radius);
+    transition: all var(--transition-fast);
+}
+
+.win11-nav-link:hover {
+    background: var(--win11-hover);
+    color: var(--win11-text);
+}
+
+.win11-nav-link.active {
+    background: var(--win11-selected-bg);
+    color: var(--win11-selected);
+}
