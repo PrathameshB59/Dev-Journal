@@ -107,6 +107,31 @@
                     </div>
                 </li>
                 <li class="nav-item">
+                    <a href="#atlas-ai" class="nav-link">Atlas AI ▾</a>
+                    <div class="dropdown-menu">
+                        <a href="#atlas-architecture" class="dropdown-link">🧱 Production Architecture</a>
+                        <a href="#atlas-subscription" class="dropdown-link">🧠 Subscription & Budget</a>
+                        <a href="#atlas-providers" class="dropdown-link">🤖 Provider Strategy</a>
+                        <a href="#atlas-fallback" class="dropdown-link">🔁 Fallback / Premium</a>
+                        <a href="#atlas-together-vs-groq" class="dropdown-link">⚡ Together AI vs Groq</a>
+                        <a href="#atlas-cost-breakdown" class="dropdown-link">💸 Cost Breakdown</a>
+                        <a href="#atlas-cost-per-feature" class="dropdown-link">🧩 Cost per Feature</a>
+                        <a href="#atlas-multi-provider" class="dropdown-link">🧠 Multi-Provider Decision</a>
+                        <a href="#atlas-budget-500" class="dropdown-link">💰 ₹500 Budget Plan</a>
+                        <a href="#atlas-system-arch" class="dropdown-link">🧱 System Architecture</a>
+                        <a href="#atlas-nodejs-arch" class="dropdown-link">🧱 Node.js Architecture</a>
+                        <a href="#atlas-universal-design" class="dropdown-link">🌍 Universal Service</a>
+                        <a href="#atlas-naming" class="dropdown-link">🏷 Naming Decision</a>
+                        <a href="#atlas-name-lock" class="dropdown-link">🔒 Name Lock</a>
+                        <a href="#atlas-per-user-budget" class="dropdown-link">👤 Per-User Budget</a>
+                        <a href="#atlas-monetization" class="dropdown-link">💳 Monetization</a>
+                        <a href="#atlas-coupons" class="dropdown-link">🎟 Coupon System</a>
+                        <a href="#atlas-dynamic-coupons" class="dropdown-link">⚙️ Dynamic Coupons</a>
+                        <a href="#atlas-file-explorer" class="dropdown-link">🗂️ File Explorer Architecture</a>
+                        <a href="#atlas-mongodb-ai" class="dropdown-link">🤖 MongoDB Atlas AI</a>
+                    </div>
+                </li>
+                <li class="nav-item">
                     <a href="#dev-journal" class="nav-link">Dev-Journal ▾</a>
                     <div class="dropdown-menu">
                         <a href="#dev-journal-done" class="dropdown-link">✅ What We Have Done</a>
@@ -6902,6 +6927,2139 @@ pm2 unstartup systemd</code></pre>
         </blockquote>
     </div>
 
+    <!-- ATLAS AI SECTIONS -->
+    <div class="card full" id="atlas-ai">
+        <h2>🤖 Atlas AI – Universal AI Core Service</h2>
+        <p class="muted">Multi-provider AI routing, budget enforcement, and cost control</p>
+    </div>
+
+    <div class="card full" id="atlas-architecture">
+        <h2>🧱 Final Production Architecture</h2>
+
+        <h3>High-Level Flow</h3>
+        <pre>
+Client / App
+    ↓
+Atlas API (Node.js / Express)
+    ↓
+AI Router (aiRouter.js)
+    ↓
+Budget Guard (MongoDB)
+    ↓
+OpenAI (deep reasoning) | Groq (fast help)
+        </pre>
+        <p class="muted">
+            Applications never talk to AI providers directly.
+        </p>
+
+        <h3>Core Rules (Non-Negotiable)</h3>
+        <ul>
+            <li>Atlas never exceeds <strong>$5 per user per month</strong></li>
+            <li>Budget checked before every AI call</li>
+            <li>Usage recorded after every response</li>
+            <li>No fallback after limit is reached</li>
+            <li>MongoDB is the single source of truth</li>
+        </ul>
+
+        <h3>Why This Works</h3>
+        <ul>
+            <li>Predictable AI costs</li>
+            <li>Production-safe routing</li>
+            <li>No vendor lock-in at app level</li>
+            <li>Scales across multiple projects</li>
+        </ul>
+    </div>
+
+    <div class="card full" id="atlas-subscription">
+        <h2>🧠 Subscription, Budget & Coupons</h2>
+
+        <h3>What Atlas Is</h3>
+        <p>
+            <strong>Atlas</strong> is a universal AI core service used by multiple
+            projects (Dev-Journal, StackPilot, future apps).
+            It is not tied to any single project and runs as a standalone service.
+        </p>
+
+        <h3>AI Access Model</h3>
+        <ul>
+            <li>All Dev-Journal features are <strong>free</strong></li>
+            <li>AI features require an active Atlas AI subscription</li>
+            <li>Cost: <strong>₹300 per user per month</strong></li>
+            <li>Subscription is optional and user-specific</li>
+        </ul>
+
+        <h3>Monthly AI Budget (Hard Limit)</h3>
+        <ul>
+            <li>Each paid user gets <strong>₹300 AI usage per month</strong></li>
+            <li>Budget is enforced strictly by Atlas</li>
+            <li>Once ₹300 is reached:
+                <ul>
+                    <li>❌ AI requests are blocked</li>
+                    <li>❌ No fallback, no overuse</li>
+                    <li>✅ Access resets next month automatically</li>
+                </ul>
+            </li>
+        </ul>
+
+        <h3>AI Provider Split (Internal)</h3>
+        <ul>
+            <li>Together AI → ₹150 (default, long docs)</li>
+            <li>Groq → ₹50 (fast, short help)</li>
+            <li>OpenAI → ₹100 (deep reasoning)</li>
+        </ul>
+        <p class="muted">
+            Provider split is internal to Atlas and invisible to users.
+        </p>
+
+        <h3>Coupon System (Admin Controlled)</h3>
+        <ul>
+            <li>Admins can generate coupon codes</li>
+            <li>Coupons grant <strong>1–6 months of free AI access</strong></li>
+            <li>Coupon duration is adjustable per code</li>
+            <li>Coupons are limited by usage count and expiry date</li>
+        </ul>
+
+        <h3>Coupon Rules</h3>
+        <ul>
+            <li>One coupon per user (lifetime)</li>
+            <li>No stacking or extensions</li>
+            <li>Coupon users get the same ₹300/month limit</li>
+            <li>After coupon expiry, AI access is disabled automatically</li>
+        </ul>
+
+        <h3>Access Validation Flow</h3>
+        <pre>
+User → Dev-Journal (auth)
+     → Atlas (aiEnabled + expiry check)
+     → Monthly budget check (₹300)
+     → AI provider (if allowed)
+        </pre>
+
+        <h3>Why This Design</h3>
+        <ul>
+            <li>Prevents cost abuse</li>
+            <li>Scales to many users</li>
+            <li>Allows future paid plans</li>
+            <li>Keeps Atlas provider-agnostic</li>
+            <li>Production-safe and auditable</li>
+        </ul>
+    </div>
+
+    <div class="card full" id="atlas-providers">
+        <h2>🤖 Provider Strategy</h2>
+
+        <h3>Why Atlas Uses Multiple AI Providers</h3>
+        <p>
+            Atlas is designed as a <strong>provider-agnostic AI core</strong>.
+            Instead of depending on a single AI vendor, Atlas dynamically routes
+            requests to different providers based on cost, performance, and use case.
+        </p>
+        <p class="muted">
+            This avoids vendor lock-in, reduces cost, and keeps the system future-proof.
+        </p>
+
+        <h3>Together AI vs OpenAI (Dev-Journal Focus)</h3>
+        <table style="width:100%; border-collapse: collapse; font-size:14px;">
+            <thead>
+                <tr style="border-bottom:1px solid #1f2937;">
+                    <th align="left">Aspect</th>
+                    <th align="left">OpenAI</th>
+                    <th align="left">Together AI</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>Code explanation</td><td>⭐⭐⭐⭐⭐</td><td>⭐⭐⭐⭐</td></tr>
+                <tr><td>Architecture reasoning</td><td>⭐⭐⭐⭐⭐</td><td>⭐⭐⭐⭐</td></tr>
+                <tr><td>Long context clarity</td><td>⭐⭐⭐⭐⭐</td><td>⭐⭐⭐⭐</td></tr>
+                <tr><td>Human-like polish</td><td>⭐⭐⭐⭐⭐</td><td>⭐⭐⭐</td></tr>
+                <tr><td>Cost efficiency</td><td>💸💸💸</td><td>💸</td></tr>
+                <tr><td>Open-source models</td><td>❌</td><td>✅</td></tr>
+                <tr><td>Vendor lock-in</td><td>High</td><td>Low</td></tr>
+                <tr><td>Future self-hosting</td><td>❌</td><td>✅</td></tr>
+            </tbody>
+        </table>
+
+        <h3>How Atlas Uses These Providers</h3>
+        <ul>
+            <li><strong>Together AI</strong> is the default provider for:
+                <ul>
+                    <li>Daily dev logs</li>
+                    <li>Summaries</li>
+                    <li>Documentation generation</li>
+                    <li>Markdown cleanup</li>
+                </ul>
+            </li>
+            <li><strong>OpenAI</strong> is used selectively for:
+                <ul>
+                    <li>Deep architectural explanations</li>
+                    <li>Complex reasoning tasks</li>
+                    <li>High-importance AI requests</li>
+                </ul>
+            </li>
+        </ul>
+
+        <h3>Cost-Aware Routing (Atlas Rule)</h3>
+        <pre>
+IF monthlyUsage &lt; ₹300
+  → Route to best-fit provider
+ELSE
+  → Block AI request until next month
+        </pre>
+        <p class="muted">
+            Atlas never exceeds the per-user monthly limit.
+            Once ₹300 is reached, AI usage is stopped completely.
+        </p>
+
+        <h3>Final Decision</h3>
+        <p>
+            Atlas uses <strong>Together AI as the default</strong> for cost efficiency
+            and <strong>OpenAI as a premium fallback</strong> for quality.
+        </p>
+        <p>This combination delivers:</p>
+        <ul>
+            <li>Low operating cost</li>
+            <li>High-quality explanations when needed</li>
+            <li>Strong privacy guarantees</li>
+            <li>Long-term flexibility</li>
+        </ul>
+    </div>
+
+    <div class="card full" id="atlas-fallback">
+        <h2>🔁 Fallback / Premium Mode</h2>
+
+        <h3>What "Fallback / Premium Mode" Means</h3>
+        <p>
+            Atlas does not rely on a single AI provider.
+            Instead, it follows a <strong>cost-aware fallback strategy</strong>.
+        </p>
+        <p>The idea is simple:</p>
+        <ul>
+            <li><strong>Use Together AI by default</strong> for most requests</li>
+            <li><strong>Fallback to OpenAI only when higher quality is required</strong></li>
+        </ul>
+        <p class="muted">
+            This avoids unnecessary cost while preserving output quality.
+        </p>
+
+        <h3>Default Mode (Primary Path)</h3>
+        <ul>
+            <li>Provider: <strong>Together AI</strong></li>
+            <li>Used for ~90% of requests</li>
+            <li>Optimized for cost and speed</li>
+        </ul>
+        <p>Typical use cases:</p>
+        <ul>
+            <li>Daily development logs</li>
+            <li>Summaries and rewrites</li>
+            <li>Git commit explanations</li>
+            <li>VPS troubleshooting notes</li>
+            <li>Markdown cleanup</li>
+        </ul>
+        <p class="muted">
+            Cheap, fast, and sufficient for most documentation workflows.
+        </p>
+
+        <h3>Premium / Fallback Mode</h3>
+        <ul>
+            <li>Provider: <strong>OpenAI</strong></li>
+            <li>Used selectively</li>
+            <li>Consumes budget faster</li>
+        </ul>
+        <p>Triggered when:</p>
+        <ul>
+            <li>Explanation complexity is high</li>
+            <li>Architectural reasoning is required</li>
+            <li>Output quality is critical</li>
+            <li>Default provider response is insufficient</li>
+        </ul>
+        <p class="muted">
+            This path is intentionally limited to protect the ₹300/month quota.
+        </p>
+
+        <h3>Fallback Decision Flow</h3>
+        <pre>
+User request
+   ↓
+Route to Together AI (default)
+   ↓
+Is response acceptable?
+   ├─ YES → Save &amp; return
+   └─ NO  → Retry with OpenAI (if budget allows)
+        </pre>
+        <p class="muted">
+            The user does not need to manually choose providers.
+            Atlas handles this automatically.
+        </p>
+
+        <h3>Budget Interaction</h3>
+        <ul>
+            <li>Fallback does <strong>not</strong> bypass the monthly ₹300 limit</li>
+            <li>If the user has exhausted their quota:
+                <ul>
+                    <li>❌ No fallback occurs</li>
+                    <li>❌ No provider is called</li>
+                    <li>✅ Request is blocked until next month</li>
+                </ul>
+            </li>
+        </ul>
+
+        <h3>Why This Design</h3>
+        <ul>
+            <li>Prevents unnecessary OpenAI usage</li>
+            <li>Keeps costs predictable</li>
+            <li>Maintains high-quality output when needed</li>
+            <li>Avoids vendor lock-in</li>
+            <li>Scales safely for public users</li>
+        </ul>
+    </div>
+
+    <div class="card full" id="atlas-together-vs-groq">
+        <h2>⚡ Together AI vs Groq</h2>
+
+        <h3>Purpose of Using Two Providers</h3>
+        <p>
+            Atlas uses both <strong>Together AI</strong> and <strong>Groq</strong>
+            because they solve different problems.
+        </p>
+        <p class="muted">
+            One focuses on quality and documentation, the other on speed and instant responses.
+        </p>
+
+        <h3>High-Level Difference</h3>
+        <table style="width:100%; border-collapse: collapse; font-size:14px;">
+            <thead>
+                <tr style="border-bottom:1px solid #1f2937;">
+                    <th align="left">Aspect</th>
+                    <th align="left">Together AI</th>
+                    <th align="left">Groq</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>Primary focus</td><td>Quality + control</td><td>Speed + cost</td></tr>
+                <tr><td>Best for</td><td>Docs, summaries, explanations</td><td>Instant answers, quick help</td></tr>
+                <tr><td>Long reasoning</td><td>✅ Strong</td><td>⚠️ Limited</td></tr>
+                <tr><td>Response speed</td><td>Normal</td><td>🚀 Near-instant</td></tr>
+                <tr><td>Cost efficiency</td><td>Low</td><td>Very low</td></tr>
+                <tr><td>Model flexibility</td><td>High</td><td>Limited</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Dev-Journal Use Case Comparison</h3>
+        <table style="width:100%; border-collapse: collapse; font-size:14px;">
+            <thead>
+                <tr style="border-bottom:1px solid #1f2937;">
+                    <th align="left">Task</th>
+                    <th align="left">Together AI</th>
+                    <th align="left">Groq</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>Daily dev logs</td><td>⭐⭐⭐⭐</td><td>⭐⭐⭐</td></tr>
+                <tr><td>Markdown cleanup</td><td>⭐⭐⭐⭐</td><td>⭐⭐⭐</td></tr>
+                <tr><td>Architecture explanation</td><td>⭐⭐⭐⭐</td><td>⭐⭐</td></tr>
+                <tr><td>Code explanation</td><td>⭐⭐⭐⭐</td><td>⭐⭐⭐</td></tr>
+                <tr><td>Instant error help</td><td>⭐⭐⭐</td><td>⭐⭐⭐⭐⭐</td></tr>
+            </tbody>
+        </table>
+
+        <h3>How Atlas Uses Each Provider</h3>
+        <ul>
+            <li><strong>Together AI</strong> is used as the default provider for:
+                <ul>
+                    <li>Daily development logs</li>
+                    <li>Summaries and rewrites</li>
+                    <li>Documentation generation</li>
+                    <li>Structured explanations</li>
+                </ul>
+            </li>
+            <li><strong>Groq</strong> is used for:
+                <ul>
+                    <li>Instant error explanations</li>
+                    <li>Quick "what is this?" queries</li>
+                    <li>Terminal-style fast responses</li>
+                </ul>
+            </li>
+        </ul>
+
+        <h3>Design Decision</h3>
+        <p>
+            Atlas treats Together AI as the <strong>thinking and writing layer</strong>,
+            and Groq as the <strong>speed layer</strong>.
+        </p>
+        <p class="muted">
+            This separation keeps costs low while preserving a fast user experience.
+        </p>
+    </div>
+
+    <div class="card full" id="atlas-cost-breakdown">
+        <h2>💸 Cost Breakdown & Budget Planning</h2>
+
+        <h3>Assumptions (Realistic Usage)</h3>
+        <ul>
+            <li>1,000–2,000 AI requests per user per month</li>
+            <li>Mostly short to medium responses</li>
+            <li>Occasional long architectural explanations</li>
+            <li>Daily dev logs, summaries, and VPS notes</li>
+        </ul>
+        <p class="muted">
+            These numbers reflect real Dev-Journal usage, not theoretical benchmarks.
+        </p>
+
+        <h3>Together AI – Main Brain (70–80%)</h3>
+        <ul>
+            <li>Daily development logs</li>
+            <li>Markdown cleanup</li>
+            <li>Summaries</li>
+            <li>Documentation generation</li>
+        </ul>
+        <p><strong>Estimated monthly cost:</strong></p>
+        <ul>
+            <li>$1 – $4</li>
+            <li>₹80 – ₹330</li>
+        </ul>
+        <p class="muted">This provider handles most requests due to its cost efficiency.</p>
+
+        <h3>Groq – Speed Booster (15–20%)</h3>
+        <ul>
+            <li>Instant error explanations</li>
+            <li>Quick "what is this?" queries</li>
+            <li>Terminal-style fast responses</li>
+        </ul>
+        <p><strong>Estimated monthly cost:</strong></p>
+        <ul>
+            <li>$0.20 – $1</li>
+            <li>₹15 – ₹80</li>
+        </ul>
+        <p class="muted">Extremely low cost and near-instant responses.</p>
+
+        <h3>OpenAI – Premium Fallback (5–10%)</h3>
+        <ul>
+            <li>Complex reasoning</li>
+            <li>System architecture explanations</li>
+            <li>High-importance AI requests</li>
+        </ul>
+        <p><strong>Estimated monthly cost:</strong></p>
+        <ul>
+            <li>$2 – $5</li>
+            <li>₹170 – ₹420</li>
+        </ul>
+        <p class="muted">Used sparingly to preserve quality without overspending.</p>
+
+        <h3>Total Monthly Cost (Per User)</h3>
+        <p><strong>Conservative usage:</strong></p>
+        <pre>
+Together AI → $1.5
+Groq        → $0.5
+OpenAI      → $2.0
+--------------------
+Total       → ~$4 / month
+        </pre>
+        <p><strong>Heavy usage:</strong></p>
+        <pre>
+Together AI → $4
+Groq        → $1
+OpenAI      → $5
+--------------------
+Total       → ~$10 / month
+        </pre>
+
+        <h3>Atlas Budget Enforcement</h3>
+        <ul>
+            <li>Per-user AI limit: <strong>₹300 per month</strong></li>
+            <li>Once ₹300 is reached:
+                <ul>
+                    <li>❌ No provider is called</li>
+                    <li>❌ No fallback occurs</li>
+                    <li>✅ Access resumes next month</li>
+                </ul>
+            </li>
+        </ul>
+        <p class="muted">Atlas enforces a hard stop to prevent accidental overspending.</p>
+
+        <h3>Key Takeaway</h3>
+        <p>
+            Atlas delivers near-OpenAI quality, Groq-level speed, and Together AI pricing
+            while keeping per-user AI cost strictly capped.
+        </p>
+        <p class="muted">This makes Atlas safe for public usage and scalable across many users.</p>
+    </div>
+
+    <div class="card full" id="atlas-cost-per-feature">
+        <h2>🧩 Cost per Feature / Button</h2>
+
+        <h3>Baseline Assumptions</h3>
+        <ul>
+            <li>Average note length: <strong>300–600 words</strong></li>
+            <li>Average AI response: <strong>150–400 words</strong></li>
+            <li>Each feature used <strong>5–30 times per month</strong></li>
+            <li>Atlas routes requests automatically by cost and use case</li>
+        </ul>
+        <p class="muted">These estimates reflect real Dev-Journal usage, not theoretical benchmarks.</p>
+
+        <h3>1️⃣ Save Daily Dev Log</h3>
+        <ul>
+            <li>Purpose: Enhance / clean / rewrite notes</li>
+            <li>Provider: <strong>Together AI</strong></li>
+            <li>Usage: ~30 times/month</li>
+        </ul>
+        <p><strong>Estimated cost:</strong> $0.30 – $0.60 / month (₹25 – ₹50)</p>
+        <p class="muted">Cheap enough to remain always enabled.</p>
+
+        <h3>2️⃣ Summarize Today's Work</h3>
+        <ul>
+            <li>Purpose: End-of-day summary</li>
+            <li>Provider: <strong>Together AI</strong></li>
+            <li>Usage: ~20 times/month</li>
+        </ul>
+        <p><strong>Estimated cost:</strong> $0.40 – $0.80 / month (₹35 – ₹70)</p>
+
+        <h3>3️⃣ Explain Git Commit</h3>
+        <ul>
+            <li>Purpose: Convert commit diffs into explanations</li>
+            <li>Provider: <strong>Together AI</strong></li>
+            <li>Usage: ~10–15 times/month</li>
+        </ul>
+        <p><strong>Estimated cost:</strong> $0.30 – $0.70 / month (₹25 – ₹60)</p>
+
+        <h3>4️⃣ Quick Error Help ⚡</h3>
+        <ul>
+            <li>Purpose: Instant error explanations</li>
+            <li>Provider: <strong>Groq</strong></li>
+            <li>Usage: ~20–40 times/month</li>
+        </ul>
+        <p><strong>Estimated cost:</strong> $0.10 – $0.30 / month (₹8 – ₹25)</p>
+        <p class="muted">This is where Groq excels: ultra-fast and extremely cheap.</p>
+
+        <h3>5️⃣ Explain This Concept (Premium)</h3>
+        <ul>
+            <li>Purpose: Deep reasoning (architecture, infra, learning)</li>
+            <li>Provider: <strong>OpenAI</strong></li>
+            <li>Usage: ~5–10 times/month</li>
+        </ul>
+        <p><strong>Estimated cost:</strong> $1.50 – $3.00 / month (₹120 – ₹250)</p>
+        <p class="muted">This is the most expensive feature and is strictly limited.</p>
+
+        <h3>6️⃣ Rewrite as Documentation</h3>
+        <ul>
+            <li>Purpose: Convert raw notes into clean markdown docs</li>
+            <li>Provider: <strong>Together AI</strong></li>
+            <li>Usage: ~10 times/month</li>
+        </ul>
+        <p><strong>Estimated cost:</strong> $0.40 – $0.90 / month (₹35 – ₹75)</p>
+
+        <h3>7️⃣ Auto Fallback Retry</h3>
+        <ul>
+            <li>Purpose: Retry with higher-quality provider</li>
+            <li>Provider: <strong>OpenAI</strong></li>
+            <li>Usage: ~3–5 times/month</li>
+        </ul>
+        <p><strong>Estimated cost:</strong> $0.50 – $1.00 / month (₹40 – ₹80)</p>
+
+        <h3>Total Monthly Cost (Per User)</h3>
+        <table style="width:100%; border-collapse:collapse; font-size:14px;">
+            <thead>
+                <tr style="border-bottom:1px solid #1f2937;">
+                    <th align="left">Feature Group</th>
+                    <th align="left">Estimated Cost</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>Daily dev logs</td><td>$0.5</td></tr>
+                <tr><td>Daily summary</td><td>$0.6</td></tr>
+                <tr><td>Git commits</td><td>$0.5</td></tr>
+                <tr><td>Quick errors</td><td>$0.2</td></tr>
+                <tr><td>Deep explanations</td><td>$2.0</td></tr>
+                <tr><td>Doc rewrite</td><td>$0.6</td></tr>
+                <tr><td>Fallback retries</td><td>$0.7</td></tr>
+                <tr><td><strong>Total</strong></td><td><strong>~$5 – $6 (₹400 – ₹550)</strong></td></tr>
+            </tbody>
+        </table>
+
+        <h3>Atlas Cost Control Rules</h3>
+        <ul>
+            <li>Monthly per-user hard limit: <strong>₹300</strong></li>
+            <li>Expensive features are rate-limited</li>
+            <li>No provider is called once the limit is reached</li>
+            <li>Usage resets automatically next month</li>
+        </ul>
+        <p class="muted">Atlas ensures predictable spending and zero surprise bills.</p>
+
+        <h3>Key Takeaway</h3>
+        <p>
+            Each AI feature costs <strong>paise, not rupees</strong>.
+            Only deep reasoning features consume meaningful budget.
+        </p>
+    </div>
+
+    <div class="card full" id="atlas-multi-provider">
+        <h2>🧠 Multi-Provider Architecture Decision</h2>
+
+        <h3>Final Verdict</h3>
+        <p>
+            Atlas intentionally uses a <strong>multi-provider AI architecture</strong>
+            instead of relying on a single AI vendor.
+        </p>
+        <p>
+            This approach delivers <strong>quality, speed, privacy, and cost control</strong>
+            simultaneously.
+        </p>
+        <p class="muted">Atlas is designed as a smart AI router, not a simple API wrapper.</p>
+
+        <h3>Together AI — Daily Workhorse</h3>
+        <ul>
+            <li>Default provider for most AI requests</li>
+            <li>Handles ~70–80% of usage</li>
+            <li>Optimized for documentation, summaries, and journaling</li>
+            <li>Uses open-source models</li>
+            <li>Low cost and no vendor lock-in</li>
+        </ul>
+        <p class="muted">Together AI is the backbone of Atlas for everyday workloads.</p>
+
+        <h3>Groq — Instant Help Path</h3>
+        <ul>
+            <li>Used for fast, short responses</li>
+            <li>Ideal for error explanations and quick questions</li>
+            <li>Near-instant latency</li>
+            <li>Extremely low cost</li>
+        </ul>
+        <p class="muted">Groq provides a terminal-like experience for instant feedback.</p>
+
+        <h3>OpenAI — Premium Reasoning Layer</h3>
+        <ul>
+            <li>Used only for complex or high-importance requests</li>
+            <li>Best reasoning and explanation quality</li>
+            <li>Consumes budget faster</li>
+            <li>Strictly rate-limited</li>
+        </ul>
+        <p class="muted">OpenAI is reserved for situations where quality matters more than cost.</p>
+
+        <h3>Why a Single Provider Is Not Enough</h3>
+        <ul>
+            <li><strong>Only OpenAI</strong> → Excellent quality but expensive and overkill</li>
+            <li><strong>Only Together AI</strong> → Cheap and private but weaker for deep reasoning</li>
+            <li><strong>Only Groq</strong> → Fast and cheap but unsuitable for long explanations</li>
+        </ul>
+        <p>A single-provider setup forces trade-offs. A multi-provider setup removes them.</p>
+
+        <h3>Industry-Standard Pattern</h3>
+        <ul>
+            <li>Simple tasks routed to low-cost models</li>
+            <li>Complex tasks routed to premium models</li>
+            <li>Strict budget enforcement</li>
+            <li>Provider complexity hidden from users</li>
+        </ul>
+        <p class="muted">Atlas follows the same pattern used by mature developer tools.</p>
+
+        <h3>Design Conclusion</h3>
+        <p>
+            <strong>Together AI + Groq + OpenAI</strong> is not over-engineering.
+            It is a deliberate, cost-aware architecture choice.
+        </p>
+        <p class="muted">This design keeps Atlas fast, affordable, private, and future-proof.</p>
+    </div>
+
+    <div class="card full" id="atlas-budget-500">
+        <h2>💰 ₹500 Global Budget Planning</h2>
+
+        <h3>Budget Constraint</h3>
+        <p>
+            Atlas was initially designed and tested under a strict
+            <strong>₹500 per month global budget</strong>.
+        </p>
+        <p>
+            This constraint ensured that the system was built with
+            <strong>cost awareness, provider routing, and hard limits</strong>
+            from day one.
+        </p>
+        <p class="muted">₹500 ≈ $6 USD per month (approx).</p>
+
+        <h3>Recommended Provider Split (₹500 Plan)</h3>
+        <table style="width:100%; border-collapse:collapse; font-size:14px;">
+            <thead>
+                <tr style="border-bottom:1px solid #1f2937;">
+                    <th align="left">Provider</th>
+                    <th align="left">Role</th>
+                    <th align="left">Monthly Budget</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>Together AI</td><td>Primary AI (docs, summaries, journaling)</td><td>₹250 – ₹300</td></tr>
+                <tr><td>Groq</td><td>Instant help / fast responses</td><td>₹50 – ₹100</td></tr>
+                <tr><td>OpenAI</td><td>Premium reasoning (strictly limited)</td><td>₹80 – ₹120</td></tr>
+                <tr><td><strong>Total</strong></td><td></td><td><strong>₹380 – ₹480</strong></td></tr>
+            </tbody>
+        </table>
+        <p class="muted">The remaining buffer protects against minor usage spikes.</p>
+
+        <h3>Provider Usage Intent</h3>
+        <ul>
+            <li><strong>Together AI</strong> handles ~75–80% of all requests:
+                <ul>
+                    <li>Daily dev logs</li>
+                    <li>Summaries</li>
+                    <li>Commit explanations</li>
+                    <li>Markdown cleanup</li>
+                    <li>Documentation rewrite</li>
+                </ul>
+            </li>
+            <li><strong>Groq</strong> is used for:
+                <ul>
+                    <li>Quick error explanations</li>
+                    <li>Instant "what is this?" queries</li>
+                    <li>Terminal-style fast feedback</li>
+                </ul>
+            </li>
+            <li><strong>OpenAI</strong> is reserved strictly for:
+                <ul>
+                    <li>Deep architectural explanations</li>
+                    <li>Hard conceptual reasoning</li>
+                    <li>Fallback when other providers are insufficient</li>
+                </ul>
+            </li>
+        </ul>
+
+        <h3>Hard Limits (Non-Negotiable)</h3>
+        <ul>
+            <li>OpenAI: Maximum ~₹120 per month, auto-fallback disabled after limit</li>
+            <li>Together AI: Default provider, used only within allocated budget</li>
+            <li>Groq: Safe to treat as near-unlimited, still monitored</li>
+        </ul>
+        <p class="muted">These limits guarantee zero surprise billing.</p>
+
+        <h3>Operational Rule of Thumb</h3>
+        <blockquote>
+            If it's long and routine → Together AI<br />
+            If it's fast and short → Groq<br />
+            If it's hard and important → OpenAI
+        </blockquote>
+
+        <h3>Design Outcome</h3>
+        <p>
+            Operating Atlas under a ₹500 global budget proved that
+            a <strong>multi-provider, cost-aware AI system</strong>
+            can deliver high quality without overspending.
+        </p>
+        <p class="muted">This experiment directly informed the later per-user ₹300 subscription model.</p>
+    </div>
+
+    <div class="card full" id="atlas-system-arch">
+        <h2>🧱 System Architecture (₹500 Budget Plan)</h2>
+
+        <h3>Architecture Goal</h3>
+        <ul>
+            <li>Best AI quality where it matters</li>
+            <li>Fast user experience for quick help</li>
+            <li>Hard budget cap with no overspending</li>
+            <li>Easy to extend with new providers</li>
+            <li>No vendor lock-in</li>
+            <li>No surprise billing</li>
+        </ul>
+
+        <h3>High-Level Overview</h3>
+        <pre>
+Frontend (Web / App)
+        ↓
+Backend API (Node.js / Express)
+        ↓
+Atlas AI Router (Decision Layer)
+        ↓
+--------------------------------
+| Together AI | Groq | OpenAI |
+--------------------------------
+        ↓
+Response → Stored → Returned to User
+        </pre>
+        <p class="muted">The AI Router is the core intelligence of Atlas. All routing and budget decisions happen here.</p>
+
+        <h3>1️⃣ Frontend Layer</h3>
+        <p>The frontend provides AI-triggering actions such as:</p>
+        <ul>
+            <li>Save Dev Log</li>
+            <li>Rewrite as Documentation</li>
+            <li>Summarize Day</li>
+            <li>Quick Error Help</li>
+            <li>Explain Concept (Premium)</li>
+        </ul>
+        <p class="muted">The frontend never chooses the AI provider. It only sends intent and content.</p>
+        <pre>
+{
+  "action": "summarize_daily_log",
+  "text": "...",
+  "priority": "normal"
+}
+        </pre>
+
+        <h3>2️⃣ Backend API Layer</h3>
+        <ul>
+            <li>User authentication &amp; authorization</li>
+            <li>Journal entry persistence</li>
+            <li>Calling Atlas AI</li>
+            <li>Tracking AI usage</li>
+            <li>Subscription &amp; coupon validation</li>
+        </ul>
+        <p class="muted">This layer acts as the system's security, rules, and memory.</p>
+
+        <h3>3️⃣ Atlas AI Router (Core Logic)</h3>
+        <p>The AI Router decides which provider to use based on task type, cost, and remaining budget.</p>
+        <table style="width:100%; border-collapse:collapse; font-size:14px;">
+            <thead>
+                <tr style="border-bottom:1px solid #1f2937;">
+                    <th align="left">Task Type</th>
+                    <th align="left">Routed To</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>Daily logs</td><td>Together AI</td></tr>
+                <tr><td>Summaries</td><td>Together AI</td></tr>
+                <tr><td>Docs rewrite</td><td>Together AI</td></tr>
+                <tr><td>Commit explanation</td><td>Together AI</td></tr>
+                <tr><td>Quick errors</td><td>Groq</td></tr>
+                <tr><td>Instant help</td><td>Groq</td></tr>
+                <tr><td>Deep concepts</td><td>OpenAI</td></tr>
+                <tr><td>Fallback retry</td><td>OpenAI (limited)</td></tr>
+            </tbody>
+        </table>
+
+        <h3>4️⃣ Budget Guard (Non-Negotiable)</h3>
+        <pre>
+Check provider usage
+        ↓
+If limit reached → Block request
+        ↓
+Log usage
+        </pre>
+        <p>Initial ₹500 system-level allocation:</p>
+        <ul>
+            <li>OpenAI: ₹120 / month</li>
+            <li>Together AI: ₹300 / month</li>
+            <li>Groq: ₹80 / month</li>
+        </ul>
+        <p class="muted">If a provider limit is reached, Atlas stops routing requests to it. No automatic overspending is allowed.</p>
+
+        <h3>5️⃣ AI Provider Layer</h3>
+        <pre>
+/providers
+├── together.js
+├── groq.js
+└── openai.js
+        </pre>
+        <ul>
+            <li>Providers are fully isolated</li>
+            <li>Easy to replace or remove</li>
+            <li>No vendor-specific logic leaks into core code</li>
+        </ul>
+
+        <h3>6️⃣ Storage &amp; Usage Tracking</h3>
+        <p>Atlas stores:</p>
+        <ul>
+            <li>Raw user input</li>
+            <li>AI-generated output</li>
+            <li>Provider used</li>
+            <li>Estimated cost</li>
+            <li>Monthly usage totals</li>
+        </ul>
+        <p class="muted">This enables auditing, analytics, and future billing insights.</p>
+
+        <h3>End-to-End Request Flow</h3>
+        <pre>
+User Action
+  → Backend API
+    → Atlas AI Router
+      → Budget Check
+        → AI Provider
+          → Response Stored
+            → Returned to User
+        </pre>
+
+        <h3>Why This Architecture Works</h3>
+        <ul>
+            <li>Cost fits strict budget constraints</li>
+            <li>Quality used only when necessary</li>
+            <li>Fast UX for common actions</li>
+            <li>Safe for public users</li>
+            <li>Scales across multiple projects</li>
+        </ul>
+    </div>
+
+    <div class="card full" id="atlas-nodejs-arch">
+        <h2>🧱 Node.js VPS Architecture</h2>
+
+        <h3>Context &amp; Alignment</h3>
+        <p>
+            Atlas is designed to integrate directly with the existing
+            <strong>Node.js + Express + VPS</strong> stack.
+            No framework replacement or architectural rewrite is required.
+        </p>
+        <p class="muted">
+            Earlier references to Django or FastAPI were generic examples and
+            do not apply to the actual implementation.
+        </p>
+
+        <h3>Current Backend Stack</h3>
+        <pre>
+Node.js (Express)
+PM2
+Nginx
+MongoDB Atlas
+JWT Authentication
+RBAC (Role-Based Access Control)
+        </pre>
+        <p class="muted">Atlas is built to operate natively within this environment.</p>
+
+        <h3>High-Level Architecture</h3>
+        <pre>
+Frontend (HTML / CSS / JS)
+        ↓
+Express API (JWT + RBAC)
+        ↓
+Atlas AI Router (Node.js)
+        ↓
+----------------------------------
+| Together AI | Groq | OpenAI |
+----------------------------------
+        ↓
+MongoDB (Entries + AI Usage Logs)
+        </pre>
+        <p class="muted">The Atlas AI Router is the decision layer responsible for provider selection and budget enforcement.</p>
+
+        <h3>Project Placement</h3>
+        <p>Atlas is added as a dedicated AI module inside the backend. No existing controllers or middleware are modified.</p>
+        <pre>
+backend/src/
+├── ai/
+│   ├── router.js     ← AI routing logic
+│   ├── together.js   ← Together AI client
+│   ├── groq.js       ← Groq client
+│   ├── openai.js     ← OpenAI client
+│   └── budget.js     ← Budget enforcement
+        </pre>
+        <p class="muted">Existing authentication, RBAC, and rate-limiting remain untouched.</p>
+
+        <h3>AI Routing Rules</h3>
+        <table style="width:100%; border-collapse:collapse; font-size:14px;">
+            <thead>
+                <tr style="border-bottom:1px solid #1f2937;">
+                    <th align="left">Feature</th>
+                    <th align="left">Provider</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>Save dev log</td><td>Together AI</td></tr>
+                <tr><td>Summarize day</td><td>Together AI</td></tr>
+                <tr><td>Rewrite documentation</td><td>Together AI</td></tr>
+                <tr><td>Explain commit</td><td>Together AI</td></tr>
+                <tr><td>Quick error help</td><td>Groq</td></tr>
+                <tr><td>Instant "what is this?"</td><td>Groq</td></tr>
+                <tr><td>Explain deep concept</td><td>OpenAI</td></tr>
+                <tr><td>Retry if response is weak</td><td>OpenAI (limited)</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Budget Guard (System-Level)</h3>
+        <p>Atlas enforces strict monthly provider limits to prevent accidental overspending.</p>
+        <pre>
+Together AI → ₹300 / month
+Groq        → ₹80  / month
+OpenAI      → ₹120 / month
+--------------------------
+TOTAL       → ₹500 (hard cap)
+        </pre>
+        <ul>
+            <li>OpenAI is disabled automatically when its limit is reached</li>
+            <li>No provider is allowed to exceed its assigned budget</li>
+            <li>No silent fallback after limits are hit</li>
+        </ul>
+
+        <h3>Example Request Flow</h3>
+        <pre>
+User Action
+  → POST /api/ai/explain
+    → Auth middleware
+    → Rate limit
+    → Atlas AI Router
+        → Budget check
+            → OpenAI (if allowed)
+            → Otherwise block or downgrade
+    → Response saved
+    → Response returned
+        </pre>
+        <p class="muted">This flow matches the existing Express controller pattern.</p>
+
+        <h3>AI Usage Tracking</h3>
+        <p>Atlas records AI usage for auditing and cost control.</p>
+        <pre>
+AiUsage {
+  userId,
+  provider,        // together | groq | openai
+  feature,         // explain, summarize, quick-help
+  estimatedCost,
+  createdAt
+}
+        </pre>
+        <p class="muted">This data enables analytics, dashboards, and future billing logic.</p>
+
+        <h3>Security &amp; Deployment</h3>
+        <ul>
+            <li>All AI endpoints are protected by JWT</li>
+            <li>RBAC controls feature access</li>
+            <li>Rate limiting prevents abuse</li>
+            <li>Helmet and CSP already applied</li>
+            <li>No new ports or services required</li>
+        </ul>
+        <p class="muted">Atlas runs behind Nginx and is managed by PM2 like other services.</p>
+
+        <h3>Design Outcome</h3>
+        <ul>
+            <li>Uses the existing Node.js stack</li>
+            <li>Fits strict budget constraints</li>
+            <li>No vendor lock-in</li>
+            <li>Easy to extend or refactor</li>
+            <li>Production-grade, not experimental</li>
+        </ul>
+    </div>
+
+    <div class="card full" id="atlas-universal-design">
+        <h2>🌍 Universal AI Service Design</h2>
+
+        <h3>Design Intent</h3>
+        <p>
+            Atlas is intentionally designed as a
+            <strong>universal AI service</strong> that lives
+            <strong>beside application projects</strong>, not inside them.
+        </p>
+        <p>
+            This approach follows mature infrastructure practices where
+            shared capabilities are centralized and reused.
+        </p>
+
+        <h3>Core Requirements</h3>
+        <ul>
+            <li><strong>Separate AI project</strong> — Not tied to Dev-Journal or ShopEase. Reusable by any current or future project.</li>
+            <li><strong>Lives in the same <code>dev/projects</code> directory</strong> — Clean and organized structure. No coupling between projects.</li>
+            <li><strong>Future-proof by design</strong> — Supports multiple AI providers. Usable by web apps, APIs, and CLI tools. Scales from small budgets to larger usage.</li>
+        </ul>
+
+        <h3>Correct Mental Model</h3>
+        <p>Atlas should be thought of as an <strong>internal AI platform / utility service</strong>.</p>
+        <p>It is not:</p>
+        <ul>
+            <li>❌ An application</li>
+            <li>❌ A feature inside another project</li>
+        </ul>
+        <p>It is:</p>
+        <ul>
+            <li>✅ A shared service</li>
+            <li>✅ Consumed by projects over HTTP</li>
+            <li>✅ Owned independently from business logic</li>
+        </ul>
+
+        <h3>Recommended Directory Structure</h3>
+        <pre>
+~/dev/projects/
+├── ai-core/        ← Universal AI Service (Atlas)
+├── Dev-Journal/
+├── ShopEase/
+├── FinTrack/       (future)
+└── experiments/    (prompts, tests, drafts)
+        </pre>
+        <p class="muted">This structure keeps AI infrastructure independent while remaining easily accessible to all projects.</p>
+
+        <h3>What <code>ai-core</code> Is Responsible For</h3>
+        <ul>
+            <li>Running as a standalone Node.js service</li>
+            <li>Exposing AI APIs over HTTP</li>
+            <li>Routing requests to AI providers</li>
+            <li>Enforcing per-user and monthly budgets</li>
+            <li>Tracking AI usage</li>
+        </ul>
+        <p class="muted">Atlas does not contain application-specific logic.</p>
+
+        <h3>Internal Structure (Future-Proof)</h3>
+        <pre>
+ai-core/
+├── src/
+│   ├── server.js
+│   ├── app.js
+│   ├── router/        # AI decision logic
+│   ├── providers/     # Together, Groq, OpenAI
+│   ├── budget/        # ₹300 per-user enforcement
+│   ├── api/           # /summarize /explain /quick
+│   └── utils/
+├── data/
+│   └── usage.json     # initial storage (DB later)
+├── .env
+├── package.json
+└── README.md
+        </pre>
+
+        <h3>How Other Projects Consume Atlas</h3>
+        <pre>
+Dev-Journal → http://localhost:9000/ai/summarize
+ShopEase    → http://localhost:9000/ai/explain
+CLI Script  → curl http://localhost:9000/ai/quick-help
+        </pre>
+        <p class="muted">Projects never import Atlas code directly. All communication happens over HTTP.</p>
+
+        <h3>Budget Ownership</h3>
+        <p>AI cost control is centralized inside Atlas. Individual projects cannot bypass budget rules.</p>
+        <ul>
+            <li>Monthly hard cap: <strong>₹300 per user</strong></li>
+            <li>Provider-level limits enforced internally</li>
+            <li>No silent overspending</li>
+        </ul>
+
+        <h3>Design Outcome</h3>
+        <ul>
+            <li>Single AI service for all projects</li>
+            <li>No duplicated AI logic</li>
+            <li>Predictable costs</li>
+            <li>Easy provider replacement</li>
+            <li>Scales cleanly over time</li>
+        </ul>
+        <p class="muted">This is a platform-level design decision, not a convenience shortcut.</p>
+    </div>
+
+    <div class="card full" id="atlas-naming">
+        <h2>🏷 Naming & Identity Decision</h2>
+
+        <h3>Why Naming Matters</h3>
+        <p>
+            The name of the AI system is treated as part of the architecture,
+            not as a cosmetic detail. Atlas is designed to exist long-term as infrastructure,
+            so its name must reflect stability, neutrality, and purpose.
+        </p>
+
+        <h3>Design Requirements for the Name</h3>
+        <ul>
+            <li>Universal and reusable across projects</li>
+            <li>Developer-first and infrastructure-oriented</li>
+            <li>VPS and backend friendly</li>
+            <li>Future-proof and non-trendy</li>
+            <li>Not tied to a single application</li>
+            <li>Not playful or mascot-like</li>
+        </ul>
+
+        <h3>What the AI System Is (and Is Not)</h3>
+        <p><strong>Atlas is:</strong></p>
+        <ul>
+            <li>✅ A universal internal AI service</li>
+            <li>✅ Shared across multiple projects</li>
+            <li>✅ Focused on development, infrastructure, and documentation</li>
+            <li>✅ Deployed and operated on a VPS</li>
+        </ul>
+        <p><strong>Atlas is not:</strong></p>
+        <ul>
+            <li>❌ A chatbot toy</li>
+            <li>❌ A single-project feature</li>
+            <li>❌ An entertainment assistant</li>
+        </ul>
+
+        <h3>Names Considered</h3>
+        <table style="width:100%; border-collapse:collapse; font-size:14px;">
+            <thead>
+                <tr style="border-bottom:1px solid #1f2937;">
+                    <th align="left">Name</th>
+                    <th align="left">Meaning</th>
+                    <th align="left">Notes</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>Sentinel</td><td>Watcher / guardian</td><td>Strong infra tone, security-oriented</td></tr>
+                <tr><td>Atlas</td><td>Backbone / carrier</td><td>Infrastructure-focused, stable, universal</td></tr>
+                <tr><td>Relay</td><td>Router / connector</td><td>Architecturally accurate for AI routing</td></tr>
+                <tr><td>Nimbus</td><td>Cloud layer</td><td>Modern but less infra-serious</td></tr>
+                <tr><td>Forge</td><td>Build / craft</td><td>Developer-centric, good for tooling</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Rejected Naming Patterns</h3>
+        <ul>
+            <li>Overused pop-culture names</li>
+            <li>Vendor-tied names (e.g. GPT-based)</li>
+            <li>Playful or assistant-style branding</li>
+            <li>Names implying a chatbot or persona</li>
+        </ul>
+        <p class="muted">Atlas is infrastructure, not a mascot.</p>
+
+        <h3>Final Decision</h3>
+        <p>
+            The system is named <strong>Atlas</strong>.
+            Atlas represents a stable backbone that quietly supports
+            multiple applications without drawing attention to itself.
+        </p>
+
+        <h3>Practical Usage</h3>
+        <pre>
+~/dev/projects/
+├── atlas/
+│   ├── src/
+│   ├── providers/
+│   ├── budget/
+│   └── README.md
+        </pre>
+        <pre>
+Atlas: OpenAI budget exhausted, routing disabled
+Atlas: Request routed to Together AI
+        </pre>
+
+        <h3>Design Outcome</h3>
+        <ul>
+            <li>Name aligns with system responsibility</li>
+            <li>Works for API, logs, CLI, and documentation</li>
+            <li>Neutral and professional</li>
+            <li>Safe for long-term maintenance</li>
+        </ul>
+    </div>
+
+    <div class="card full" id="atlas-name-lock">
+        <h2>🔒 Name Lock & Identity</h2>
+
+        <h3>Final Name Confirmation</h3>
+        <p>
+            The AI system is officially named <strong>Atlas</strong>.
+            This decision is final and treated as part of the system architecture.
+            The name will not be changed going forward.
+        </p>
+
+        <h3>Why the Name "Atlas"</h3>
+        <ul>
+            <li><strong>Universal</strong> — shared across all projects</li>
+            <li><strong>Backbone</strong> — infrastructure-level, not a feature</li>
+            <li><strong>Quiet intelligence</strong> — reliable, non-intrusive</li>
+            <li><strong>Future-proof</strong> — suitable for API, CLI, UI, SaaS, or open-source</li>
+        </ul>
+        <p class="muted">Atlas is designed to support systems without drawing attention to itself.</p>
+
+        <h3>Identity Lock (Non-Negotiable)</h3>
+        <ul>
+            <li><strong>Project name:</strong> Atlas</li>
+            <li><strong>Role:</strong> Universal AI Core / Internal AI Platform</li>
+            <li><strong>Scope:</strong> All projects under <code>~/dev/projects/</code></li>
+            <li><strong>Monthly AI budget:</strong> ₹300 per user (hard cap)</li>
+        </ul>
+        <p class="muted">Consistency is critical for long-term maintainability.</p>
+
+        <h3>Directory Naming Standard</h3>
+        <pre>
+~/dev/projects/
+├── atlas/
+│   ├── src/
+│   ├── providers/
+│   ├── budget/
+│   ├── data/
+│   ├── package.json
+│   ├── .env
+│   └── README.md
+├── Dev-Journal/
+├── ShopEase/
+└── other-projects/
+        </pre>
+        <ul>
+            <li>Use <code>atlas</code> (lowercase) for folders and paths</li>
+            <li>Use <strong>Atlas</strong> (capitalized) in documentation, UI, and logs</li>
+        </ul>
+
+        <h3>Operational Tone Guide</h3>
+        <p>Atlas communicates in a calm, factual, infrastructure-oriented manner.</p>
+        <pre>
+Atlas: OpenAI budget exhausted, routing disabled
+Atlas: Request routed to Groq (fast path)
+Atlas: Monthly AI usage at 82%
+        </pre>
+        <p class="muted">No conversational tone, no humor, no emojis. Atlas behaves like infrastructure.</p>
+
+        <h3>Identity Statement</h3>
+        <blockquote>
+            <strong>Atlas</strong> is a universal AI core service designed to support
+            multiple projects from a single, centralized intelligence layer.
+            It prioritizes cost control, provider flexibility, and long-term maintainability.
+        </blockquote>
+
+        <h3>Post-Naming Execution Plan</h3>
+        <ol>
+            <li>Create the <code>atlas/</code> project skeleton (Node.js)</li>
+            <li>Write the Atlas <code>README.md</code> (vision + architecture)</li>
+            <li>Define the Atlas API contract (<code>/summarize</code>, <code>/explain</code>, <code>/quick</code>)</li>
+            <li>Implement the ₹300 per-user budget guard</li>
+            <li>Add Atlas as a managed PM2 service</li>
+        </ol>
+        <p class="muted">Provider integration follows only after the foundation is complete.</p>
+    </div>
+
+    <div class="card full" id="atlas-per-user-budget">
+        <h2>👤 Per-User Budget Enforcement</h2>
+
+        <h3>Problem Identification</h3>
+        <p>
+            Atlas was initially considered with a single global monthly AI budget.
+            This approach breaks immediately once the system is exposed to
+            multiple authenticated users.
+        </p>
+        <p class="muted">This issue was identified early and corrected at the architecture level.</p>
+
+        <h3>Correct Mental Model</h3>
+        <p>
+            Atlas must treat AI usage as a <strong>per-user resource</strong>,
+            not a shared global pool. Each authenticated user receives an isolated AI allowance.
+        </p>
+        <ul>
+            <li>❌ Not per project</li>
+            <li>❌ Not per server</li>
+            <li>❌ Not per API key</li>
+            <li>✅ Per authenticated user</li>
+        </ul>
+        <p class="muted">This aligns naturally with existing JWT authentication and RBAC.</p>
+
+        <h3>Final Budget Strategy</h3>
+        <p>Atlas enforces a strict <strong>₹300 per user per month</strong> AI budget.</p>
+        <ul>
+            <li>Fair and predictable for users</li>
+            <li>Scales safely for public access</li>
+            <li>No cross-user impact</li>
+            <li>No surprise billing</li>
+        </ul>
+
+        <h3>Per-User Budget Breakdown</h3>
+        <table style="width:100%; border-collapse:collapse; font-size:14px;">
+            <thead>
+                <tr style="border-bottom:1px solid #1f2937;">
+                    <th align="left">Provider</th>
+                    <th align="left">Monthly Limit (per user)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>Together AI</td><td>₹150</td></tr>
+                <tr><td>Groq</td><td>₹50</td></tr>
+                <tr><td>OpenAI</td><td>₹100</td></tr>
+                <tr><td><strong>Total</strong></td><td><strong>₹300 / user / month</strong></td></tr>
+            </tbody>
+        </table>
+        <p class="muted">One user reaching their limit has no effect on others.</p>
+
+        <h3>Updated Architecture Flow</h3>
+        <pre>
+User (JWT Authenticated)
+        ↓
+Dev-Journal Backend API
+        ↓
+Atlas AI Core
+        ↓
+Per-User Budget Check
+        ↓
+AI Provider (if allowed)
+        </pre>
+        <p class="muted">Atlas must receive a <code>userId</code> with every AI request.</p>
+
+        <h3>User-Aware Request Contract</h3>
+        <p>Every AI request sent to Atlas must include the user identity.</p>
+        <pre>
+{
+  "userId": "mongo_user_id_here",
+  "action": "summarize",
+  "text": "..."
+}
+        </pre>
+        <ul>
+            <li>Atlas does not manage authentication</li>
+            <li>Atlas trusts Dev-Journal JWT validation</li>
+            <li>Atlas only enforces budget and routing</li>
+        </ul>
+
+        <h3>Usage Tracking Model</h3>
+        <p>AI usage is tracked per user and per calendar month.</p>
+        <pre>
+AiUsage {
+  userId,
+  provider,     // together | groq | openai
+  cost,
+  month,        // YYYY-MM
+  createdAt
+}
+        </pre>
+        <p class="muted">Monthly totals are computed by summing usage for the active month.</p>
+
+        <h3>Behavior When Limit Is Reached</h3>
+        <ul>
+            <li>OpenAI requests are blocked</li>
+            <li>Groq requests are blocked</li>
+            <li>Together AI may optionally show a warning</li>
+            <li>AI access resumes automatically next month</li>
+        </ul>
+        <p class="muted">Clear feedback prevents user frustration.</p>
+
+        <h3>Global Safety Net</h3>
+        <table style="width:100%; border-collapse:collapse; font-size:14px;">
+            <thead>
+                <tr style="border-bottom:1px solid #1f2937;">
+                    <th align="left">Scope</th>
+                    <th align="left">Limit</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>Per user</td><td>₹300 / month</td></tr>
+                <tr><td>Global Atlas</td><td>₹3,000 / month</td></tr>
+            </tbody>
+        </table>
+        <p class="muted">If the global limit is reached, premium providers are temporarily disabled.</p>
+
+        <h3>Design Summary</h3>
+        <p>
+            Atlas enforces AI usage limits per user rather than globally.
+            Each user has an isolated monthly allowance that resets automatically.
+        </p>
+        <p class="muted">This design supports public usage, paid plans, coupons, and future upgrades without architectural changes.</p>
+    </div>
+
+    <div class="card full" id="atlas-monetization">
+        <h2>💳 Monetization & Access Model</h2>
+
+        <h3>Final Rule (Locked)</h3>
+        <p>
+            Dev-Journal operates under a strict separation between
+            <strong>core application features</strong> and
+            <strong>AI-powered features</strong>.
+        </p>
+        <blockquote>
+            All Dev-Journal features are free.<br />
+            AI features are paid — ₹300 per user per month.
+        </blockquote>
+
+        <h3>What Is Free</h3>
+        <ul>
+            <li>CRUD journal entries</li>
+            <li>File explorer interface</li>
+            <li>Dashboard and statistics</li>
+            <li>Authentication and authorization</li>
+            <li>RBAC and role management</li>
+            <li>Exports and basic tooling</li>
+        </ul>
+        <p class="muted">Core productivity features are never gated behind payment.</p>
+
+        <h3>What Is Paid</h3>
+        <ul>
+            <li>AI-powered summaries</li>
+            <li>AI explanations and reasoning</li>
+            <li>AI-assisted documentation rewrite</li>
+            <li>AI-based error analysis and help</li>
+        </ul>
+        <p>These features require an active Atlas AI subscription.</p>
+
+        <h3>Correct Mental Model</h3>
+        <p>Dev-Journal itself is <strong>not the paid product</strong>. The paid product is <strong>AI access via Atlas</strong>.</p>
+        <pre>
+Dev-Journal = Free Product
+Atlas AI    = Paid Add-on
+        </pre>
+        <p class="muted">Dev-Journal simply consumes Atlas as a service.</p>
+
+        <h3>AI Subscription Plan</h3>
+        <ul>
+            <li><strong>Price:</strong> ₹300 per month</li>
+            <li><strong>Scope:</strong> Per user</li>
+            <li><strong>Billing:</strong> Manual initially (Razorpay / Stripe later)</li>
+            <li><strong>Reset:</strong> Monthly</li>
+        </ul>
+        <p class="muted">Pricing is intentionally simple and predictable.</p>
+
+        <h3>User States</h3>
+        <table style="width:100%; border-collapse:collapse; font-size:14px;">
+            <thead>
+                <tr style="border-bottom:1px solid #1f2937;">
+                    <th align="left">State</th>
+                    <th align="left">Meaning</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td><code>aiEnabled = false</code></td><td>Free user (no AI access)</td></tr>
+                <tr><td><code>aiEnabled = true</code></td><td>Paid user (₹300 plan)</td></tr>
+            </tbody>
+        </table>
+        <p class="muted">This flag is stored in the Dev-Journal database, not in Atlas.</p>
+
+        <h3>Access Control Flow</h3>
+        <pre>
+User
+  ↓
+Dev-Journal Backend
+  ↓
+Check aiEnabled flag
+  ↓
+Atlas AI (budget enforcement)
+  ↓
+AI Providers
+        </pre>
+        <p class="muted">Atlas never decides who is paid. It only enforces usage rules.</p>
+
+        <h3>AI Request Contract</h3>
+        <p>Every AI request must explicitly declare whether AI access is enabled.</p>
+        <pre>
+{
+  "userId": "abc123",
+  "aiEnabled": true,
+  "action": "summarize",
+  "text": "..."
+}
+        </pre>
+        <p class="muted">Requests with <code>aiEnabled !== true</code> are rejected immediately.</p>
+
+        <h3>Budget Enforcement for Paid Users</h3>
+        <table style="width:100%; border-collapse:collapse; font-size:14px;">
+            <thead>
+                <tr style="border-bottom:1px solid #1f2937;">
+                    <th align="left">Provider</th>
+                    <th align="left">Monthly Limit</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>Together AI</td><td>₹150</td></tr>
+                <tr><td>Groq</td><td>₹50</td></tr>
+                <tr><td>OpenAI</td><td>₹100</td></tr>
+                <tr><td><strong>Total</strong></td><td><strong>₹300 / month</strong></td></tr>
+            </tbody>
+        </table>
+
+        <h3>Behavior When Limit Is Reached</h3>
+        <ul>
+            <li>AI requests are blocked immediately</li>
+            <li>No fallback or partial responses</li>
+            <li>No overuse beyond ₹300</li>
+            <li>Access automatically resets next month</li>
+        </ul>
+        <p class="muted">This guarantees zero surprise billing.</p>
+
+        <h3>User Experience Expectations</h3>
+        <p><strong>Free user:</strong></p>
+        <ul>
+            <li>AI buttons visible but disabled</li>
+            <li>Clear message: "AI features cost ₹300/month"</li>
+        </ul>
+        <p><strong>Paid user:</strong></p>
+        <ul>
+            <li>AI buttons enabled</li>
+            <li>Visible usage meter (e.g. ₹180 / ₹300)</li>
+        </ul>
+        <p><strong>User at limit:</strong></p>
+        <ul>
+            <li>AI buttons disabled</li>
+            <li>Message: "AI limit reached. Resets next month."</li>
+        </ul>
+
+        <h3>Security &amp; Abuse Prevention</h3>
+        <ul>
+            <li>All AI calls require JWT-authenticated backend requests</li>
+            <li>User identity is always known</li>
+            <li>RBAC already enforced upstream</li>
+            <li>Atlas never accepts direct browser calls</li>
+        </ul>
+        <p class="muted">This prevents budget abuse and unauthorized access.</p>
+
+        <h3>Design Summary</h3>
+        <blockquote>
+            Dev-Journal is free for everyone.<br />
+            Atlas AI is a paid add-on costing ₹300 per user per month.<br />
+            Dev-Journal controls access.<br />
+            Atlas enforces budget and routing.
+        </blockquote>
+        <p class="muted">This model is simple, scalable, and production-safe.</p>
+    </div>
+
+    <div class="card full" id="atlas-coupons">
+        <h2>🎟 Coupon & Free Trial System</h2>
+
+        <h3>Purpose</h3>
+        <p>
+            Atlas supports a coupon-based free trial system to enable user growth
+            without uncontrolled AI spending. Coupons grant <strong>temporary AI access</strong>
+            while still enforcing the standard <strong>₹300 per-user monthly budget</strong>.
+        </p>
+
+        <h3>Design Principles</h3>
+        <ul>
+            <li>Safe by default</li>
+            <li>Abuse-resistant</li>
+            <li>Cost-predictable</li>
+            <li>Future-proof</li>
+            <li>Clear separation of responsibilities</li>
+        </ul>
+
+        <h3>Responsibility Separation</h3>
+        <table style="width:100%; border-collapse:collapse; font-size:14px;">
+            <thead>
+                <tr style="border-bottom:1px solid #1f2937;">
+                    <th align="left">Component</th>
+                    <th align="left">Responsibility</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>Dev-Journal</td><td>User accounts, subscriptions, coupons</td></tr>
+                <tr><td>Atlas AI</td><td>AI access enforcement and budget control</td></tr>
+                <tr><td>AI Providers</td><td>Inference only (no business logic)</td></tr>
+            </tbody>
+        </table>
+        <p class="muted">Atlas never manages users, pricing, or coupons directly.</p>
+
+        <h3>High-Level Flow (Coupon → AI Access)</h3>
+        <pre>
+Admin creates coupon
+      ↓
+User applies coupon
+      ↓
+Dev-Journal validates coupon
+      ↓
+AI access enabled for limited duration
+      ↓
+Dev-Journal calls Atlas
+      ↓
+Atlas allows AI until expiry
+        </pre>
+        <p class="muted">Atlas only validates flags and dates; it never decides eligibility.</p>
+
+        <h3>Coupon Data Model (Dev-Journal)</h3>
+        <pre>
+Coupon {
+  code: "ATLAS-FREE-1M",
+  type: "FREE_SUBSCRIPTION",
+  durationDays: 30,
+  maxRedemptions: 100,
+  usedCount: 12,
+  expiresAt: ISODate,
+  active: true,
+  createdBy: adminId
+}
+        </pre>
+        <p class="muted">This model enables expiry, redemption limits, and abuse prevention.</p>
+
+        <h3>User Subscription Fields</h3>
+        <pre>
+User {
+  aiEnabled: true,
+  aiPlan: "PAID" | "COUPON",
+  aiExpiresAt: ISODate,
+  couponUsed: "ATLAS-FREE-1M"
+}
+        </pre>
+        <ul>
+            <li>Coupons do not stack</li>
+            <li>One coupon per user (lifetime)</li>
+            <li>Access automatically expires</li>
+        </ul>
+
+        <h3>Coupon Rules (Non-Negotiable)</h3>
+        <ul>
+            <li>One coupon per user (ever)</li>
+            <li>Coupon must be active and not expired</li>
+            <li><code>usedCount &lt; maxRedemptions</code></li>
+            <li>Coupons do not auto-renew</li>
+            <li>Coupons cannot be reused by the same user</li>
+        </ul>
+        <p class="muted">These rules prevent farming, abuse, and infinite free access.</p>
+
+        <h3>Atlas Integration Contract</h3>
+        <p>Every AI request sent to Atlas must include access flags and expiry data.</p>
+        <pre>
+{
+  "userId": "abc123",
+  "aiEnabled": true,
+  "aiExpiresAt": "2026-03-05T00:00:00Z"
+}
+        </pre>
+        <p><strong>Atlas validation logic:</strong></p>
+        <pre>
+IF aiEnabled !== true → reject
+IF now > aiExpiresAt → reject
+ELSE → allow AI (₹300 budget applies)
+        </pre>
+
+        <h3>Budget Handling for Coupon Users</h3>
+        <ul>
+            <li>Coupon users receive the same ₹300 monthly AI limit</li>
+            <li>No special quota or bypass</li>
+            <li>Usage resets monthly</li>
+            <li>Coupon duration limits total exposure</li>
+        </ul>
+        <p class="muted">Coupon users behave exactly like paid users from Atlas' perspective.</p>
+
+        <h3>User Experience Expectations</h3>
+        <p><strong>Free user:</strong> AI buttons disabled, prompt to subscribe or apply coupon</p>
+        <p><strong>Coupon applied:</strong> AI features enabled immediately, banner showing expiry date, usage meter visible</p>
+        <p><strong>Coupon expired:</strong> AI access disabled, clear upgrade prompt</p>
+
+        <h3>Admin Coupon Generation</h3>
+        <ul>
+            <li>Manual or automatic code generation</li>
+            <li>Configurable duration (e.g. 30 days)</li>
+            <li>Max redemption limits</li>
+            <li>Global expiry date</li>
+        </ul>
+        <p>Example coupon codes:</p>
+        <pre>
+ATLAS-FREE-1M
+STACKPILOT-AI
+DEVJOURNAL-TRIAL
+        </pre>
+
+        <h3>Future Extensions</h3>
+        <ul>
+            <li>Short trials (7 days)</li>
+            <li>Discount coupons</li>
+            <li>Referral-based extensions</li>
+            <li>Student or team plans</li>
+        </ul>
+        <p class="muted">All extensions can be added without modifying Atlas core logic.</p>
+
+        <h3>Final Rules (Locked)</h3>
+        <ul>
+            <li>One coupon = one user</li>
+            <li>Coupons grant temporary AI access only</li>
+            <li>₹300 monthly budget is always enforced</li>
+            <li>Atlas remains clean and provider-agnostic</li>
+            <li>Dev-Journal controls eligibility and lifecycle</li>
+        </ul>
+    </div>
+
+    <div class="card full" id="atlas-dynamic-coupons">
+        <h2>⚙️ Dynamic Coupons & Quota Control</h2>
+
+        <h3>Final Goals (Locked)</h3>
+        <ul>
+            <li><strong>Dynamic coupons</strong> — Admin can grant 1–6 months of free AI access. Duration is configurable per coupon. Usage is strictly controlled.</li>
+            <li><strong>Hard ₹300 monthly limit per user</strong> — Once the limit is reached, AI usage stops immediately. No overuse. No surprise costs.</li>
+            <li><strong>Atlas remains universal</strong> — Dev-Journal manages users, coupons, and plans. Atlas only enforces access rules and quotas.</li>
+        </ul>
+
+        <h3>Correct Mental Model</h3>
+        <table style="width:100%; border-collapse:collapse; font-size:14px;">
+            <thead>
+                <tr style="border-bottom:1px solid #1f2937;">
+                    <th align="left">Concept</th>
+                    <th align="left">Owned By</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>Subscription (paid / coupon)</td><td>Dev-Journal</td></tr>
+                <tr><td>Coupon duration (1–6 months)</td><td>Dev-Journal</td></tr>
+                <tr><td>Monthly AI quota (₹300)</td><td>Atlas</td></tr>
+            </tbody>
+        </table>
+        <p class="muted">These concerns are intentionally separated and must never be mixed.</p>
+
+        <h3>Dynamic Coupon Schema (Dev-Journal)</h3>
+        <pre>
+Coupon {
+  code: "ATLAS-FREE-3M",
+  type: "FREE_SUBSCRIPTION",
+  durationMonths: 3,          // 1–6 months
+  maxRedemptions: 100,
+  usedCount: 0,
+  expiresAt: ISODate,
+  active: true,
+  createdBy: adminId,
+  createdAt: ISODate
+}
+        </pre>
+        <p class="muted">Duration is stored in months to align with billing cycles and quota resets.</p>
+
+        <h3>User Subscription Fields</h3>
+        <pre>
+User {
+  aiEnabled: true,
+  aiPlan: "PAID" | "COUPON",
+  aiStartedAt: ISODate,
+  aiExpiresAt: ISODate,
+  couponUsed: "ATLAS-FREE-3M"
+}
+        </pre>
+        <ul>
+            <li>Coupons do not stack</li>
+            <li>One coupon per user (lifetime)</li>
+            <li>Expiry is calculated dynamically</li>
+        </ul>
+
+        <h3>Coupon Rules (Strict)</h3>
+        <ul>
+            <li>One coupon per user (ever)</li>
+            <li>Coupons do not auto-renew</li>
+            <li>Coupons expire globally</li>
+            <li><code>usedCount &lt; maxRedemptions</code></li>
+            <li>Coupon users are treated the same as paid users for quota</li>
+        </ul>
+        <p class="muted">These rules prevent farming, infinite free usage, and quota abuse.</p>
+
+        <h3>Per-User Monthly AI Quota (Atlas)</h3>
+        <pre>
+AI_QUOTA_PER_MONTH = ₹300
+        </pre>
+        <p>This quota applies equally to: Paid users, Coupon users, Admin-granted users.</p>
+        <p class="muted">There are no exceptions.</p>
+
+        <h3>AI Usage Tracking Model</h3>
+        <pre>
+AiUsage {
+  userId,
+  month: "YYYY-MM",
+  provider,   // together | groq | openai
+  cost,
+  createdAt
+}
+        </pre>
+        <p class="muted">Monthly usage is calculated by summing costs for the active month bucket.</p>
+
+        <h3>Hard Stop Logic (Mandatory)</h3>
+        <pre>
+IF totalCostThisMonth >= 300
+  → reject request
+  → DO NOT route to any AI
+        </pre>
+        <ul>
+            <li>No fallback</li>
+            <li>No downgrade</li>
+            <li>No partial response</li>
+        </ul>
+        <p class="muted">This guarantees zero overspend.</p>
+
+        <h3>Monthly Reset Strategy</h3>
+        <p>Atlas uses a lazy reset strategy.</p>
+        <ul>
+            <li>Usage stored by <code>YYYY-MM</code></li>
+            <li>New month = new bucket</li>
+            <li>No cron jobs required</li>
+        </ul>
+        <p class="muted">This approach is simple, safe, and production-proven.</p>
+
+        <h3>Atlas Request Contract</h3>
+        <pre>
+{
+  "userId": "abc123",
+  "aiEnabled": true,
+  "aiExpiresAt": "2026-06-01T00:00:00Z",
+  "action": "summarize",
+  "text": "..."
+}
+        </pre>
+        <p><strong>Atlas validation order:</strong></p>
+        <pre>
+IF aiEnabled !== true → reject
+IF now > aiExpiresAt → reject
+IF monthlyCost >= 300 → reject
+ELSE → route request
+        </pre>
+        <p class="muted">Atlas never checks payment method, coupon type, or plan name.</p>
+
+        <h3>Admin Coupon Generator</h3>
+        <ul>
+            <li>Configurable duration (1–6 months)</li>
+            <li>Manual or auto-generated codes</li>
+            <li>Max redemption limits</li>
+            <li>Expiry date</li>
+            <li>Active / inactive toggle</li>
+        </ul>
+        <p>Example codes:</p>
+        <pre>
+ATLAS-FREE-1M
+ATLAS-FREE-3M
+ATLAS-FREE-6M
+        </pre>
+
+        <h3>User Experience Behavior</h3>
+        <p><strong>Free user:</strong> AI buttons disabled, prompt to subscribe or apply coupon</p>
+        <p><strong>Coupon user:</strong> AI enabled immediately, expiry date clearly shown, usage meter visible</p>
+        <p><strong>User hits ₹300 limit:</strong> AI disabled instantly, message: "Monthly AI limit reached. Resets next month."</p>
+        <p><strong>Coupon expires:</strong> AI disabled, upgrade prompt shown</p>
+
+        <h3>Global Safety Net</h3>
+        <pre>
+GLOBAL_ATLAS_LIMIT = ₹5,000
+        </pre>
+        <ul>
+            <li>Protects system-wide spending</li>
+            <li>Premium providers disabled if exceeded</li>
+            <li>Application remains online</li>
+        </ul>
+        <p class="muted">This protects the operator, not the user.</p>
+
+        <h3>Final Architecture Summary</h3>
+        <blockquote>
+            Admins can generate adjustable coupons granting 1–6 months of free AI access.
+            Coupon users are treated exactly like paid users, with a strict ₹300 per-month
+            AI quota enforced by Atlas. Once the quota is reached, AI usage stops until the
+            next reset. Dev-Journal manages subscriptions and coupons, while Atlas remains a
+            universal, cost-safe AI core.
+        </blockquote>
+    </div>
+
+    <div class="card full" id="atlas-file-explorer">
+        <h2>🗂️ Dev Journal – File Explorer Architecture</h2>
+        <p class="muted">Production-grade virtual file system inspired by Windows 11 File Explorer</p>
+
+        <h3>Goal</h3>
+        <p>
+            Provide a <strong>Windows-11-like File Explorer experience</strong> while
+            storing all data securely in <strong>MongoDB Atlas</strong> using a
+            <em>virtual filesystem</em>.
+        </p>
+
+        <h3>Core Design Principle</h3>
+        <blockquote>
+            The File Explorer is <strong>not the data</strong>.<br>
+            It is a <strong>view over the data</strong>.
+        </blockquote>
+        <pre>
+UI Layer    → Explorer Shell (HTML / CSS)
+State Layer → Explorer Brain (fileExplorer.js)
+Data Layer  → Virtual Filesystem (MongoDB)
+        </pre>
+
+        <h3>High-Level Architecture</h3>
+        <pre>
+Browser (User)
+   ↓
+Explorer UI (HTML + CSS)
+   ↓
+Explorer State Manager (fileExplorer.js)
+   ↓
+Explorer API (Express.js)
+   ↓
+MongoDB Atlas (Virtual File System)
+        </pre>
+        <p class="muted">Each layer has a single responsibility. No layer leaks into another.</p>
+
+        <h3>Virtual File System (MongoDB)</h3>
+        <p>Files and folders are represented by the <strong>same entity</strong>. Only the <code>type</code> field changes.</p>
+        <pre>
+{
+  _id: ObjectId,
+  name: "firewall.md",
+  type: "file",              // file | folder
+  parentId: ObjectId | null, // null = root
+  content: String,           // files only
+  mime: "text/markdown",
+  ownerId: ObjectId,
+  pinned: Boolean,
+  favorite: Boolean,
+  tags: ["vps", "security"],
+  createdAt,
+  updatedAt
+}
+        </pre>
+
+        <h3>Root Structure (Per User)</h3>
+        <pre>
+ROOT
+ ├── Daily Learning
+ ├── Project Notes
+ │    └── Dev Journal
+ ├── Bug Fixes
+ ├── Code Snippets
+ └── Concepts
+        </pre>
+        <p class="muted">Each user has an isolated root using <code>ownerId</code>.</p>
+
+        <h3>Explorer-Specific APIs</h3>
+        <pre>
+GET    /api/explorer/root
+GET    /api/explorer/folder/:id
+POST   /api/explorer/file
+POST   /api/explorer/folder
+PATCH  /api/explorer/:id
+DELETE /api/explorer/:id
+GET    /api/explorer/breadcrumb/:id
+        </pre>
+        <p>These routes are <strong>Explorer-aware</strong>, not generic CRUD.</p>
+
+        <h3>Explorer State Manager</h3>
+        <p><code>fileExplorer.js</code> acts like <strong>explorer.exe</strong>.</p>
+        <pre>
+const ExplorerState = {
+  currentFolderId: null,
+  selectedEntryId: null,
+  viewMode: "grid", // grid | list
+  sortBy: "name",
+  history: []
+};
+        </pre>
+        <p class="muted">Navigation is state-based, not page-based.</p>
+
+        <h3>Interaction Rules</h3>
+        <table style="width:100%; border-collapse:collapse; font-size:14px;">
+            <thead>
+                <tr style="border-bottom:1px solid #1f2937;">
+                    <th align="left">Action</th>
+                    <th align="left">Behavior</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>Single Click</td><td>Select item</td></tr>
+                <tr><td>Double Click</td><td>Open file / folder</td></tr>
+                <tr><td>Right Click</td><td>Context menu</td></tr>
+                <tr><td>Click Empty Area</td><td>Clear selection</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Keyboard Navigation</h3>
+        <table style="width:100%; border-collapse:collapse; font-size:14px;">
+            <thead>
+                <tr style="border-bottom:1px solid #1f2937;">
+                    <th align="left">Key</th>
+                    <th align="left">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>↑ / ↓</td><td>Navigate items</td></tr>
+                <tr><td>Enter</td><td>Open</td></tr>
+                <tr><td>Backspace</td><td>Go to parent folder</td></tr>
+                <tr><td>Ctrl + N</td><td>New file</td></tr>
+                <tr><td>Ctrl + Shift + N</td><td>New folder</td></tr>
+                <tr><td>Delete</td><td>Delete item</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Mental Model</h3>
+        <blockquote>
+            MongoDB is the disk<br>
+            Express is the kernel<br>
+            fileExplorer.js is explorer.exe<br>
+            Dev Journal is a virtual OS panel
+        </blockquote>
+    </div>
+
+    <div class="card full" id="atlas-mongodb-ai">
+        <h2>🤖 MongoDB Atlas AI – Dev Journal Architecture</h2>
+        <p class="muted">Turning Dev Journal into an AI-powered developer knowledge system</p>
+
+        <h3>Purpose</h3>
+        <p>
+            MongoDB Atlas AI enables <strong>semantic understanding</strong> of Dev Journal
+            entries, allowing users to search, analyze, and reason over their notes
+            instead of relying on plain keyword matching.
+        </p>
+
+        <h3>What "Atlas AI" Means in Dev Journal</h3>
+        <table style="width:100%; border-collapse:collapse; font-size:14px;">
+            <thead>
+                <tr style="border-bottom:1px solid #1f2937;">
+                    <th align="left">Atlas Capability</th>
+                    <th align="left">Dev Journal Feature</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>Vector Search</td><td>Search by meaning, not keywords</td></tr>
+                <tr><td>Embeddings</td><td>Every <code>.md</code> entry becomes AI-readable</td></tr>
+                <tr><td>Semantic Queries</td><td>Find related notes across folders</td></tr>
+                <tr><td>AI Analysis</td><td>Summaries, insights, recurring patterns</td></tr>
+                <tr><td>Context Retrieval</td><td>Feed relevant notes to LLMs (RAG)</td></tr>
+            </tbody>
+        </table>
+
+        <h3>High-Level AI Architecture</h3>
+        <pre>
+User
+↓
+Dev Journal Explorer UI
+↓
+AI Request (search / summarize / ask)
+↓
+Backend AI Orchestrator
+↓
+MongoDB Atlas Vector Search
+↓
+Relevant Entries (context)
+↓
+LLM (OpenAI / Groq / Together)
+↓
+AI Response to User
+        </pre>
+        <p class="muted">MongoDB Atlas does <strong>retrieval</strong>, not generation. LLMs handle reasoning and text generation.</p>
+
+        <h3>Entry Schema with AI Embeddings</h3>
+        <p>AI support is added with a <strong>minimal schema extension</strong>.</p>
+        <pre>
+{
+  _id: ObjectId,
+  name: "firewall.md",
+  type: "file",
+  content: "# UFW configuration...",
+  embedding: [Number],      // AI vector representation
+  ownerId: ObjectId,
+  tags: ["vps", "security"],
+  createdAt,
+  updatedAt
+}
+        </pre>
+        <p class="muted">Embeddings are generated only when content changes.</p>
+
+        <h3>Embedding Generation Flow</h3>
+        <pre>
+User saves markdown
+↓
+Backend extracts content
+↓
+Embedding model generates vector
+↓
+Vector stored in MongoDB Atlas
+        </pre>
+        <p>This operation happens <strong>once per save</strong>, never per search.</p>
+
+        <h3>AI-Powered Search (Explorer Integration)</h3>
+        <p>AI search allows users to find entries based on intent and meaning.</p>
+        <pre>
+Query: "docker mysql permission issue"
+
+Results:
+• mysql-access-denied.md
+• docker-compose-debug.md
+• root-lockout-notes.md
+        </pre>
+        <p class="muted">Results are based on semantic similarity, not filenames.</p>
+
+        <h3>Chat With Your Journal (RAG)</h3>
+        <p>
+            Dev Journal uses <strong>Retrieval-Augmented Generation (RAG)</strong>
+            to answer questions using your own notes.
+        </p>
+        <pre>
+Question
+↓
+Generate embedding
+↓
+Retrieve top relevant entries
+↓
+Inject entries into LLM prompt
+↓
+AI answers using your history
+        </pre>
+
+        <h3>UI Integration (Explorer Vibe)</h3>
+        <ul>
+            <li>Search bar toggle: <code>Keyword | AI</code></li>
+            <li>Folder context menu: "Summarize folder"</li>
+            <li>Entry actions: "Explain", "Find related", "Generate checklist"</li>
+            <li>Insights: recurring issues &amp; learning patterns</li>
+        </ul>
+
+        <h3>Security &amp; Cost Control</h3>
+        <table style="width:100%; border-collapse:collapse; font-size:14px;">
+            <thead>
+                <tr style="border-bottom:1px solid #1f2937;">
+                    <th align="left">Handled By</th>
+                    <th align="left">Responsibility</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>MongoDB Atlas</td><td>Vector indexing, retrieval, isolation</td></tr>
+                <tr><td>Backend</td><td>Rate limits, token limits, access control</td></tr>
+                <tr><td>LLM Layer</td><td>Reasoning &amp; response generation</td></tr>
+            </tbody>
+        </table>
+        <p class="muted">Only <strong>top-N relevant entries</strong> are ever sent to the LLM.</p>
+
+        <h3>Mental Model</h3>
+        <blockquote>
+            MongoDB Atlas = Memory<br>
+            Vector Search = Recall<br>
+            LLM = Reasoning<br>
+            Dev Journal = Your external brain
+        </blockquote>
+    </div>
     <!-- DEV-JOURNAL PROJECT -->
     <div class="card full" id="dev-journal">
         <h2>📓 Dev-Journal — VPS Progress Report</h2>

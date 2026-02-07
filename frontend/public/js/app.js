@@ -1,6 +1,8 @@
 // Dev-Journal Frontend JavaScript
 
 const API_BASE = '/api/entries';
+const EXPLORER_API = '/api/explorer';
+const AI_API = '/api/ai';
 
 // Utility Functions
 const formatDate = (dateString) => {
@@ -36,7 +38,19 @@ const getCategoryLabel = (category) => {
     return labels[category] || category;
 };
 
+// Get icon for file or folder entry
+const getEntryIcon = (entry) => {
+    if (entry.type === 'folder') {
+        return '&#128193;';
+    }
+    // File icons based on mime or legacy category
+    if (entry.category) return getCategoryIcon(entry.category);
+    if (entry.mime === 'text/markdown') return '&#128196;';
+    return '&#128196;';
+};
+
 const truncateText = (text, maxLength = 150) => {
+    if (!text) return '';
     if (text.length <= maxLength) return text;
     return text.substring(0, maxLength) + '...';
 };
@@ -107,7 +121,278 @@ const renderContent = (content) => {
     return rendered;
 };
 
-// API Functions (with authentication)
+// ========================================
+// EXPLORER API FUNCTIONS
+// ========================================
+
+const ExplorerAPI = {
+    async getRoot(sort = 'name', order = 'asc') {
+        const res = await fetch(`${EXPLORER_API}/root?sort=${sort}&order=${order}`, {
+            headers: Auth.getAuthHeader()
+        });
+        return res.json();
+    },
+
+    async getFolder(folderId, sort = 'name', order = 'asc') {
+        const res = await fetch(`${EXPLORER_API}/folder/${folderId}?sort=${sort}&order=${order}`, {
+            headers: Auth.getAuthHeader()
+        });
+        return res.json();
+    },
+
+    async getBreadcrumb(entryId) {
+        const res = await fetch(`${EXPLORER_API}/breadcrumb/${entryId}`, {
+            headers: Auth.getAuthHeader()
+        });
+        return res.json();
+    },
+
+    async createFile(data) {
+        const res = await fetch(`${EXPLORER_API}/file`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', ...Auth.getAuthHeader() },
+            body: JSON.stringify(data)
+        });
+        return res.json();
+    },
+
+    async createFolder(name, parentId = null) {
+        const res = await fetch(`${EXPLORER_API}/folder`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', ...Auth.getAuthHeader() },
+            body: JSON.stringify({ name, parentId })
+        });
+        return res.json();
+    },
+
+    async updateEntry(id, data) {
+        const res = await fetch(`${EXPLORER_API}/${id}`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json', ...Auth.getAuthHeader() },
+            body: JSON.stringify(data)
+        });
+        return res.json();
+    },
+
+    async deleteEntry(id) {
+        const res = await fetch(`${EXPLORER_API}/${id}`, {
+            method: 'DELETE',
+            headers: Auth.getAuthHeader()
+        });
+        return res.json();
+    },
+
+    async moveEntry(id, newParentId) {
+        const res = await fetch(`${EXPLORER_API}/${id}/move`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json', ...Auth.getAuthHeader() },
+            body: JSON.stringify({ newParentId })
+        });
+        return res.json();
+    },
+
+    async search(query) {
+        const res = await fetch(`${EXPLORER_API}/search?q=${encodeURIComponent(query)}`, {
+            headers: Auth.getAuthHeader()
+        });
+        return res.json();
+    },
+
+    async getFavorites() {
+        const res = await fetch(`${EXPLORER_API}/favorites`, {
+            headers: Auth.getAuthHeader()
+        });
+        return res.json();
+    },
+
+    async getRecent(limit = 20) {
+        const res = await fetch(`${EXPLORER_API}/recent?limit=${limit}`, {
+            headers: Auth.getAuthHeader()
+        });
+        return res.json();
+    },
+
+    async getTags() {
+        const res = await fetch(`${EXPLORER_API}/tags`, {
+            headers: Auth.getAuthHeader()
+        });
+        return res.json();
+    }
+};
+
+window.ExplorerAPI = ExplorerAPI;
+
+// ========================================
+// ATLAS AI API FUNCTIONS (thin client calls)
+// ========================================
+
+const AiAPI = {
+    async summarize(folderId) {
+        const res = await fetch(`${AI_API}/summarize`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', ...Auth.getAuthHeader() },
+            body: JSON.stringify({ folderId })
+        });
+        return res.json();
+    },
+
+    async explain(entryId) {
+        const res = await fetch(`${AI_API}/explain`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', ...Auth.getAuthHeader() },
+            body: JSON.stringify({ entryId })
+        });
+        return res.json();
+    },
+
+    async quickHelp(question) {
+        const res = await fetch(`${AI_API}/quick-help`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', ...Auth.getAuthHeader() },
+            body: JSON.stringify({ question })
+        });
+        return res.json();
+    },
+
+    async getStatus() {
+        const res = await fetch(`${AI_API}/status`, {
+            headers: Auth.getAuthHeader()
+        });
+        return res.json();
+    }
+};
+
+window.AiAPI = AiAPI;
+
+// ========================================
+// AI PANEL (modal for showing AI responses)
+// ========================================
+
+const AiPanel = {
+    _modal: null,
+
+    getModal() {
+        if (this._modal) return this._modal;
+        // Create modal on first use
+        const modal = document.createElement('div');
+        modal.id = 'aiModal';
+        modal.className = 'ai-modal';
+        modal.innerHTML = `
+            <div class="ai-modal-content">
+                <div class="ai-modal-header">
+                    <h3 class="ai-modal-title">Atlas AI</h3>
+                    <button class="ai-modal-close" id="aiModalClose">&times;</button>
+                </div>
+                <div class="ai-modal-body" id="aiModalBody">
+                    <div class="ai-loading" id="aiLoading">
+                        <div class="win11-spinner"></div>
+                        <p>Thinking...</p>
+                    </div>
+                    <div class="ai-result" id="aiResult"></div>
+                </div>
+                <div class="ai-modal-footer">
+                    <div class="ai-quick-ask">
+                        <input type="text" id="aiQuickInput" placeholder="Ask AI a question..." />
+                        <button id="aiQuickSend" class="toolbar-btn primary">Ask</button>
+                    </div>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(modal);
+
+        // Close handlers
+        modal.querySelector('#aiModalClose').addEventListener('click', () => this.close());
+        modal.addEventListener('click', (e) => { if (e.target === modal) this.close(); });
+
+        // Quick ask
+        const sendBtn = modal.querySelector('#aiQuickSend');
+        const input = modal.querySelector('#aiQuickInput');
+        sendBtn.addEventListener('click', () => this.askQuick());
+        input.addEventListener('keypress', (e) => { if (e.key === 'Enter') this.askQuick(); });
+
+        this._modal = modal;
+        return modal;
+    },
+
+    open(title) {
+        const modal = this.getModal();
+        if (title) modal.querySelector('.ai-modal-title').textContent = title;
+        modal.querySelector('#aiLoading').style.display = 'flex';
+        modal.querySelector('#aiResult').innerHTML = '';
+        modal.style.display = 'flex';
+    },
+
+    showResult(content) {
+        const modal = this.getModal();
+        modal.querySelector('#aiLoading').style.display = 'none';
+        modal.querySelector('#aiResult').innerHTML = `<div class="ai-content">${renderContent(content)}</div>`;
+    },
+
+    showError(message) {
+        const modal = this.getModal();
+        modal.querySelector('#aiLoading').style.display = 'none';
+        modal.querySelector('#aiResult').innerHTML = `<div class="ai-error">${escapeHtml(message)}</div>`;
+    },
+
+    close() {
+        const modal = this.getModal();
+        modal.style.display = 'none';
+    },
+
+    async askQuick() {
+        const input = this.getModal().querySelector('#aiQuickInput');
+        const question = input.value.trim();
+        if (!question) return;
+
+        input.value = '';
+        this.open('Ask AI');
+        try {
+            const result = await AiAPI.quickHelp(question);
+            if (result.success) {
+                this.showResult(result.data.content);
+            } else {
+                this.showError(result.error || 'AI request failed');
+            }
+        } catch (error) {
+            this.showError(error.message);
+        }
+    },
+
+    async summarizeFolder(folderId) {
+        this.open('Summarize Folder');
+        try {
+            const result = await AiAPI.summarize(folderId);
+            if (result.success) {
+                this.showResult(result.data.content);
+            } else {
+                this.showError(result.error || 'AI request failed');
+            }
+        } catch (error) {
+            this.showError(error.message);
+        }
+    },
+
+    async explainEntry(entryId) {
+        this.open('Explain Entry');
+        try {
+            const result = await AiAPI.explain(entryId);
+            if (result.success) {
+                this.showResult(result.data.content);
+            } else {
+                this.showError(result.error || 'AI request failed');
+            }
+        } catch (error) {
+            this.showError(error.message);
+        }
+    }
+};
+
+window.AiPanel = AiPanel;
+
+// ========================================
+// LEGACY API FUNCTIONS (for entry/edit pages)
+// ========================================
+
 const fetchEntries = async (params = {}) => {
     const queryString = new URLSearchParams(params).toString();
     const url = queryString ? `${API_BASE}?${queryString}` : API_BASE;
@@ -180,7 +465,10 @@ const fetchStats = async () => {
 // DOM Elements
 const getElement = (id) => document.getElementById(id);
 
-// Index Page Functions
+// ========================================
+// LEGACY PAGE FUNCTIONS (entry view, edit, create)
+// ========================================
+
 const renderEntryCard = (entry) => {
     const tagsHtml = entry.tags && entry.tags.length > 0
         ? entry.tags.slice(0, 3).map(tag => `<span class="entry-tag">${tag}</span>`).join('')
@@ -191,7 +479,7 @@ const renderEntryCard = (entry) => {
             <div class="entry-card-header">
                 <span class="entry-category ${entry.category}">${getCategoryLabel(entry.category)}</span>
             </div>
-            <h3>${entry.title}</h3>
+            <h3>${entry.title || entry.name}</h3>
             <p>${truncateText(entry.content)}</p>
             <div class="entry-card-footer">
                 <span class="entry-date">${formatDate(entry.createdAt)}</span>
@@ -334,7 +622,7 @@ const setupCategoryFilter = () => {
     });
 };
 
-// Search
+// Search (legacy)
 const setupSearch = () => {
     const searchInput = getElement('searchInput');
     const searchBtn = getElement('searchBtn');
@@ -344,37 +632,75 @@ const setupSearch = () => {
     const performSearch = async () => {
         const query = searchInput.value.trim();
         if (!query) {
-            loadEntries();
+            // If on Win11 explorer, reload current folder
+            if (document.querySelector('.win11-explorer')) {
+                Win11.loadCurrentView();
+            } else {
+                loadEntries();
+            }
             return;
         }
 
-        const entriesGrid = getElement('entriesGrid');
-        const loadingIndicator = getElement('loadingIndicator');
-        const noEntries = getElement('noEntries');
-        const entryCount = getElement('entryCount');
-        const contentTitle = getElement('contentTitle');
+        const fileList = document.getElementById('fileList');
+        const loadingState = document.getElementById('loadingState');
+        const emptyState = document.getElementById('emptyState');
+        const itemCount = document.getElementById('itemCount');
+        const breadcrumbCurrent = document.getElementById('breadcrumbCurrent');
 
-        loadingIndicator.style.display = 'block';
-        noEntries.style.display = 'none';
-        entriesGrid.innerHTML = '';
+        if (fileList) {
+            // Win11 explorer search
+            loadingState.style.display = 'flex';
+            emptyState.style.display = 'none';
+            fileList.innerHTML = '';
 
-        try {
-            const result = await searchEntries(query);
+            try {
+                const result = await ExplorerAPI.search(query);
 
-            loadingIndicator.style.display = 'none';
+                loadingState.style.display = 'none';
 
-            if (result.success && result.data.length > 0) {
-                entriesGrid.innerHTML = result.data.map(renderEntryCard).join('');
-                entryCount.textContent = `${result.data.length} results`;
-            } else {
-                noEntries.style.display = 'block';
-                entryCount.textContent = '0 results';
+                if (result.success && result.data.length > 0) {
+                    fileList.innerHTML = result.data.map(renderFileItem).join('');
+                    itemCount.textContent = `${result.data.length} results`;
+                } else {
+                    emptyState.style.display = 'flex';
+                    itemCount.textContent = '0 results';
+                }
+
+                if (breadcrumbCurrent) {
+                    breadcrumbCurrent.textContent = `Search: "${query}"`;
+                }
+            } catch (error) {
+                loadingState.style.display = 'none';
+                fileList.innerHTML = `<p class="error" style="padding: var(--space-lg);">Error: ${error.message}</p>`;
             }
+        } else {
+            // Legacy search
+            const entriesGrid = getElement('entriesGrid');
+            const legacyLoading = getElement('loadingIndicator');
+            const noEntries = getElement('noEntries');
+            const entryCount = getElement('entryCount');
+            const contentTitle = getElement('contentTitle');
 
-            contentTitle.textContent = `Search: "${query}"`;
-        } catch (error) {
-            loadingIndicator.style.display = 'none';
-            entriesGrid.innerHTML = `<p class="error">Error searching: ${error.message}</p>`;
+            legacyLoading.style.display = 'block';
+            noEntries.style.display = 'none';
+            entriesGrid.innerHTML = '';
+
+            try {
+                const result = await searchEntries(query);
+                legacyLoading.style.display = 'none';
+
+                if (result.success && result.data.length > 0) {
+                    entriesGrid.innerHTML = result.data.map(renderEntryCard).join('');
+                    entryCount.textContent = `${result.data.length} results`;
+                } else {
+                    noEntries.style.display = 'block';
+                    entryCount.textContent = '0 results';
+                }
+                contentTitle.textContent = `Search: "${query}"`;
+            } catch (error) {
+                legacyLoading.style.display = 'none';
+                entriesGrid.innerHTML = `<p class="error">Error searching: ${error.message}</p>`;
+            }
         }
     };
 
@@ -394,17 +720,25 @@ const setupCreateForm = () => {
 
         const formMessage = getElement('formMessage');
 
+        // Support both legacy (title/category) and new (name/parentId) creation
+        const titleEl = getElement('title');
+        const categoryEl = getElement('category');
+        const parentIdEl = getElement('parentId');
+
         const data = {
-            title: getElement('title').value.trim(),
-            category: getElement('category').value,
+            title: titleEl ? titleEl.value.trim() : '',
+            name: titleEl ? titleEl.value.trim() : '',
+            category: categoryEl ? categoryEl.value : '',
+            parentId: parentIdEl ? parentIdEl.value || null : null,
             content: getElement('content').value.trim(),
             tags: getElement('tags').value.split(',').map(t => t.trim()).filter(t => t),
-            codeLanguage: getElement('codeLanguage').value.trim(),
-            codeBlock: getElement('codeBlock').value
+            codeLanguage: getElement('codeLanguage') ? getElement('codeLanguage').value.trim() : '',
+            codeBlock: getElement('codeBlock') ? getElement('codeBlock').value : ''
         };
 
         try {
-            const result = await createEntry(data);
+            // Use explorer API for file creation
+            const result = await ExplorerAPI.createFile(data);
 
             if (result.success) {
                 formMessage.className = 'form-message success';
@@ -445,12 +779,16 @@ const setupEditForm = () => {
             if (result.success) {
                 const entry = result.data;
                 getElement('entryId').value = entry._id;
-                getElement('title').value = entry.title;
-                getElement('category').value = entry.category;
+                const titleEl = getElement('title');
+                if (titleEl) titleEl.value = entry.title || entry.name || '';
+                const categoryEl = getElement('category');
+                if (categoryEl) categoryEl.value = entry.category || '';
                 getElement('content').value = entry.content;
                 getElement('tags').value = entry.tags ? entry.tags.join(', ') : '';
-                getElement('codeLanguage').value = entry.codeLanguage || '';
-                getElement('codeBlock').value = entry.codeBlock || '';
+                const codeLangEl = getElement('codeLanguage');
+                if (codeLangEl) codeLangEl.value = entry.codeLanguage || '';
+                const codeBlockEl = getElement('codeBlock');
+                if (codeBlockEl) codeBlockEl.value = entry.codeBlock || '';
 
                 loadingIndicator.style.display = 'none';
                 form.style.display = 'block';
@@ -472,16 +810,16 @@ const setupEditForm = () => {
         const id = getElement('entryId').value;
 
         const data = {
-            title: getElement('title').value.trim(),
-            category: getElement('category').value,
+            name: getElement('title') ? getElement('title').value.trim() : '',
             content: getElement('content').value.trim(),
             tags: getElement('tags').value.split(',').map(t => t.trim()).filter(t => t),
-            codeLanguage: getElement('codeLanguage').value.trim(),
-            codeBlock: getElement('codeBlock').value
+            codeLanguage: getElement('codeLanguage') ? getElement('codeLanguage').value.trim() : '',
+            codeBlock: getElement('codeBlock') ? getElement('codeBlock').value : ''
         };
 
         try {
-            const result = await updateEntry(id, data);
+            // Use explorer API for updates
+            const result = await ExplorerAPI.updateEntry(id, data);
 
             if (result.success) {
                 formMessage.className = 'form-message success';
@@ -519,10 +857,12 @@ const setupEntryView = () => {
 
             if (result.success) {
                 const entry = result.data;
+                const displayName = entry.name || entry.title || 'Untitled';
+                const displayCategory = entry.category ? getCategoryLabel(entry.category) : (entry.type || 'file');
 
                 // Update header
-                getElement('entryTitle').innerHTML = `<span class="logo-icon">${getCategoryIcon(entry.category)}</span> ${entry.title}`;
-                getElement('entryMeta').textContent = `${getCategoryLabel(entry.category)} - ${formatDate(entry.createdAt)}`;
+                getElement('entryTitle').innerHTML = `<span class="logo-icon">${getEntryIcon(entry)}</span> ${displayName}`;
+                getElement('entryMeta').textContent = `${displayCategory} - ${formatDate(entry.createdAt)}`;
 
                 // Update content with auto-detected code blocks
                 entryContent.innerHTML = `
@@ -534,8 +874,8 @@ const setupEntryView = () => {
                 // Update details
                 getElement('entryDetails').innerHTML = `
                     <div class="detail-row">
-                        <span class="detail-label">Category</span>
-                        <span class="detail-value">${getCategoryLabel(entry.category)}</span>
+                        <span class="detail-label">Type</span>
+                        <span class="detail-value">${entry.type || 'file'}</span>
                     </div>
                     <div class="detail-row">
                         <span class="detail-label">Created</span>
@@ -575,7 +915,15 @@ const setupEntryView = () => {
                 getElement('editBtn').href = `/edit/${entry._id}`;
 
                 // Setup delete button
-                setupDeleteModal(entry._id);
+                setupDeleteModal(entry._id, entry.type);
+
+                // Setup AI explain button
+                const explainBtn = getElement('explainBtn');
+                if (explainBtn) {
+                    explainBtn.addEventListener('click', () => {
+                        AiPanel.explainEntry(entry._id);
+                    });
+                }
 
             } else {
                 entryContent.innerHTML = '<p class="error">Entry not found</p>';
@@ -589,7 +937,7 @@ const setupEntryView = () => {
 };
 
 // Delete Modal
-const setupDeleteModal = (entryId) => {
+const setupDeleteModal = (entryId, entryType) => {
     const deleteBtn = getElement('deleteBtn');
     const deleteModal = getElement('deleteModal');
     const cancelDelete = getElement('cancelDelete');
@@ -607,7 +955,7 @@ const setupDeleteModal = (entryId) => {
 
     confirmDelete.addEventListener('click', async () => {
         try {
-            const result = await deleteEntry(entryId);
+            const result = await ExplorerAPI.deleteEntry(entryId);
 
             if (result.success) {
                 window.location.href = '/';
@@ -641,7 +989,6 @@ const setupMobileMenu = () => {
         navActions.classList.toggle('open');
     });
 
-    // Close menu when clicking outside
     document.addEventListener('click', (e) => {
         if (!mobileMenuBtn.contains(e.target) && !navActions.contains(e.target)) {
             mobileMenuBtn.classList.remove('active');
@@ -649,127 +996,12 @@ const setupMobileMenu = () => {
         }
     });
 
-    // Close menu when window is resized above mobile breakpoint
     window.addEventListener('resize', () => {
         if (window.innerWidth > 768) {
             mobileMenuBtn.classList.remove('active');
             navActions.classList.remove('open');
         }
     });
-};
-
-// File Explorer: Tree Toggle
-const setupTreeToggle = () => {
-    const toggles = document.querySelectorAll('.tree-toggle');
-    toggles.forEach(toggle => {
-        toggle.addEventListener('click', () => {
-            const targetId = toggle.getAttribute('data-target');
-            const target = document.getElementById(targetId);
-            if (target) {
-                target.classList.toggle('collapsed');
-                toggle.classList.toggle('expanded');
-                toggle.textContent = toggle.classList.contains('expanded') ? '\u25BC' : '\u25B6';
-            }
-        });
-    });
-};
-
-// File Explorer: View Toggle (Grid/List)
-let currentViewMode = 'grid';
-const setupViewToggle = () => {
-    const gridBtn = getElement('gridViewBtn');
-    const listBtn = getElement('listViewBtn');
-    const entriesGrid = getElement('entriesGrid');
-
-    if (!gridBtn || !listBtn || !entriesGrid) return;
-
-    gridBtn.addEventListener('click', () => {
-        currentViewMode = 'grid';
-        entriesGrid.classList.remove('list-view');
-        entriesGrid.classList.add('grid-view');
-        gridBtn.classList.add('active');
-        listBtn.classList.remove('active');
-    });
-
-    listBtn.addEventListener('click', () => {
-        currentViewMode = 'list';
-        entriesGrid.classList.remove('grid-view');
-        entriesGrid.classList.add('list-view');
-        listBtn.classList.add('active');
-        gridBtn.classList.remove('active');
-    });
-};
-
-// File Explorer: Breadcrumb Update
-const updateBreadcrumb = (category) => {
-    const breadcrumbCurrent = getElement('breadcrumbCurrent');
-    if (!breadcrumbCurrent) return;
-
-    if (category) {
-        breadcrumbCurrent.textContent = getCategoryLabel(category);
-    } else {
-        breadcrumbCurrent.textContent = 'All Entries';
-    }
-};
-
-// File Explorer: Update Category Counts
-const updateCategoryCounts = (stats) => {
-    if (!stats) return;
-
-    stats.forEach(stat => {
-        const countEl = document.getElementById(`count-${stat._id}`);
-        if (countEl) {
-            countEl.textContent = stat.count;
-        }
-    });
-};
-
-// File Explorer: Setup Tree Navigation
-const setupTreeNavigation = () => {
-    const fileTree = document.querySelector('.file-tree');
-    if (!fileTree) return;
-
-    fileTree.addEventListener('click', (e) => {
-        e.preventDefault();
-        const link = e.target.closest('.tree-label');
-        if (!link) return;
-
-        // Update active state
-        fileTree.querySelectorAll('.tree-label').forEach(a => a.classList.remove('active'));
-        link.classList.add('active');
-
-        // Load entries for category
-        const category = link.dataset.category;
-        loadEntries(category);
-        updateBreadcrumb(category);
-    });
-};
-
-// Render Entry Card (supports both grid and list view)
-const renderEntryCardEnhanced = (entry) => {
-    const tagsHtml = entry.tags && entry.tags.length > 0
-        ? entry.tags.slice(0, 3).map(tag => `<span class="entry-tag">${tag}</span>`).join('')
-        : '';
-
-    // Calculate word count for list view
-    const wordCount = entry.content.split(/\s+/).length;
-    const readTime = Math.ceil(wordCount / 200); // ~200 words per minute
-
-    return `
-        <a href="/entry/${entry._id}" class="entry-card">
-            <div class="entry-card-header">
-                <span class="entry-icon">${getCategoryIcon(entry.category)}</span>
-                <span class="entry-category ${entry.category}">${getCategoryLabel(entry.category)}</span>
-            </div>
-            <h3>${entry.title}</h3>
-            <p class="entry-preview">${truncateText(entry.content)}</p>
-            <div class="entry-card-footer">
-                <span class="entry-date">${formatDate(entry.createdAt)}</span>
-                <span class="entry-meta">${wordCount} words · ${readTime} min read</span>
-                <div class="entry-tags">${tagsHtml}</div>
-            </div>
-        </a>
-    `;
 };
 
 // Setup logout button
@@ -805,18 +1037,6 @@ const setupLogout = () => {
 // WINDOWS 11 FILE EXPLORER FUNCTIONALITY
 // ========================================
 
-// Windows 11 Explorer State
-const Win11State = {
-    currentTab: 'recent',
-    currentCategory: '',
-    sortBy: 'date',
-    sortOrder: 'desc',
-    viewMode: 'details',
-    selectedItems: [],
-    history: ['/'],
-    historyIndex: 0
-};
-
 // Format relative date like Windows 11
 const formatRelativeDate = (dateString) => {
     const date = new Date(dateString);
@@ -838,39 +1058,69 @@ const formatRelativeDate = (dateString) => {
     });
 };
 
-// Render Windows 11 style file item
+// Render Windows 11 style file/folder item
 const renderFileItem = (entry) => {
+    const isFolder = entry.type === 'folder';
     const tagsHtml = entry.tags && entry.tags.length > 0
         ? entry.tags.slice(0, 2).map(tag => `<span class="entry-tag">${escapeHtml(tag)}</span>`).join('')
         : '<span style="color: var(--win11-text-muted);">-</span>';
 
+    const displayName = entry.name || entry.title || 'Untitled';
+    const icon = getEntryIcon(entry);
+    const typeLabel = isFolder ? 'Folder' : (entry.category ? getCategoryLabel(entry.category) : 'File');
+
+    // Folders get folder-specific styling and behavior
+    const itemClass = isFolder ? 'file-item folder-item' : 'file-item';
+    const href = isFolder ? '#' : `/entry/${entry._id}`;
+    const dblClickAttr = isFolder
+        ? `ondblclick="event.preventDefault(); Win11.navigateToFolder('${entry._id}')" onclick="event.preventDefault();"`
+        : '';
+
+    const pinnedIcon = entry.pinned ? '<span class="pinned-indicator" title="Pinned">&#128204;</span>' : '';
+    const favIcon = entry.favorite ? '<span class="fav-indicator" title="Favorite">&#9733;</span>' : '';
+
     return `
-        <a href="/entry/${entry._id}" class="file-item" data-entry-id="${entry._id}">
+        <a href="${href}" class="${itemClass}" data-entry-id="${entry._id}" data-type="${entry.type}" ${dblClickAttr}>
             <div class="file-name">
                 <input type="checkbox" class="file-checkbox" onclick="event.stopPropagation(); Win11.toggleSelect('${entry._id}')">
-                <span class="file-icon">${getCategoryIcon(entry.category)}</span>
-                <span class="file-title">${escapeHtml(entry.title)}</span>
+                <span class="file-icon ${isFolder ? 'folder' : ''}">${icon}</span>
+                <span class="file-title">${escapeHtml(displayName)}</span>
+                ${pinnedIcon}${favIcon}
             </div>
             <span class="file-date">${formatRelativeDate(entry.updatedAt || entry.createdAt)}</span>
             <span class="file-category">
-                <span class="category-badge ${entry.category}">
+                <span class="category-badge ${isFolder ? 'folder-badge' : (entry.category || '')}">
                     <span class="badge-dot"></span>
-                    ${getCategoryLabel(entry.category)}
+                    ${typeLabel}
                 </span>
             </span>
-            <span class="file-tags">${tagsHtml}</span>
+            <span class="file-tags">${isFolder ? '-' : tagsHtml}</span>
         </a>
     `;
 };
 
+// Windows 11 Explorer State
+const Win11State = {
+    currentTab: 'recent',
+    currentFolderId: null, // null = root
+    sortBy: 'name',
+    sortOrder: 'asc',
+    viewMode: 'details',
+    selectedItems: [],
+    history: [null], // null = root
+    historyIndex: 0,
+    folderMap: {} // folderId -> folder metadata cache
+};
+
 // Windows 11 Explorer Module
 const Win11 = {
-    // Load entries for Windows 11 file list
-    async loadFileList(category = '', tab = 'recent') {
+    // Load entries for the current view (root or folder)
+    async loadFileList(folderId = null, tab = 'recent') {
         const fileList = document.getElementById('fileList');
         const loadingState = document.getElementById('loadingState');
         const emptyState = document.getElementById('emptyState');
         const itemCount = document.getElementById('itemCount');
+        const quickAccessGrid = document.getElementById('quickAccessGrid');
 
         if (!fileList) return;
 
@@ -879,65 +1129,190 @@ const Win11 = {
         fileList.innerHTML = '';
 
         try {
-            const params = {};
-            if (category) params.category = category;
+            let entries = [];
 
-            // Sort based on current settings
-            params.sort = Win11State.sortBy;
-            params.order = Win11State.sortOrder;
-
-            const result = await fetchEntries(params);
+            if (tab === 'favorites') {
+                // Load favorites
+                const result = await ExplorerAPI.getFavorites();
+                if (result.success) entries = result.data;
+                if (quickAccessGrid) quickAccessGrid.style.display = 'none';
+            } else if (tab === 'recent') {
+                if (!folderId) {
+                    // Root + recent: show pinned folders grid + recent files
+                    const rootResult = await ExplorerAPI.getRoot(Win11State.sortBy, Win11State.sortOrder);
+                    if (rootResult.success) {
+                        // Update pinned folders with real data
+                        this.updatePinnedFolders(rootResult.data.filter(e => e.type === 'folder'));
+                        if (quickAccessGrid) quickAccessGrid.style.display = 'block';
+                    }
+                    // Load recent files below the pinned grid
+                    const recentResult = await ExplorerAPI.getRecent(20);
+                    if (recentResult.success) entries = recentResult.data;
+                } else {
+                    // Inside a folder - show its contents
+                    const result = await ExplorerAPI.getFolder(folderId, Win11State.sortBy, Win11State.sortOrder);
+                    if (result.success) {
+                        entries = result.data.children;
+                        Win11State.folderMap[folderId] = result.data.folder;
+                    }
+                    if (quickAccessGrid) quickAccessGrid.style.display = 'none';
+                }
+            } else if (tab === 'all') {
+                // "All" tab: show root-level entries (the full filesystem root)
+                const result = await ExplorerAPI.getRoot(Win11State.sortBy, Win11State.sortOrder);
+                if (result.success) entries = result.data;
+                if (quickAccessGrid) quickAccessGrid.style.display = 'none';
+            }
 
             loadingState.style.display = 'none';
 
-            if (result.success && result.data.length > 0) {
-                let entries = result.data;
-
-                // Filter by tab
-                if (tab === 'favorites' && window.FileExplorer) {
-                    const favIds = window.FileExplorer.favorites.map(f => f.id);
-                    entries = entries.filter(e => favIds.includes(e._id));
-                }
-
+            if (entries.length > 0) {
                 fileList.innerHTML = entries.map(renderFileItem).join('');
                 itemCount.textContent = `${entries.length} items`;
-
-                // Update pinned folder counts
-                this.updateFolderCounts(result.data);
             } else {
                 emptyState.style.display = 'flex';
                 itemCount.textContent = '0 items';
             }
+
+            // Update sidebar folder counts
+            this.updateSidebarCounts();
         } catch (error) {
             loadingState.style.display = 'none';
             fileList.innerHTML = `<p class="error" style="padding: var(--space-lg);">Error loading entries: ${error.message}</p>`;
         }
     },
 
-    // Update folder counts in pinned folders and sidebar
-    updateFolderCounts(entries) {
-        const counts = {
-            'daily-learning': 0,
-            'project-note': 0,
-            'bug-fix': 0,
-            'code-snippet': 0,
-            'concept': 0
-        };
+    // Load current view (convenience method)
+    loadCurrentView() {
+        this.loadFileList(Win11State.currentFolderId, Win11State.currentTab);
+    },
 
-        entries.forEach(entry => {
-            if (counts[entry.category] !== undefined) {
-                counts[entry.category]++;
-            }
-        });
+    // Navigate into a folder (double-click)
+    navigateToFolder(folderId) {
+        Win11State.currentFolderId = folderId;
+        Win11State.currentTab = 'recent'; // Reset tab when navigating
 
-        // Update sidebar counts
-        Object.keys(counts).forEach(cat => {
-            const countEl = document.getElementById(`count-${cat}`);
-            if (countEl) countEl.textContent = counts[cat];
+        // Add to history
+        Win11State.history = Win11State.history.slice(0, Win11State.historyIndex + 1);
+        Win11State.history.push(folderId);
+        Win11State.historyIndex = Win11State.history.length - 1;
+        this.updateNavButtons();
 
-            const pinnedCount = document.getElementById(`pinned-${cat}`);
-            if (pinnedCount) pinnedCount.textContent = `${counts[cat]} items`;
-        });
+        // Update breadcrumb
+        this.updateBreadcrumb(folderId);
+
+        // Update active tab
+        document.querySelectorAll('.win11-tab').forEach(t => t.classList.remove('active'));
+        const recentTab = document.querySelector('.win11-tab[data-tab="recent"]');
+        if (recentTab) recentTab.classList.add('active');
+
+        // Load folder contents
+        this.loadFileList(folderId, 'recent');
+    },
+
+    // Navigate to root
+    navigateToRoot() {
+        Win11State.currentFolderId = null;
+
+        Win11State.history = Win11State.history.slice(0, Win11State.historyIndex + 1);
+        Win11State.history.push(null);
+        Win11State.historyIndex = Win11State.history.length - 1;
+        this.updateNavButtons();
+
+        this.updateBreadcrumb(null);
+        this.loadFileList(null, Win11State.currentTab);
+    },
+
+    // Update pinned folders grid with real folder data
+    updatePinnedFolders(folders) {
+        const pinnedFolders = document.getElementById('pinnedFolders');
+        if (!pinnedFolders) return;
+
+        const folderColors = ['blue', 'green', 'red', 'purple', 'yellow', 'blue', 'green'];
+
+        pinnedFolders.innerHTML = folders
+            .filter(f => f.pinned)
+            .map((folder, i) => {
+                const color = folderColors[i % folderColors.length];
+                Win11State.folderMap[folder._id] = folder;
+                return `
+                    <a href="#" class="pinned-folder" data-folder-id="${folder._id}" ondblclick="event.preventDefault(); Win11.navigateToFolder('${folder._id}')" onclick="event.preventDefault(); Win11.navigateToFolder('${folder._id}')">
+                        <span class="folder-icon-lg" style="color: var(--folder-${color});">&#128193;</span>
+                        <span class="folder-name">${escapeHtml(folder.name)}</span>
+                        <span class="folder-count" id="pinned-count-${folder._id}">Folder</span>
+                    </a>
+                `;
+            }).join('');
+    },
+
+    // Update sidebar folder items with real data
+    async updateSidebarCounts() {
+        // Load root folders to update sidebar
+        try {
+            const result = await ExplorerAPI.getRoot();
+            if (!result.success) return;
+
+            const sidebarQuickAccess = document.getElementById('quickaccess');
+            if (!sidebarQuickAccess) return;
+
+            const folders = result.data.filter(e => e.type === 'folder');
+            const folderColors = ['blue', 'green', 'red', 'purple', 'yellow', 'blue', 'green'];
+
+            sidebarQuickAccess.innerHTML = folders.map((folder, i) => {
+                const color = folderColors[i % folderColors.length];
+                const isActive = Win11State.currentFolderId === folder._id.toString();
+                return `
+                    <a href="#" class="sidebar-item ${isActive ? 'active' : ''}" data-folder-id="${folder._id}" onclick="event.preventDefault(); Win11.navigateToFolder('${folder._id}')">
+                        <span class="item-icon folder-icon ${color}">&#128193;</span>
+                        <span class="item-text">${escapeHtml(folder.name)}</span>
+                    </a>
+                `;
+            }).join('');
+        } catch (error) {
+            // Silent fail for sidebar update
+        }
+    },
+
+    // Update breadcrumb using explorer API
+    async updateBreadcrumb(folderId) {
+        const breadcrumbPath = document.getElementById('breadcrumbPath');
+        if (!breadcrumbPath) return;
+
+        if (!folderId) {
+            // Root level
+            breadcrumbPath.innerHTML = `
+                <a href="#" class="breadcrumb-item" onclick="event.preventDefault(); Win11.navigateToRoot()">&#127968; Home</a>
+                <span class="breadcrumb-separator">&#8250;</span>
+                <span class="breadcrumb-current" id="breadcrumbCurrent">All Entries</span>
+            `;
+            return;
+        }
+
+        try {
+            const result = await ExplorerAPI.getBreadcrumb(folderId);
+            if (!result.success) return;
+
+            let html = `<a href="#" class="breadcrumb-item" onclick="event.preventDefault(); Win11.navigateToRoot()">&#127968; Home</a>`;
+
+            result.data.forEach((crumb, i) => {
+                html += `<span class="breadcrumb-separator">&#8250;</span>`;
+                if (i === result.data.length - 1) {
+                    // Last item is current
+                    html += `<span class="breadcrumb-current" id="breadcrumbCurrent">${escapeHtml(crumb.name)}</span>`;
+                } else {
+                    html += `<a href="#" class="breadcrumb-item" onclick="event.preventDefault(); Win11.navigateToFolder('${crumb._id}')">${escapeHtml(crumb.name)}</a>`;
+                }
+            });
+
+            breadcrumbPath.innerHTML = html;
+        } catch (error) {
+            // Fallback
+            breadcrumbPath.innerHTML = `
+                <a href="#" class="breadcrumb-item" onclick="event.preventDefault(); Win11.navigateToRoot()">&#127968; Home</a>
+                <span class="breadcrumb-separator">&#8250;</span>
+                <span class="breadcrumb-current" id="breadcrumbCurrent">...</span>
+            `;
+        }
     },
 
     // Setup sidebar toggle (mobile)
@@ -983,10 +1358,14 @@ const Win11 = {
             tab.addEventListener('click', () => {
                 const tabName = tab.dataset.tab;
 
-                // Don't do anything if clicking the same tab
-                if (tabName === Win11State.currentTab) return;
+                if (tabName === Win11State.currentTab && !Win11State.currentFolderId) return;
 
                 Win11State.currentTab = tabName;
+
+                // When switching tabs, go back to root
+                if (tabName !== 'recent') {
+                    Win11State.currentFolderId = null;
+                }
 
                 // Update active state
                 document.querySelectorAll('.win11-tab').forEach(t => t.classList.remove('active'));
@@ -1002,70 +1381,20 @@ const Win11 = {
                 // Animated tab content switch
                 const fileList = document.getElementById('fileList');
                 if (fileList) {
-                    // Fade out current content
                     fileList.style.opacity = '0';
                     fileList.style.transform = 'translateY(10px)';
                     fileList.style.transition = 'opacity 150ms ease, transform 150ms ease';
 
-                    // After fade out, load new content and fade in
                     setTimeout(() => {
-                        this.loadFileList(Win11State.currentCategory, tabName);
-                        // Fade in happens automatically via CSS animation on new items
+                        this.loadFileList(Win11State.currentFolderId, tabName);
                         fileList.style.opacity = '1';
                         fileList.style.transform = 'translateY(0)';
                     }, 150);
                 } else {
-                    // Fallback: just reload
-                    this.loadFileList(Win11State.currentCategory, tabName);
+                    this.loadFileList(Win11State.currentFolderId, tabName);
                 }
             });
         });
-    },
-
-    // Setup category navigation
-    setupCategoryNavigation() {
-        // Sidebar items
-        document.querySelectorAll('.sidebar-item[data-category]').forEach(item => {
-            item.addEventListener('click', (e) => {
-                e.preventDefault();
-                const category = item.dataset.category;
-                this.navigateToCategory(category);
-            });
-        });
-
-        // Pinned folders
-        document.querySelectorAll('.pinned-folder[data-category]').forEach(folder => {
-            folder.addEventListener('click', (e) => {
-                e.preventDefault();
-                const category = folder.dataset.category;
-                this.navigateToCategory(category);
-            });
-        });
-    },
-
-    // Navigate to category
-    navigateToCategory(category) {
-        Win11State.currentCategory = category;
-
-        // Update active state in sidebar
-        document.querySelectorAll('.sidebar-item[data-category]').forEach(item => {
-            item.classList.toggle('active', item.dataset.category === category);
-        });
-
-        // Update breadcrumb
-        const breadcrumbCurrent = document.getElementById('breadcrumbCurrent');
-        if (breadcrumbCurrent) {
-            breadcrumbCurrent.textContent = category ? getCategoryLabel(category) : 'All Entries';
-        }
-
-        // Add to history
-        Win11State.history = Win11State.history.slice(0, Win11State.historyIndex + 1);
-        Win11State.history.push(category || '/');
-        Win11State.historyIndex = Win11State.history.length - 1;
-        this.updateNavButtons();
-
-        // Load entries
-        this.loadFileList(category, Win11State.currentTab);
     },
 
     // Setup navigation buttons (back/forward/up)
@@ -1078,11 +1407,11 @@ const Win11 = {
             backBtn.addEventListener('click', () => {
                 if (Win11State.historyIndex > 0) {
                     Win11State.historyIndex--;
-                    const category = Win11State.history[Win11State.historyIndex];
-                    Win11State.currentCategory = category === '/' ? '' : category;
-                    this.loadFileList(Win11State.currentCategory, Win11State.currentTab);
+                    const folderId = Win11State.history[Win11State.historyIndex];
+                    Win11State.currentFolderId = folderId;
+                    this.loadFileList(folderId, Win11State.currentTab);
                     this.updateNavButtons();
-                    this.updateBreadcrumbForCategory(Win11State.currentCategory);
+                    this.updateBreadcrumb(folderId);
                 }
             });
         }
@@ -1091,19 +1420,25 @@ const Win11 = {
             forwardBtn.addEventListener('click', () => {
                 if (Win11State.historyIndex < Win11State.history.length - 1) {
                     Win11State.historyIndex++;
-                    const category = Win11State.history[Win11State.historyIndex];
-                    Win11State.currentCategory = category === '/' ? '' : category;
-                    this.loadFileList(Win11State.currentCategory, Win11State.currentTab);
+                    const folderId = Win11State.history[Win11State.historyIndex];
+                    Win11State.currentFolderId = folderId;
+                    this.loadFileList(folderId, Win11State.currentTab);
                     this.updateNavButtons();
-                    this.updateBreadcrumbForCategory(Win11State.currentCategory);
+                    this.updateBreadcrumb(folderId);
                 }
             });
         }
 
         if (upBtn) {
-            upBtn.addEventListener('click', () => {
-                if (Win11State.currentCategory) {
-                    this.navigateToCategory('');
+            upBtn.addEventListener('click', async () => {
+                if (Win11State.currentFolderId) {
+                    // Get parent from cached folder metadata or breadcrumb
+                    const folder = Win11State.folderMap[Win11State.currentFolderId];
+                    if (folder && folder.parentId) {
+                        this.navigateToFolder(folder.parentId);
+                    } else {
+                        this.navigateToRoot();
+                    }
                 }
             });
         }
@@ -1116,14 +1451,7 @@ const Win11 = {
 
         if (backBtn) backBtn.disabled = Win11State.historyIndex <= 0;
         if (forwardBtn) forwardBtn.disabled = Win11State.historyIndex >= Win11State.history.length - 1;
-        if (upBtn) upBtn.disabled = !Win11State.currentCategory;
-    },
-
-    updateBreadcrumbForCategory(category) {
-        const breadcrumbCurrent = document.getElementById('breadcrumbCurrent');
-        if (breadcrumbCurrent) {
-            breadcrumbCurrent.textContent = category ? getCategoryLabel(category) : 'All Entries';
-        }
+        if (upBtn) upBtn.disabled = !Win11State.currentFolderId;
     },
 
     // Setup dropdown menus
@@ -1141,9 +1469,10 @@ const Win11 = {
 
             sortMenu.querySelectorAll('.dropdown-item').forEach(item => {
                 item.addEventListener('click', () => {
-                    const [sortBy, sortOrder] = item.dataset.sort.split('-');
-                    Win11State.sortBy = sortBy;
-                    Win11State.sortOrder = sortOrder;
+                    const sortVal = item.dataset.sort;
+                    const parts = sortVal.split('-');
+                    Win11State.sortOrder = parts.pop();
+                    Win11State.sortBy = parts.join('-');
 
                     // Update active state
                     sortMenu.querySelectorAll('.dropdown-item').forEach(i => i.classList.remove('active'));
@@ -1151,7 +1480,7 @@ const Win11 = {
                     sortMenu.classList.remove('show');
 
                     // Reload
-                    this.loadFileList(Win11State.currentCategory, Win11State.currentTab);
+                    this.loadFileList(Win11State.currentFolderId, Win11State.currentTab);
                 });
             });
         }
@@ -1171,12 +1500,10 @@ const Win11 = {
                 item.addEventListener('click', () => {
                     Win11State.viewMode = item.dataset.view;
 
-                    // Update active state
                     viewMenu.querySelectorAll('.dropdown-item').forEach(i => i.classList.remove('active'));
                     item.classList.add('active');
                     viewMenu.classList.remove('show');
 
-                    // Update view mode buttons
                     const detailsBtn = document.getElementById('detailsViewBtn');
                     const tilesBtn = document.getElementById('tilesViewBtn');
                     if (detailsBtn) detailsBtn.classList.toggle('active', Win11State.viewMode === 'details');
@@ -1219,8 +1546,57 @@ const Win11 = {
         const refreshBtn = document.getElementById('refreshBtn');
         if (refreshBtn) {
             refreshBtn.addEventListener('click', () => {
-                this.loadFileList(Win11State.currentCategory, Win11State.currentTab);
+                this.loadFileList(Win11State.currentFolderId, Win11State.currentTab);
             });
+        }
+
+        // New Folder button
+        const newFolderBtn = document.getElementById('newFolderBtn');
+        if (newFolderBtn) {
+            newFolderBtn.addEventListener('click', () => {
+                this.promptCreateFolder();
+            });
+        }
+
+        // AI Ask button — opens the AI panel
+        const aiAskBtn = document.getElementById('aiAskBtn');
+        if (aiAskBtn) {
+            aiAskBtn.addEventListener('click', () => {
+                AiPanel.open('Ask AI');
+                // Stop loading spinner since we're just opening for input
+                const loading = AiPanel.getModal().querySelector('#aiLoading');
+                if (loading) loading.style.display = 'none';
+            });
+        }
+
+        // AI Summarize button — summarizes current folder
+        const aiSummarizeBtn = document.getElementById('aiSummarizeBtn');
+        if (aiSummarizeBtn) {
+            aiSummarizeBtn.addEventListener('click', () => {
+                if (Win11State.currentFolderId) {
+                    AiPanel.summarizeFolder(Win11State.currentFolderId);
+                } else {
+                    if (window.FileExplorer) FileExplorer.showToast('Navigate into a folder first', 'error');
+                }
+            });
+        }
+    },
+
+    // Prompt to create a new folder
+    async promptCreateFolder() {
+        const name = prompt('Enter folder name:');
+        if (!name || !name.trim()) return;
+
+        try {
+            const result = await ExplorerAPI.createFolder(name.trim(), Win11State.currentFolderId);
+            if (result.success) {
+                this.loadFileList(Win11State.currentFolderId, Win11State.currentTab);
+                if (window.FileExplorer) window.FileExplorer.showToast('Folder created');
+            } else {
+                alert('Error creating folder: ' + (result.error || 'Unknown error'));
+            }
+        } catch (error) {
+            alert('Error creating folder: ' + error.message);
         }
     },
 
@@ -1240,7 +1616,7 @@ const Win11 = {
 
         // Update toolbar buttons
         const favoriteBtn = document.getElementById('favoriteBtn');
-        const deleteBtn = document.getElementById('deleteBtn');
+        const deleteBtn = document.getElementById('deleteToolbarBtn');
         const hasSelection = Win11State.selectedItems.length > 0;
 
         if (favoriteBtn) favoriteBtn.disabled = !hasSelection;
@@ -1258,14 +1634,13 @@ const Win11 = {
         this.setupSidebarToggle();
         this.setupCollapsibleSections();
         this.setupTabs();
-        this.setupCategoryNavigation();
         this.setupNavButtons();
         this.setupDropdowns();
         this.setupViewModeToggle();
         this.setupToolbarButtons();
 
         // Initial load
-        this.loadFileList();
+        this.loadFileList(null, 'recent');
 
         // Initialize FileExplorer if available
         if (window.FileExplorer) {
@@ -1300,11 +1675,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (path === '/' || path === '/index.html') {
         // Index page - Windows 11 File Explorer UI
         if (document.querySelector('.win11-explorer')) {
-            // Initialize Windows 11 UI
             Win11.init();
             setupSearch();
-
-            // Load tags for sidebar
             loadTagsForSidebar();
         } else {
             // Fallback to old UI
@@ -1313,25 +1685,12 @@ document.addEventListener('DOMContentLoaded', () => {
             loadStats();
             setupCategoryFilter();
             setupSearch();
-            setupTreeToggle();
-            setupViewToggle();
-            setupTreeNavigation();
-
-            // Load stats for category counts
-            fetchStats().then(result => {
-                if (result.success) {
-                    updateCategoryCounts(result.data);
-                }
-            });
         }
     } else if (path === '/new' || path === '/new-entry.html') {
-        // Create entry page
         setupCreateForm();
     } else if (path.startsWith('/entry/')) {
-        // View entry page
         setupEntryView();
     } else if (path.startsWith('/edit/')) {
-        // Edit entry page
         setupEditForm();
     }
 });
@@ -1342,7 +1701,7 @@ const loadTagsForSidebar = async () => {
     if (!tagsList) return;
 
     try {
-        const result = await fetchTags();
+        const result = await ExplorerAPI.getTags();
         if (result.success && result.data.length > 0) {
             tagsList.innerHTML = result.data.slice(0, 10).map(tag =>
                 `<a href="#" class="sidebar-item" data-tag="${escapeHtml(tag)}">
@@ -1351,7 +1710,6 @@ const loadTagsForSidebar = async () => {
                 </a>`
             ).join('');
 
-            // Add click handlers
             tagsList.querySelectorAll('.sidebar-item').forEach(item => {
                 item.addEventListener('click', (e) => {
                     e.preventDefault();

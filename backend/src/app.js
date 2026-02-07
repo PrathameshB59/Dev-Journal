@@ -27,9 +27,11 @@ app.use('/images', express.static(path.join(__dirname, '../../frontend/public/im
 
 // Import routes
 const entriesRouter = require('./routes/entries');
+const explorerRouter = require('./routes/explorer');
 const authRouter = require('./routes/auth');
 const adminRouter = require('./routes/admin');
 const statsRouter = require('./routes/stats');
+const aiRouter = require('./routes/ai');
 
 // Apply rate limiting to auth routes
 app.use('/api/auth/login', authLimiter);
@@ -40,9 +42,11 @@ app.use('/api', apiLimiter);
 
 // API Routes
 app.use('/api/entries', entriesRouter);
+app.use('/api/explorer', explorerRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/admin', adminRouter);
 app.use('/api/stats', statsRouter);
+app.use('/api/ai', aiRouter);
 
 // Serve HTML pages
 app.get('/', (req, res) => {

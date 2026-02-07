@@ -819,6 +819,137 @@ Automatic malware removal was enabled to provide real-time protection against ma
 
 ---
 
+## Atlas AI – Universal AI Core Service
+
+Multi-provider AI routing, budget enforcement, and cost control.
+
+### Final Production Architecture
+- High-Level Flow: Client → Atlas API (Node.js/Express) → AI Router → Budget Guard (MongoDB) → OpenAI / Groq
+- Core Rules: $5 per user cap, budget checked before every call, usage recorded after every response, MongoDB is single source of truth
+- Why: Predictable costs, production-safe routing, no vendor lock-in, scales across projects
+
+### Subscription, Budget & Coupons
+- Atlas is a universal AI core service (Dev-Journal, StackPilot, future apps)
+- AI features require active subscription: ₹300 per user per month
+- Hard budget limit: once ₹300 reached → AI blocked, resets next month
+- Provider split: Together AI ₹150, Groq ₹50, OpenAI ₹100
+- Coupon system: admin-controlled, 1–6 months free, one per user lifetime
+
+### Provider Strategy
+- Together AI: default provider for docs, summaries, markdown cleanup
+- OpenAI: premium fallback for deep reasoning
+- Groq: instant error help, quick queries
+- Cost-aware routing: route to best-fit if under ₹300, block if over
+
+### Fallback / Premium Mode
+- Default: Together AI (~90% of requests)
+- Premium: OpenAI (triggered when quality critical)
+- Automatic fallback, user doesn't choose provider
+- Budget still enforced during fallback
+
+### Together AI vs Groq
+- Together AI: quality + control, best for docs/summaries/explanations
+- Groq: speed + cost, best for instant answers/quick help
+- Together = thinking layer, Groq = speed layer
+
+### Cost Breakdown & Budget Planning
+- Together AI (70-80%): $1–$4/month
+- Groq (15-20%): $0.20–$1/month
+- OpenAI (5-10%): $2–$5/month
+- Conservative total: ~$4/month, Heavy: ~$10/month
+- Hard cap: ₹300 per user per month
+
+### Cost per Feature / Button
+- Save Daily Dev Log: Together AI, ~$0.30–$0.60/month
+- Summarize Today's Work: Together AI, ~$0.40–$0.80/month
+- Explain Git Commit: Together AI, ~$0.30–$0.70/month
+- Quick Error Help: Groq, ~$0.10–$0.30/month
+- Explain Concept (Premium): OpenAI, ~$1.50–$3.00/month
+- Rewrite as Documentation: Together AI, ~$0.40–$0.90/month
+- Total: ~$5–$6 (₹400–₹550) per user per month
+
+### Multi-Provider Architecture Decision
+- Together AI: daily workhorse (70-80%), open-source, low cost
+- Groq: instant help, near-instant latency, extremely low cost
+- OpenAI: premium reasoning, strictly rate-limited
+- Single provider forces trade-offs; multi-provider removes them
+
+### ₹500 Global Budget Planning
+- Initial budget constraint: ₹500/month global
+- Together AI ₹250–₹300, Groq ₹50–₹100, OpenAI ₹80–₹120
+- Rule of thumb: long/routine → Together, fast/short → Groq, hard/important → OpenAI
+
+### System Architecture (₹500 Budget Plan)
+- Frontend → Backend API → Atlas AI Router → Providers → Response stored → Returned
+- Frontend sends intent + content, never chooses provider
+- Budget Guard: blocks requests when provider limit reached
+- Providers fully isolated (together.js, groq.js, openai.js)
+
+### Node.js VPS Architecture
+- Stack: Node.js (Express), PM2, Nginx, MongoDB Atlas, JWT, RBAC
+- Atlas added as dedicated AI module: backend/src/ai/
+- All AI endpoints protected by JWT, RBAC, rate limiting
+- Usage tracking: userId, provider, feature, estimatedCost, createdAt
+
+### Universal AI Service Design
+- Atlas lives beside projects, not inside them
+- Directory: ~/dev/projects/ai-core/
+- Projects consume Atlas over HTTP (localhost:9000)
+- Budget ownership centralized in Atlas
+- No duplicated AI logic across projects
+
+### Naming & Identity Decision
+- Names considered: Sentinel, Atlas, Relay, Nimbus, Forge
+- Final choice: Atlas — backbone, universal, infrastructure-focused
+- Rejected: pop-culture, vendor-tied, chatbot-style names
+
+### Name Lock & Identity
+- Official name: Atlas (final, non-negotiable)
+- Role: Universal AI Core / Internal AI Platform
+- Scope: All projects under ~/dev/projects/
+- Operational tone: calm, factual, infrastructure-oriented
+
+### Per-User Budget Enforcement
+- AI usage is per-user, not global pool
+- ₹300/user/month: Together ₹150, Groq ₹50, OpenAI ₹100
+- User-aware request contract requires userId
+- Global safety net: ₹3,000/month system-wide
+
+### Monetization & Access Model
+- Dev-Journal = Free Product, Atlas AI = Paid Add-on
+- Free: CRUD, file explorer, dashboard, auth, RBAC
+- Paid: AI summaries, explanations, doc rewrite, error help
+- User states: aiEnabled = false (free) / true (paid)
+
+### Coupon & Free Trial System
+- Admin-created coupons grant temporary AI access
+- Duration: configurable (e.g. 30 days)
+- One coupon per user lifetime, no stacking
+- Coupon users get same ₹300 budget as paid users
+
+### Dynamic Coupons & Quota Control
+- Configurable duration: 1–6 months
+- Hard stop logic: if monthlyCost >= 300 → reject
+- Lazy monthly reset: usage stored by YYYY-MM
+- Global safety: ₹5,000 system-wide limit
+
+### File Explorer Architecture
+- Virtual filesystem in MongoDB Atlas (files + folders as same entity)
+- Schema: name, type, parentId, content, mime, ownerId, pinned, tags
+- Explorer State Manager (fileExplorer.js) acts like explorer.exe
+- APIs: /api/explorer/root, folder/:id, file, breadcrumb/:id
+- Keyboard navigation: ↑/↓, Enter, Backspace, Ctrl+N, Delete
+
+### MongoDB Atlas AI – Dev Journal Architecture
+- Vector Search: search by meaning, not keywords
+- Embeddings: every .md entry becomes AI-readable
+- RAG: retrieve relevant entries → inject into LLM prompt → AI answers
+- Embedding generation happens once per save, not per search
+- UI: search bar toggle (Keyword | AI), folder summarize, entry explain
+- Security: only top-N entries sent to LLM, rate limits, access control
+
+---
+
 ## Dev-Journal Overview
 
 **Dev-Journal** — Personal Infrastructure & Documentation System

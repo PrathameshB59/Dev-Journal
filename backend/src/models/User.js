@@ -44,6 +44,22 @@ const userSchema = new mongoose.Schema({
     },
     passwordChangedAt: {
         type: Date
+    },
+    // AI subscription fields
+    aiEnabled: {
+        type: Boolean,
+        default: false
+    },
+    aiPlan: {
+        type: String,
+        enum: ['NONE', 'PAID', 'COUPON'],
+        default: 'NONE'
+    },
+    aiExpiresAt: {
+        type: Date
+    },
+    couponUsed: {
+        type: String
     }
 }, {
     timestamps: true

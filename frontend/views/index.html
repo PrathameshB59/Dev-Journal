@@ -56,6 +56,10 @@
                     <span class="btn-icon">&#10133;</span>
                     <span class="btn-label">New</span>
                 </a>
+                <button class="toolbar-btn" id="newFolderBtn" title="New Folder">
+                    <span class="btn-icon">&#128193;</span>
+                    <span class="btn-label">Folder</span>
+                </button>
                 <div class="toolbar-separator"></div>
                 <button class="toolbar-btn" id="refreshBtn" title="Refresh">
                     <span class="btn-icon">&#128260;</span>
@@ -66,6 +70,15 @@
                 <div class="toolbar-separator"></div>
                 <button class="toolbar-btn danger" id="deleteBtn" title="Delete" disabled>
                     <span class="btn-icon">&#128465;</span>
+                </button>
+                <div class="toolbar-separator"></div>
+                <button class="toolbar-btn ai-btn" id="aiSummarizeBtn" title="Summarize folder with AI">
+                    <span class="btn-icon">&#129302;</span>
+                    <span class="btn-label">Summarize</span>
+                </button>
+                <button class="toolbar-btn ai-btn" id="aiAskBtn" title="Ask AI">
+                    <span class="btn-icon">&#128172;</span>
+                    <span class="btn-label">Ask AI</span>
                 </button>
             </div>
             <div class="toolbar-right">
@@ -83,17 +96,17 @@
                             <span class="check-icon">&#10003;</span>
                             <span>Date (Oldest)</span>
                         </div>
-                        <div class="dropdown-item" data-sort="title-asc">
+                        <div class="dropdown-item" data-sort="name-asc">
                             <span class="check-icon">&#10003;</span>
                             <span>Name (A-Z)</span>
                         </div>
-                        <div class="dropdown-item" data-sort="title-desc">
+                        <div class="dropdown-item" data-sort="name-desc">
                             <span class="check-icon">&#10003;</span>
                             <span>Name (Z-A)</span>
                         </div>
-                        <div class="dropdown-item" data-sort="category-asc">
+                        <div class="dropdown-item" data-sort="type-asc">
                             <span class="check-icon">&#10003;</span>
-                            <span>Category</span>
+                            <span>Type</span>
                         </div>
                     </div>
                 </div>
@@ -279,7 +292,7 @@
                 <div class="file-list-container" id="fileListContainer">
                     <!-- File List Header -->
                     <div class="file-list-header" id="fileListHeader">
-                        <div class="col-header sorted" data-sort="title">
+                        <div class="col-header sorted" data-sort="name">
                             <span>Name</span>
                             <span class="sort-icon">&#9660;</span>
                         </div>
@@ -287,8 +300,8 @@
                             <span>Date Modified</span>
                             <span class="sort-icon">&#9660;</span>
                         </div>
-                        <div class="col-header" data-sort="category">
-                            <span>Category</span>
+                        <div class="col-header" data-sort="type">
+                            <span>Type</span>
                             <span class="sort-icon">&#9660;</span>
                         </div>
                         <div class="col-header">

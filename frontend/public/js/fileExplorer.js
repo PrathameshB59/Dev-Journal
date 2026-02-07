@@ -1,126 +1,30 @@
 // Advanced File Explorer Module for Dev-Journal
 const FileExplorer = {
     // State
-    currentView: 'grid', // 'grid' or 'list'
+    currentView: 'grid',
     selectedItems: [],
     focusedItem: null,
-    favorites: [],
-    sortBy: 'date', // 'date', 'title', 'category'
+    sortBy: 'date',
     sortOrder: 'desc',
     contextMenuOpen: false,
 
     // Initialize file explorer
     init() {
-        this.loadFavorites();
         this.setupKeyboardNav();
         this.setupContextMenu();
         this.setupDragDrop();
-        this.setupViewToggle();
-        this.setupSorting();
-        this.renderQuickAccess();
-    },
-
-    // Load favorites from localStorage
-    loadFavorites() {
-        const saved = localStorage.getItem('devjournal_favorites');
-        this.favorites = saved ? JSON.parse(saved) : [];
-    },
-
-    // Save favorites to localStorage
-    saveFavorites() {
-        localStorage.setItem('devjournal_favorites', JSON.stringify(this.favorites));
-    },
-
-    // Add to favorites
-    addToFavorites(entryId, title) {
-        if (!this.favorites.find(f => f.id === entryId)) {
-            this.favorites.push({ id: entryId, title });
-            this.saveFavorites();
-            this.renderQuickAccess();
-            this.showToast('Added to favorites');
-        }
-    },
-
-    // Remove from favorites
-    removeFromFavorites(entryId) {
-        this.favorites = this.favorites.filter(f => f.id !== entryId);
-        this.saveFavorites();
-        this.renderQuickAccess();
-        this.showToast('Removed from favorites');
-    },
-
-    // Check if entry is favorited
-    isFavorite(entryId) {
-        return this.favorites.some(f => f.id === entryId);
-    },
-
-    // Render quick access sidebar
-    renderQuickAccess() {
-        const container = document.getElementById('quickAccess');
-        if (!container) return;
-
-        const categories = [
-            { id: 'daily-learning', icon: '&#128218;', name: 'Daily Learning' },
-            { id: 'project-note', icon: '&#128193;', name: 'Project Notes' },
-            { id: 'bug-fix', icon: '&#128027;', name: 'Bug Fixes' },
-            { id: 'code-snippet', icon: '&#128187;', name: 'Code Snippets' },
-            { id: 'concept', icon: '&#128161;', name: 'Concepts' }
-        ];
-
-        container.innerHTML = `
-            <div class="quick-access-section">
-                <h3 class="quick-access-title">&#9733; Favorites</h3>
-                <ul class="quick-access-list" role="list">
-                    ${this.favorites.length ? this.favorites.map(f => `
-                        <li>
-                            <a href="/entry/${f.id}" class="quick-access-item" data-entry-id="${f.id}">
-                                <span class="item-icon">&#128196;</span>
-                                <span class="item-text">${this.escapeHtml(f.title)}</span>
-                            </a>
-                        </li>
-                    `).join('') : '<li class="no-favorites">No favorites yet</li>'}
-                </ul>
-            </div>
-            <div class="quick-access-section">
-                <h3 class="quick-access-title">&#128193; Categories</h3>
-                <ul class="quick-access-list" role="list">
-                    ${categories.map(cat => `
-                        <li>
-                            <a href="/?category=${cat.id}" class="quick-access-item" data-category="${cat.id}">
-                                <span class="item-icon">${cat.icon}</span>
-                                <span class="item-text">${cat.name}</span>
-                            </a>
-                        </li>
-                    `).join('')}
-                </ul>
-            </div>
-            <div class="quick-access-section">
-                <h3 class="quick-access-title">&#128337; Quick Links</h3>
-                <ul class="quick-access-list" role="list">
-                    <li>
-                        <a href="/new" class="quick-access-item">
-                            <span class="item-icon">&#10133;</span>
-                            <span class="item-text">New Entry</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="/dashboard" class="quick-access-item">
-                            <span class="item-icon">&#128202;</span>
-                            <span class="item-text">Dashboard</span>
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        `;
     },
 
     // Setup keyboard navigation
     setupKeyboardNav() {
         document.addEventListener('keydown', (e) => {
-            const entriesGrid = document.querySelector('.entries-grid, .entries-list');
-            if (!entriesGrid) return;
+            // Don't capture when typing in inputs
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
 
-            const items = Array.from(entriesGrid.querySelectorAll('.entry-card, .entry-list-item'));
+            const fileList = document.getElementById('fileList');
+            if (!fileList) return;
+
+            const items = Array.from(fileList.querySelectorAll('.file-item'));
             if (!items.length) return;
 
             const currentIndex = items.findIndex(item => item === this.focusedItem);
@@ -136,48 +40,61 @@ const FileExplorer = {
                     e.preventDefault();
                     this.focusItem(items, currentIndex - 1);
                     break;
-                case 'ArrowRight':
-                case 'l':
-                    if (this.currentView === 'grid') {
-                        e.preventDefault();
-                        this.focusItem(items, currentIndex + 1);
-                    }
-                    break;
-                case 'ArrowLeft':
-                case 'h':
-                    if (this.currentView === 'grid') {
-                        e.preventDefault();
-                        this.focusItem(items, currentIndex - 1);
-                    }
-                    break;
                 case 'Enter':
                     if (this.focusedItem) {
-                        const link = this.focusedItem.querySelector('a');
-                        if (link) link.click();
+                        e.preventDefault();
+                        const entryType = this.focusedItem.dataset.type;
+                        const entryId = this.focusedItem.dataset.entryId;
+                        if (entryType === 'folder') {
+                            // Navigate into folder
+                            if (window.Win11) Win11.navigateToFolder(entryId);
+                        } else {
+                            // Open file
+                            window.location.href = `/entry/${entryId}`;
+                        }
                     }
                     break;
-                case 'f':
-                    if (e.ctrlKey && this.focusedItem) {
+                case 'Backspace':
+                    if (!e.ctrlKey) {
                         e.preventDefault();
-                        const entryId = this.focusedItem.dataset.entryId;
-                        const title = this.focusedItem.querySelector('.entry-title')?.textContent;
-                        if (entryId && title) {
-                            if (this.isFavorite(entryId)) {
-                                this.removeFromFavorites(entryId);
+                        // Go up to parent folder
+                        if (window.Win11 && window.Win11State && window.Win11State.currentFolderId) {
+                            const folder = Win11State.folderMap[Win11State.currentFolderId];
+                            if (folder && folder.parentId) {
+                                Win11.navigateToFolder(folder.parentId);
                             } else {
-                                this.addToFavorites(entryId, title);
+                                Win11.navigateToRoot();
                             }
                         }
                     }
                     break;
                 case 'Delete':
-                case 'Backspace':
-                    if (this.focusedItem && e.ctrlKey) {
+                    if (this.focusedItem) {
                         e.preventDefault();
                         const entryId = this.focusedItem.dataset.entryId;
-                        if (entryId && confirm('Delete this entry?')) {
+                        const entryType = this.focusedItem.dataset.type;
+                        const msg = entryType === 'folder'
+                            ? 'Delete this folder and all its contents?'
+                            : 'Delete this entry?';
+                        if (entryId && confirm(msg)) {
                             this.deleteEntry(entryId);
                         }
+                    }
+                    break;
+                case 'F2':
+                    if (this.focusedItem) {
+                        e.preventDefault();
+                        const entryId = this.focusedItem.dataset.entryId;
+                        this.renameEntry(entryId);
+                    }
+                    break;
+                case 'n':
+                    if (e.ctrlKey && e.shiftKey) {
+                        e.preventDefault();
+                        if (window.Win11) Win11.promptCreateFolder();
+                    } else if (e.ctrlKey) {
+                        e.preventDefault();
+                        window.location.href = '/new';
                     }
                     break;
                 case 'Escape':
@@ -225,7 +142,12 @@ const FileExplorer = {
             <ul role="menu">
                 <li role="menuitem" data-action="open"><span>&#128194;</span> Open</li>
                 <li role="menuitem" data-action="edit"><span>&#9998;</span> Edit</li>
+                <li role="menuitem" data-action="rename"><span>&#128221;</span> Rename</li>
                 <li role="menuitem" data-action="favorite"><span>&#9733;</span> Toggle Favorite</li>
+                <li role="menuitem" data-action="pin"><span>&#128204;</span> Toggle Pin</li>
+                <li class="divider"></li>
+                <li role="menuitem" data-action="ai-summarize" class="ai-action"><span>&#129302;</span> Summarize</li>
+                <li role="menuitem" data-action="ai-explain" class="ai-action"><span>&#129302;</span> Explain</li>
                 <li class="divider"></li>
                 <li role="menuitem" data-action="delete" class="danger"><span>&#128465;</span> Delete</li>
             </ul>
@@ -234,10 +156,10 @@ const FileExplorer = {
 
         // Handle right-click on entries
         document.addEventListener('contextmenu', (e) => {
-            const entryCard = e.target.closest('.entry-card, .entry-list-item');
-            if (entryCard) {
+            const fileItem = e.target.closest('.file-item');
+            if (fileItem) {
                 e.preventDefault();
-                this.showContextMenu(e.clientX, e.clientY, entryCard);
+                this.showContextMenu(e.clientX, e.clientY, fileItem);
             }
         });
 
@@ -247,27 +169,49 @@ const FileExplorer = {
             if (!action || !this.contextMenuTarget) return;
 
             const entryId = this.contextMenuTarget.dataset.entryId;
-            const title = this.contextMenuTarget.querySelector('.entry-title')?.textContent;
+            const entryType = this.contextMenuTarget.dataset.type;
 
             switch (action) {
                 case 'open':
-                    window.location.href = `/entry/${entryId}`;
-                    break;
-                case 'edit':
-                    window.location.href = `/edit/${entryId}`;
-                    break;
-                case 'favorite':
-                    if (this.isFavorite(entryId)) {
-                        this.removeFromFavorites(entryId);
+                    if (entryType === 'folder') {
+                        if (window.Win11) Win11.navigateToFolder(entryId);
                     } else {
-                        this.addToFavorites(entryId, title);
+                        window.location.href = `/entry/${entryId}`;
                     }
                     break;
-                case 'delete':
-                    if (confirm('Are you sure you want to delete this entry?')) {
+                case 'edit':
+                    if (entryType === 'file') {
+                        window.location.href = `/edit/${entryId}`;
+                    }
+                    break;
+                case 'rename':
+                    this.renameEntry(entryId);
+                    break;
+                case 'favorite':
+                    this.toggleFavorite(entryId);
+                    break;
+                case 'pin':
+                    this.togglePin(entryId);
+                    break;
+                case 'ai-summarize':
+                    if (entryType === 'folder' && window.AiPanel) {
+                        AiPanel.summarizeFolder(entryId);
+                    }
+                    break;
+                case 'ai-explain':
+                    if (entryType === 'file' && window.AiPanel) {
+                        AiPanel.explainEntry(entryId);
+                    }
+                    break;
+                case 'delete': {
+                    const msg = entryType === 'folder'
+                        ? 'Delete this folder and all its contents?'
+                        : 'Are you sure you want to delete this entry?';
+                    if (confirm(msg)) {
                         this.deleteEntry(entryId);
                     }
                     break;
+                }
             }
 
             this.closeContextMenu();
@@ -289,19 +233,21 @@ const FileExplorer = {
         this.contextMenuTarget = target;
         this.contextMenuOpen = true;
 
-        // Update favorite text
-        const entryId = target.dataset.entryId;
-        const favItem = menu.querySelector('[data-action="favorite"]');
-        if (favItem) {
-            favItem.innerHTML = this.isFavorite(entryId)
-                ? '<span>&#9734;</span> Remove from Favorites'
-                : '<span>&#9733;</span> Add to Favorites';
-        }
+        const entryType = target.dataset.type;
+
+        // Hide edit option for folders
+        const editItem = menu.querySelector('[data-action="edit"]');
+        if (editItem) editItem.style.display = entryType === 'folder' ? 'none' : '';
+
+        // Show "Summarize" for folders, "Explain" for files
+        const summarizeItem = menu.querySelector('[data-action="ai-summarize"]');
+        const explainItem = menu.querySelector('[data-action="ai-explain"]');
+        if (summarizeItem) summarizeItem.style.display = entryType === 'folder' ? '' : 'none';
+        if (explainItem) explainItem.style.display = entryType === 'file' ? '' : 'none';
 
         // Position menu
         menu.style.display = 'block';
 
-        // Adjust position if menu would go off screen
         const menuRect = menu.getBoundingClientRect();
         if (x + menuRect.width > window.innerWidth) {
             x = window.innerWidth - menuRect.width - 10;
@@ -324,123 +270,173 @@ const FileExplorer = {
         this.contextMenuOpen = false;
     },
 
-    // Setup drag and drop
+    // Setup drag and drop for moving entries between folders
     setupDragDrop() {
         document.addEventListener('dragstart', (e) => {
-            const entryCard = e.target.closest('.entry-card, .entry-list-item');
-            if (entryCard) {
-                e.dataTransfer.setData('text/plain', entryCard.dataset.entryId);
+            const fileItem = e.target.closest('.file-item');
+            if (fileItem) {
+                e.dataTransfer.setData('text/plain', fileItem.dataset.entryId);
                 e.dataTransfer.effectAllowed = 'move';
-                entryCard.classList.add('dragging');
+                fileItem.classList.add('dragging');
             }
         });
 
         document.addEventListener('dragend', (e) => {
-            const entryCard = e.target.closest('.entry-card, .entry-list-item');
-            if (entryCard) {
-                entryCard.classList.remove('dragging');
+            const fileItem = e.target.closest('.file-item');
+            if (fileItem) {
+                fileItem.classList.remove('dragging');
+            }
+            // Remove all drag-over highlights
+            document.querySelectorAll('.drag-over').forEach(el => el.classList.remove('drag-over'));
+        });
+
+        // Allow dropping on folder items
+        document.addEventListener('dragover', (e) => {
+            const folderItem = e.target.closest('.folder-item');
+            if (folderItem) {
+                e.preventDefault();
+                e.dataTransfer.dropEffect = 'move';
+                folderItem.classList.add('drag-over');
             }
         });
 
-        // Allow dropping on quick access favorites
-        const quickAccess = document.getElementById('quickAccess');
-        if (quickAccess) {
-            quickAccess.addEventListener('dragover', (e) => {
-                e.preventDefault();
-                e.dataTransfer.dropEffect = 'copy';
-            });
+        document.addEventListener('dragleave', (e) => {
+            const folderItem = e.target.closest('.folder-item');
+            if (folderItem) {
+                folderItem.classList.remove('drag-over');
+            }
+        });
 
-            quickAccess.addEventListener('drop', (e) => {
+        document.addEventListener('drop', async (e) => {
+            const folderItem = e.target.closest('.folder-item');
+            if (folderItem) {
                 e.preventDefault();
+                folderItem.classList.remove('drag-over');
+
                 const entryId = e.dataTransfer.getData('text/plain');
-                const entryCard = document.querySelector(`[data-entry-id="${entryId}"]`);
-                if (entryCard) {
-                    const title = entryCard.querySelector('.entry-title')?.textContent;
-                    if (title) {
-                        this.addToFavorites(entryId, title);
-                    }
+                const targetFolderId = folderItem.dataset.entryId;
+
+                if (entryId && targetFolderId && entryId !== targetFolderId) {
+                    await this.moveEntry(entryId, targetFolderId);
                 }
-            });
-        }
-    },
-
-    // Setup view toggle (grid/list)
-    setupViewToggle() {
-        const toggleBtn = document.getElementById('viewToggle');
-        if (!toggleBtn) return;
-
-        // Load saved preference
-        const savedView = localStorage.getItem('devjournal_view');
-        if (savedView) {
-            this.currentView = savedView;
-            this.applyView();
-        }
-
-        toggleBtn.addEventListener('click', () => {
-            this.currentView = this.currentView === 'grid' ? 'list' : 'grid';
-            localStorage.setItem('devjournal_view', this.currentView);
-            this.applyView();
+            }
         });
-    },
 
-    // Apply current view
-    applyView() {
-        const container = document.querySelector('.entries-container');
-        const toggleBtn = document.getElementById('viewToggle');
+        // Also allow dropping on pinned folders
+        document.addEventListener('dragover', (e) => {
+            const pinnedFolder = e.target.closest('.pinned-folder');
+            if (pinnedFolder) {
+                e.preventDefault();
+                e.dataTransfer.dropEffect = 'move';
+                pinnedFolder.classList.add('drag-over');
+            }
+        });
 
-        if (container) {
-            container.classList.remove('grid-view', 'list-view');
-            container.classList.add(`${this.currentView}-view`);
-        }
+        document.addEventListener('dragleave', (e) => {
+            const pinnedFolder = e.target.closest('.pinned-folder');
+            if (pinnedFolder) {
+                pinnedFolder.classList.remove('drag-over');
+            }
+        });
 
-        if (toggleBtn) {
-            toggleBtn.innerHTML = this.currentView === 'grid'
-                ? '&#9776; List View'
-                : '&#9783; Grid View';
-        }
-    },
+        document.addEventListener('drop', async (e) => {
+            const pinnedFolder = e.target.closest('.pinned-folder');
+            if (pinnedFolder) {
+                e.preventDefault();
+                pinnedFolder.classList.remove('drag-over');
 
-    // Setup sorting
-    setupSorting() {
-        const sortSelect = document.getElementById('sortSelect');
-        if (!sortSelect) return;
+                const entryId = e.dataTransfer.getData('text/plain');
+                const targetFolderId = pinnedFolder.dataset.folderId;
 
-        sortSelect.addEventListener('change', () => {
-            const [sortBy, sortOrder] = sortSelect.value.split('-');
-            this.sortBy = sortBy;
-            this.sortOrder = sortOrder;
-            // Trigger re-fetch of entries
-            if (typeof loadEntries === 'function') {
-                loadEntries();
+                if (entryId && targetFolderId) {
+                    await this.moveEntry(entryId, targetFolderId);
+                }
             }
         });
     },
 
-    // Delete entry
+    // Rename entry
+    async renameEntry(entryId) {
+        const newName = prompt('Enter new name:');
+        if (!newName || !newName.trim()) return;
+
+        try {
+            const result = await window.ExplorerAPI.updateEntry(entryId, { name: newName.trim() });
+            if (result.success) {
+                if (window.Win11) Win11.loadCurrentView();
+                this.showToast('Renamed successfully');
+            } else {
+                this.showToast('Failed to rename: ' + (result.error || 'Unknown error'), 'error');
+            }
+        } catch (error) {
+            this.showToast('Failed to rename: ' + error.message, 'error');
+        }
+    },
+
+    // Toggle favorite
+    async toggleFavorite(entryId) {
+        try {
+            // Get current state from DOM
+            const item = document.querySelector(`.file-item[data-entry-id="${entryId}"]`);
+            const isFav = item && item.querySelector('.fav-indicator');
+
+            const result = await window.ExplorerAPI.updateEntry(entryId, { favorite: !isFav });
+            if (result.success) {
+                if (window.Win11) Win11.loadCurrentView();
+                this.showToast(isFav ? 'Removed from favorites' : 'Added to favorites');
+            }
+        } catch (error) {
+            this.showToast('Failed to update favorite', 'error');
+        }
+    },
+
+    // Toggle pin
+    async togglePin(entryId) {
+        try {
+            const item = document.querySelector(`.file-item[data-entry-id="${entryId}"]`);
+            const isPinned = item && item.querySelector('.pinned-indicator');
+
+            const result = await window.ExplorerAPI.updateEntry(entryId, { pinned: !isPinned });
+            if (result.success) {
+                if (window.Win11) Win11.loadCurrentView();
+                this.showToast(isPinned ? 'Unpinned' : 'Pinned');
+            }
+        } catch (error) {
+            this.showToast('Failed to update pin', 'error');
+        }
+    },
+
+    // Move entry to a folder
+    async moveEntry(entryId, targetFolderId) {
+        try {
+            const result = await window.ExplorerAPI.moveEntry(entryId, targetFolderId);
+            if (result.success) {
+                if (window.Win11) Win11.loadCurrentView();
+                this.showToast('Moved successfully');
+            } else {
+                this.showToast('Failed to move: ' + (result.error || 'Unknown error'), 'error');
+            }
+        } catch (error) {
+            this.showToast('Failed to move: ' + error.message, 'error');
+        }
+    },
+
+    // Delete entry via explorer API
     async deleteEntry(entryId) {
         try {
-            const response = await fetch(`/api/entries/${entryId}`, {
-                method: 'DELETE',
-                headers: Auth.getAuthHeader()
-            });
-
-            const result = await response.json();
+            const result = await window.ExplorerAPI.deleteEntry(entryId);
 
             if (result.success) {
                 // Remove from DOM
                 const card = document.querySelector(`[data-entry-id="${entryId}"]`);
-                if (card) {
-                    card.remove();
-                }
-                // Remove from favorites if present
-                this.removeFromFavorites(entryId);
-                this.showToast('Entry deleted');
+                if (card) card.remove();
+                this.showToast('Deleted');
             } else {
-                this.showToast('Failed to delete entry', 'error');
+                this.showToast('Failed to delete', 'error');
             }
         } catch (error) {
             console.error('Delete error:', error);
-            this.showToast('Failed to delete entry', 'error');
+            this.showToast('Failed to delete', 'error');
         }
     },
 
@@ -511,105 +507,50 @@ fileExplorerStyles.textContent = `
         padding: 0;
     }
 
-    /* Quick Access Sidebar */
-    .quick-access {
-        background: var(--card-bg);
-        border: 1px solid var(--border);
-        border-radius: var(--radius-lg);
-        padding: var(--space-md);
-    }
-
-    .quick-access-section {
-        margin-bottom: var(--space-lg);
-    }
-
-    .quick-access-section:last-child {
-        margin-bottom: 0;
-    }
-
-    .quick-access-title {
-        font-size: var(--text-sm);
-        color: var(--text-muted);
-        margin-bottom: var(--space-sm);
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-    }
-
-    .quick-access-list {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-    }
-
-    .quick-access-item {
-        display: flex;
-        align-items: center;
-        gap: var(--space-sm);
-        padding: var(--space-sm);
-        color: var(--text);
-        text-decoration: none;
-        border-radius: var(--radius-sm);
-        transition: all var(--transition-fast);
-    }
-
-    .quick-access-item:hover {
-        background: var(--bg-secondary);
-        color: var(--primary);
-    }
-
-    .quick-access-item .item-icon {
-        flex-shrink: 0;
-    }
-
-    .quick-access-item .item-text {
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-    }
-
-    .no-favorites {
-        color: var(--text-muted);
-        font-size: var(--text-sm);
-        font-style: italic;
-        padding: var(--space-sm);
-    }
-
-    /* Entry Card States */
-    .entry-card.focused,
-    .entry-list-item.focused {
+    /* File Item States */
+    .file-item.focused {
         outline: 2px solid var(--primary);
-        outline-offset: 2px;
+        outline-offset: -2px;
     }
 
-    .entry-card.selected,
-    .entry-list-item.selected {
+    .file-item.selected {
         background: rgba(59, 130, 246, 0.1);
     }
 
-    .entry-card.dragging,
-    .entry-list-item.dragging {
+    .file-item.dragging {
         opacity: 0.5;
     }
 
-    /* List View */
-    .entries-container.list-view .entries-grid {
-        display: flex;
-        flex-direction: column;
-        gap: var(--space-sm);
+    .file-item.drag-over,
+    .pinned-folder.drag-over {
+        outline: 2px dashed var(--primary);
+        outline-offset: -2px;
+        background: rgba(59, 130, 246, 0.05);
     }
 
-    .entries-container.list-view .entry-card {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        padding: var(--space-md);
+    /* Folder-specific styles */
+    .folder-item {
+        cursor: default;
     }
 
-    .entries-container.list-view .entry-card .entry-content {
-        display: flex;
-        align-items: center;
-        gap: var(--space-md);
-        flex: 1;
+    .folder-item .file-icon.folder {
+        font-size: 1.1em;
+    }
+
+    .folder-badge {
+        background: rgba(59, 130, 246, 0.1);
+        color: var(--primary);
+    }
+
+    /* Pinned/Favorite indicators */
+    .pinned-indicator,
+    .fav-indicator {
+        font-size: 0.75em;
+        margin-left: 4px;
+    }
+
+    .fav-indicator {
+        color: #f59e0b;
     }
 
     /* Toast Notifications */

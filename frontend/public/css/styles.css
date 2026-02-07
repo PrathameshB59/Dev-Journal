@@ -450,6 +450,28 @@ nav {
     box-shadow: var(--shadow-sm);
 }
 
+.btn-ai {
+    background: rgba(167, 139, 250, 0.15);
+    color: #a78bfa;
+    border: 1px solid rgba(167, 139, 250, 0.3);
+    padding: var(--space-sm) var(--space-lg);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    font-size: var(--text-base);
+    transition: all var(--transition-base);
+}
+
+.btn-ai:hover {
+    background: rgba(167, 139, 250, 0.25);
+    color: #c4b5fd;
+    transform: translateY(-2px);
+    box-shadow: 0 0 15px rgba(167, 139, 250, 0.2);
+}
+
+.btn-ai:active {
+    transform: translateY(0) scale(0.98);
+}
+
 /* ========================================
    MAIN CONTAINER & LAYOUT
    ======================================== */

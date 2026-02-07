@@ -165,7 +165,7 @@
 
     <header>
         <h1>VPS Progress & Execution Plan</h1>
-        <p>Dev-Journal • StackPilot • Node.js • AI-Assisted (₹300 Budget)</p>
+        <p>Dev-Journal • StackPilot • Node.js • Atlas AI (Hard $5 / user / month)</p>
     </header>
 
     <div class="container">
@@ -231,38 +231,43 @@
             </div>
 
             <div class="card">
-                <h3>AI Usage Strategy</h3>
+                <h3>AI Usage Strategy (Final)</h3>
                 <ul>
-                    <li>Daily logs & summaries → Together AI</li>
-                    <li>Quick error help → Groq</li>
-                    <li>Deep explanation → OpenAI (limited)</li>
-                    <li>Auto fallback disabled when budget hits</li>
+                    <li>Quick error help → <strong>Groq</strong> (fast & cheap)</li>
+                    <li>Deep explanations → <strong>OpenAI</strong> (premium)</li>
+                    <li>Provider selection handled by Atlas Router</li>
+                    <li>No fallback once monthly limit is reached</li>
                 </ul>
-            </div>
-
-            <div class="card">
-                <h3>Monthly Budget (₹300)</h3>
-
-                <div class="budget">
-                    <span>Together AI</span>
-                    <strong>₹150</strong>
-                </div>
-
-                <div class="budget">
-                    <span>Groq</span>
-                    <strong>₹50</strong>
-                </div>
-
-                <div class="budget">
-                    <span>OpenAI (Premium)</span>
-                    <strong>₹100</strong>
-                </div>
-
                 <p class="muted">
-                    Hard-limits enforced at backend level.<br />
-                    No surprise billing.
+                    Atlas exposes a single AI interface. Providers are never visible to users.
                 </p>
             </div>
+
+
+            <div class="card">
+                <h3>Monthly AI Budget (Hard Cap)</h3>
+            
+                <div class="budget">
+                    <span>OpenAI (Deep Reasoning)</span>
+                    <strong>$4.00</strong>
+                </div>
+            
+                <div class="budget">
+                    <span>Groq (Fast Help)</span>
+                    <strong>$1.00</strong>
+                </div>
+            
+                <div class="budget">
+                    <span><strong>Total</strong></span>
+                    <strong><strong>$5.00 / user / month</strong></strong>
+                </div>
+            
+                <p class="muted">
+                    Budget is enforced strictly by Atlas.<br />
+                    No fallback. No partial responses. No surprise billing.
+                </p>
+            </div>
+
 
             <div class="card">
                 <h3>Next Steps</h3>
@@ -274,6 +279,49 @@
                 </ul>
             </div>
         </section>
+        <section class="panel">
+            <h2>🧱 Atlas AI – Final Production Architecture</h2>
+        
+            <div class="card">
+                <h3>High-Level Flow</h3>
+                <pre>
+        Client / App
+            ↓
+        Atlas API (Node.js / Express)
+            ↓
+        AI Router (aiRouter.js)
+            ↓
+        Budget Guard (MongoDB)
+            ↓
+        OpenAI (deep reasoning) | Groq (fast help)
+                </pre>
+                <p class="muted">
+                    Applications never talk to AI providers directly.
+                </p>
+            </div>
+        
+            <div class="card">
+                <h3>Core Rules (Non-Negotiable)</h3>
+                <ul>
+                    <li>Atlas never exceeds <strong>$5 per user per month</strong></li>
+                    <li>Budget checked before every AI call</li>
+                    <li>Usage recorded after every response</li>
+                    <li>No fallback after limit is reached</li>
+                    <li>MongoDB is the single source of truth</li>
+                </ul>
+            </div>
+        
+            <div class="card">
+                <h3>Why This Works</h3>
+                <ul>
+                    <li>Predictable AI costs</li>
+                    <li>Production-safe routing</li>
+                    <li>No vendor lock-in at app level</li>
+                    <li>Scales across multiple projects</li>
+                </ul>
+            </div>
+        </section>
+
 
     </div>
     <section class="panel">
@@ -3378,6 +3426,442 @@
             </blockquote>
         </div>
     </section>
+        <!-- ================= FILE EXPLORER ARCHITECTURE ================= -->
+    <section class="doc-section" id="file-explorer-architecture">
+    
+        <h2>🗂️ Dev Journal – File Explorer Architecture</h2>
+        <p class="doc-subtitle">
+            Production-grade virtual file system inspired by Windows 11 File Explorer
+        </p>
+    
+        <div class="doc-card">
+            <h3>🎯 Goal</h3>
+            <p>
+                Provide a <strong>Windows-11-like File Explorer experience</strong> while
+                storing all data securely in <strong>MongoDB Atlas</strong> using a
+                <em>virtual filesystem</em>.
+            </p>
+        </div>
+    
+        <div class="doc-card">
+            <h3>🧠 Core Design Principle</h3>
+            <blockquote>
+                The File Explorer is <strong>not the data</strong>.<br>
+                It is a <strong>view over the data</strong>.
+            </blockquote>
+    
+            <pre class="code-block">
+    UI Layer    → Explorer Shell (HTML / CSS)
+    State Layer → Explorer Brain (fileExplorer.js)
+    Data Layer  → Virtual Filesystem (MongoDB)
+            </pre>
+        </div>
+    
+        <div class="doc-card">
+            <h3>🏗️ High-Level Architecture</h3>
+    
+            <pre class="code-block">
+    Browser (User)
+       ↓
+    Explorer UI (HTML + CSS)
+       ↓
+    Explorer State Manager (fileExplorer.js)
+       ↓
+    Explorer API (Express.js)
+       ↓
+    MongoDB Atlas (Virtual File System)
+            </pre>
+    
+            <p class="note">
+                Each layer has a single responsibility. No layer leaks into another.
+            </p>
+        </div>
+    
+        <div class="doc-card">
+            <h3>📦 Virtual File System (MongoDB)</h3>
+    
+            <p>
+                Files and folders are represented by the <strong>same entity</strong>.
+                Only the <code>type</code> field changes.
+            </p>
+    
+            <pre class="code-block">
+    {
+      _id: ObjectId,
+      name: "firewall.md",
+      type: "file",              // file | folder
+      parentId: ObjectId | null, // null = root
+      content: String,           // files only
+      mime: "text/markdown",
+      ownerId: ObjectId,
+      pinned: Boolean,
+      favorite: Boolean,
+      tags: ["vps", "security"],
+      createdAt,
+      updatedAt
+    }
+            </pre>
+        </div>
+    
+        <div class="doc-card">
+            <h3>📁 Root Structure (Per User)</h3>
+    
+            <pre class="code-block">
+    ROOT
+     ├── Daily Learning
+     ├── Project Notes
+     │    └── Dev Journal
+     ├── Bug Fixes
+     ├── Code Snippets
+     └── Concepts
+            </pre>
+    
+            <p class="note">
+                Each user has an isolated root using <code>ownerId</code>.
+            </p>
+        </div>
+    
+        <div class="doc-card">
+            <h3>🔌 Explorer-Specific APIs</h3>
+    
+            <pre class="code-block">
+    GET    /api/explorer/root
+    GET    /api/explorer/folder/:id
+    POST   /api/explorer/file
+    POST   /api/explorer/folder
+    PATCH  /api/explorer/:id
+    DELETE /api/explorer/:id
+    GET    /api/explorer/breadcrumb/:id
+            </pre>
+    
+            <p>
+                These routes are <strong>Explorer-aware</strong>, not generic CRUD.
+            </p>
+        </div>
+    
+        <div class="doc-card">
+            <h3>🧭 Explorer State Manager</h3>
+    
+            <p>
+                <code>fileExplorer.js</code> acts like <strong>explorer.exe</strong>.
+            </p>
+    
+            <pre class="code-block">
+    const ExplorerState = {
+      currentFolderId: null,
+      selectedEntryId: null,
+      viewMode: "grid", // grid | list
+      sortBy: "name",
+      history: []
+    };
+            </pre>
+    
+            <p class="note">
+                Navigation is state-based, not page-based.
+            </p>
+        </div>
+    
+        <div class="doc-card">
+            <h3>🖱️ Interaction Rules</h3>
+    
+            <table class="doc-table">
+                <thead>
+                    <tr>
+                        <th>Action</th>
+                        <th>Behavior</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Single Click</td>
+                        <td>Select item</td>
+                    </tr>
+                    <tr>
+                        <td>Double Click</td>
+                        <td>Open file / folder</td>
+                    </tr>
+                    <tr>
+                        <td>Right Click</td>
+                        <td>Context menu</td>
+                    </tr>
+                    <tr>
+                        <td>Click Empty Area</td>
+                        <td>Clear selection</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    
+        <div class="doc-card">
+            <h3>⌨️ Keyboard Navigation</h3>
+    
+            <table class="doc-table">
+                <thead>
+                    <tr>
+                        <th>Key</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>↑ / ↓</td>
+                        <td>Navigate items</td>
+                    </tr>
+                    <tr>
+                        <td>Enter</td>
+                        <td>Open</td>
+                    </tr>
+                    <tr>
+                        <td>Backspace</td>
+                        <td>Go to parent folder</td>
+                    </tr>
+                    <tr>
+                        <td>Ctrl + N</td>
+                        <td>New file</td>
+                    </tr>
+                    <tr>
+                        <td>Ctrl + Shift + N</td>
+                        <td>New folder</td>
+                    </tr>
+                    <tr>
+                        <td>Delete</td>
+                        <td>Delete item</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    
+        <div class="doc-card highlight">
+            <h3>🧠 Mental Model</h3>
+            <blockquote>
+                MongoDB is the disk<br>
+                Express is the kernel<br>
+                fileExplorer.js is explorer.exe<br>
+                Dev Journal is a virtual OS panel
+            </blockquote>
+        </div>
+    
+    </section>
+    <!-- ============================================================= -->
+    <!-- ================= MONGODB ATLAS AI ARCHITECTURE ================= -->
+    <section class="doc-section" id="atlas-ai-architecture">
+
+        <h2>🤖 MongoDB Atlas AI – Dev Journal Architecture</h2>
+        <p class="doc-subtitle">
+            Turning Dev Journal into an AI-powered developer knowledge system
+        </p>
+
+        <div class="doc-card">
+            <h3>🎯 Purpose</h3>
+            <p>
+                MongoDB Atlas AI enables <strong>semantic understanding</strong> of Dev Journal
+                entries, allowing users to search, analyze, and reason over their notes
+                instead of relying on plain keyword matching.
+            </p>
+        </div>
+
+        <div class="doc-card">
+            <h3>🧠 What “Atlas AI” Means in Dev Journal</h3>
+
+            <table class="doc-table">
+                <thead>
+                    <tr>
+                        <th>Atlas Capability</th>
+                        <th>Dev Journal Feature</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Vector Search</td>
+                        <td>Search by meaning, not keywords</td>
+                    </tr>
+                    <tr>
+                        <td>Embeddings</td>
+                        <td>Every <code>.md</code> entry becomes AI-readable</td>
+                    </tr>
+                    <tr>
+                        <td>Semantic Queries</td>
+                        <td>Find related notes across folders</td>
+                    </tr>
+                    <tr>
+                        <td>AI Analysis</td>
+                        <td>Summaries, insights, recurring patterns</td>
+                    </tr>
+                    <tr>
+                        <td>Context Retrieval</td>
+                        <td>Feed relevant notes to LLMs (RAG)</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="doc-card">
+            <h3>🏗️ High-Level AI Architecture</h3>
+
+            <pre class="code-block">
+    User
+    ↓
+    Dev Journal Explorer UI
+    ↓
+    AI Request (search / summarize / ask)
+    ↓
+    Backend AI Orchestrator
+    ↓
+    MongoDB Atlas Vector Search
+    ↓
+    Relevant Entries (context)
+    ↓
+    LLM (OpenAI / Groq / Together)
+    ↓
+    AI Response to User
+            </pre>
+
+            <p class="note">
+                MongoDB Atlas does <strong>retrieval</strong>, not generation.
+                LLMs handle reasoning and text generation.
+            </p>
+        </div>
+
+        <div class="doc-card">
+            <h3>📦 Entry Schema with AI Embeddings</h3>
+
+            <p>
+                AI support is added with a <strong>minimal schema extension</strong>.
+            </p>
+
+            <pre class="code-block">
+    {
+    _id: ObjectId,
+    name: "firewall.md",
+    type: "file",
+    content: "# UFW configuration...",
+    embedding: [Number],      // AI vector representation
+    ownerId: ObjectId,
+    tags: ["vps", "security"],
+    createdAt,
+    updatedAt
+    }
+            </pre>
+
+            <p class="note">
+                Embeddings are generated only when content changes.
+            </p>
+        </div>
+
+        <div class="doc-card">
+            <h3>🔁 Embedding Generation Flow</h3>
+
+            <pre class="code-block">
+    User saves markdown
+    ↓
+    Backend extracts content
+    ↓
+    Embedding model generates vector
+    ↓
+    Vector stored in MongoDB Atlas
+            </pre>
+
+            <p>
+                This operation happens <strong>once per save</strong>, never per search.
+            </p>
+        </div>
+
+        <div class="doc-card">
+            <h3>🔍 AI-Powered Search (Explorer Integration)</h3>
+
+            <p>
+                AI search allows users to find entries based on intent and meaning.
+            </p>
+
+            <pre class="code-block">
+    Query: "docker mysql permission issue"
+
+    Results:
+    • mysql-access-denied.md
+    • docker-compose-debug.md
+    • root-lockout-notes.md
+            </pre>
+
+            <p class="note">
+                Results are based on semantic similarity, not filenames.
+            </p>
+        </div>
+
+        <div class="doc-card">
+            <h3>💬 Chat With Your Journal (RAG)</h3>
+
+            <p>
+                Dev Journal uses <strong>Retrieval-Augmented Generation (RAG)</strong>
+                to answer questions using your own notes.
+            </p>
+
+            <pre class="code-block">
+    Question
+    ↓
+    Generate embedding
+    ↓
+    Retrieve top relevant entries
+    ↓
+    Inject entries into LLM prompt
+    ↓
+    AI answers using your history
+            </pre>
+        </div>
+
+        <div class="doc-card">
+            <h3>🖥️ UI Integration (Explorer Vibe)</h3>
+
+            <ul class="doc-list">
+                <li>🔍 Search bar toggle: <code>Keyword | AI</code></li>
+                <li>🤖 Folder context menu: “Summarize folder”</li>
+                <li>🧠 Entry actions: “Explain”, “Find related”, “Generate checklist”</li>
+                <li>📊 Insights: recurring issues & learning patterns</li>
+            </ul>
+        </div>
+
+        <div class="doc-card">
+            <h3>🔐 Security & Cost Control</h3>
+
+            <table class="doc-table">
+                <thead>
+                    <tr>
+                        <th>Handled By</th>
+                        <th>Responsibility</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>MongoDB Atlas</td>
+                        <td>Vector indexing, retrieval, isolation</td>
+                    </tr>
+                    <tr>
+                        <td>Backend</td>
+                        <td>Rate limits, token limits, access control</td>
+                    </tr>
+                    <tr>
+                        <td>LLM Layer</td>
+                        <td>Reasoning & response generation</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <p class="note">
+                Only <strong>top-N relevant entries</strong> are ever sent to the LLM.
+            </p>
+        </div>
+
+        <div class="doc-card highlight">
+            <h3>🧠 Mental Model</h3>
+            <blockquote>
+                MongoDB Atlas = Memory<br>
+                Vector Search = Recall<br>
+                LLM = Reasoning<br>
+                Dev Journal = Your external brain
+            </blockquote>
+        </div>
+
+    </section>
+    <!-- =============================================================== -->
 
     <footer>
         Dev-Journal • VPS Documentation • Last updated: Feb 2026
