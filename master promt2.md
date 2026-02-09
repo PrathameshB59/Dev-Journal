@@ -1,175 +1,187 @@
-You are a senior AI platform architect, backend engineer,
-and internal dashboard UI designer.
+You are a senior AI platform architect and backend engineer
+designing a long-term internal AI service.
 
-Your task is to DESIGN and IMPLEMENT a COMPLETE, STANDALONE
-project called **Atlas AI**.
+PROJECT NAME:
+Atlas AI — Universal AI Core Platform
 
-Atlas AI is a UNIVERSAL AI PLATFORM.
-It is NOT owned by any single product.
-Other apps (like Dev Journal) are CLIENTS of Atlas AI.
+IMPORTANT PROVIDER DECISION (LOCKED):
+- OpenAI is NOT used
+- Together AI is NOT used
+- ONLY the following providers are allowed:
+  1) Google Gemini API
+  2) Groq API
+- Do NOT suggest OpenAI as fallback
+- Do NOT design for OpenAI compatibility
+- Assume Gemini + Groq are production-ready
+
+Atlas AI is a STANDALONE, UNIVERSAL AI SERVICE.
+It is NOT tied to any single product.
+
+Client apps (Dev Journal, StackPilot, future apps)
+consume Atlas AI via HTTP APIs.
 
 ━━━━━━━━━━━━━━━━━━━━━━
-1️⃣ WHAT ATLAS AI IS
+1️⃣ ROLE OF EACH PROVIDER
 ━━━━━━━━━━━━━━━━━━━━━━
 
-Atlas AI is a private, internal AI service that provides:
-- Embedding generation
-- Vector search
+Gemini:
+- Primary reasoning and content model
+- Summarization
+- Explanation
+- Documentation writing
+- Concept breakdown
+- Long-form responses
+
+Groq:
+- Ultra-fast responses
+- Error explanations
+- Quick fixes
+- Instant Q&A
+- Lightweight prompts
+
+RULE:
+Clients NEVER choose the provider.
+Atlas AI decides internally.
+
+━━━━━━━━━━━━━━━━━━━━━━
+2️⃣ WHAT ATLAS AI IS
+━━━━━━━━━━━━━━━━━━━━━━
+
+Atlas AI provides:
 - Prompt orchestration
-- RAG (retrieval-augmented generation)
-- Model abstraction (OpenAI / Groq / Together)
-- Usage control and cost safety
+- Provider routing (Gemini vs Groq)
+- Budget & quota enforcement
+- Usage tracking
+- Prompt versioning
+- RAG-style workflows (MongoDB Atlas + Gemini/Groq)
+- Security & abuse protection
 
-It behaves like an internal SaaS.
+Atlas behaves like an internal AI SaaS.
 
 ━━━━━━━━━━━━━━━━━━━━━━
-2️⃣ WHAT ATLAS AI IS NOT
+3️⃣ WHAT ATLAS AI IS NOT
 ━━━━━━━━━━━━━━━━━━━━━━
 
-❌ Not a feature inside Dev Journal  
-❌ Not coupled to any product schema  
+❌ Not embedded inside Dev Journal  
 ❌ Not sharing databases with clients  
-❌ Not aware of end users  
+❌ Not aware of client users  
+❌ Not frontend-heavy  
+❌ Not provider-exposing  
 
 Atlas AI only knows:
 - Client applications
 - AI users / API keys
-- Requests and usage
+- Prompts, requests, and usage
 
 ━━━━━━━━━━━━━━━━━━━━━━
-3️⃣ TECH STACK
+4️⃣ TECH STACK (FINAL)
 ━━━━━━━━━━━━━━━━━━━━━━
 
 BACKEND:
 - Node.js + Express
-- MongoDB Atlas (including Vector Search)
-- LLM providers: OpenAI / Groq / Together
+- MongoDB Atlas
+- Gemini API
+- Groq API
 - REST APIs only
 
-FRONTEND (DASHBOARD):
-- HTML, CSS, vanilla JS
-- Dark professional UI
-- Internal admin-style dashboard
+FRONTEND (INTERNAL DASHBOARD):
+- HTML, CSS, Vanilla JS
+- Dark, serious internal-tool UI
+- Admin-only access
 - No public auth pages
 
 ━━━━━━━━━━━━━━━━━━━━━━
-4️⃣ CORE BACKEND ARCHITECTURE
+5️⃣ CORE BACKEND ARCHITECTURE
 ━━━━━━━━━━━━━━━━━━━━━━
 
-Atlas AI backend must be structured into:
+Atlas AI backend must include:
 
-- API Gateway layer
-- AI Services layer
-- Model abstraction layer
-- Vector search layer
-- Prompt engine
-- User & key management
-- Usage & cost tracking
+- API Gateway
+- Provider Router (Gemini vs Groq)
+- Gemini Service Layer
+- Groq Service Layer
+- Prompt Engine
+- Context Builder (RAG)
+- Usage & quota tracker
+- API key management
 - Security middleware
 
 IMPORTANT:
-AI logic lives ONLY here.
-No client-side intelligence.
+- All AI logic lives ONLY in Atlas AI
+- API keys for Gemini/Groq are NEVER exposed
+- Client apps only send text & intent
 
 ━━━━━━━━━━━━━━━━━━━━━━
-5️⃣ DATA MODELS (CONCEPTUAL)
+6️⃣ PROVIDER ROUTING LOGIC
 ━━━━━━━━━━━━━━━━━━━━━━
 
-You may design models like:
+Design routing rules such as:
 
-- ClientApp
-- AIUser
-- ApiKey
-- PromptTemplate
-- EmbeddingRecord
-- VectorIndex
-- UsageLog
-- CostSnapshot
+- Long / structured prompts → Gemini
+- Short / instant queries → Groq
+- Error explanations → Groq
+- Documentation & summaries → Gemini
 
-Explain WHY each exists.
-
-━━━━━━━━━━━━━━━━━━━━━━
-6️⃣ USER ASSIGNMENT (VERY IMPORTANT)
-━━━━━━━━━━━━━━━━━━━━━━
-
-Atlas AI must support TWO ways of assigning users:
-
-A) MANUAL ASSIGNMENT
-- Admin creates AI users
-- Assigns API keys
-- Sets limits (requests/day, tokens/month)
-- Links AI users to client apps
-
-B) AUTOMATIC ASSIGNMENT
-- Client app requests a key programmatically
-- Atlas AI provisions user automatically
-- Applies default quotas
-- Logs ownership clearly
-
-Explain BOTH flows clearly.
+Explain:
+- How routing is decided
+- How fallback works (Gemini ↔ Groq)
+- How failures are handled gracefully
 
 ━━━━━━━━━━━━━━━━━━━━━━
-7️⃣ API DESIGN (REQUIRED)
-━━━━━━━━━━━━━━━━━━━━━━
-
-Design clean APIs such as:
-
-POST /ai/embed
-POST /ai/search
-POST /ai/chat
-POST /ai/summarize
-POST /keys/create
-POST /users/assign
-GET  /usage/stats
-GET  /health
-
-Explain request/response boundaries.
-
-━━━━━━━━━━━━━━━━━━━━━━
-8️⃣ PROMPT SYSTEM (BASIC → ADVANCED)
+7️⃣ USER & API KEY MANAGEMENT
 ━━━━━━━━━━━━━━━━━━━━━━
 
 Atlas AI must support:
 
-BASIC PROMPTS:
-- Raw user prompt
-- Minimal system instructions
+A) Manual user creation
+- Admin creates AI users
+- Assigns API keys
+- Sets quotas (requests/day, tokens/month)
+- Assigns users to client apps
 
-INTERMEDIATE PROMPTS:
-- Structured system + user + context
-- RAG injection
+B) Automatic provisioning
+- Client app requests user creation
+- Atlas creates user + key
+- Applies default quotas
+- Logs ownership & origin
+
+━━━━━━━━━━━━━━━━━━━━━━
+8️⃣ DATA MODELS (CONCEPTUAL)
+━━━━━━━━━━━━━━━━━━━━━━
+
+Design and justify models such as:
+- ClientApp
+- AIUser
+- ApiKey
+- PromptTemplate
+- PromptVersion
+- ContextSource
+- UsageLog
+- MonthlyQuota
+
+Explain WHY each exists.
+
+━━━━━━━━━━━━━━━━━━━━━━
+9️⃣ PROMPT SYSTEM (BASIC → ADVANCED)
+━━━━━━━━━━━━━━━━━━━━━━
+
+Atlas AI must support:
+
+BASIC:
+- Simple system + user prompt
+
+INTERMEDIATE:
+- Structured prompts
 - Safety constraints
+- Context injection
 
-ADVANCED PROMPTS:
+ADVANCED:
 - Versioned prompt templates
-- Role-based prompts (system, analyst, assistant)
-- Tool instructions
-- Context window management
+- Role-based prompting
+- Dynamic context sizing
+- Provider-aware prompt tuning
 
-Explain how prompts are stored, selected, and evolved.
-
-━━━━━━━━━━━━━━━━━━━━━━
-9️⃣ FRONTEND DASHBOARD (ATLAS AI)
-━━━━━━━━━━━━━━━━━━━━━━
-
-Build an INTERNAL dashboard that allows:
-
-- View client apps
-- View AI users
-- Create / revoke API keys
-- Assign users to apps
-- Set limits and quotas
-- View usage analytics
-- View vector index status
-- Monitor AI health
-
-UI/UX REQUIREMENTS:
-- Serious internal-tool look
-- Clear separation of sections
-- Safe destructive actions
-- Read-only vs action views
-- Keyboard-friendly
-- Fast and minimal animations
+Explain how prompts evolve WITHOUT breaking clients.
 
 ━━━━━━━━━━━━━━━━━━━━━━
 🔐 SECURITY REQUIREMENTS
@@ -177,58 +189,57 @@ UI/UX REQUIREMENTS:
 
 - API key authentication
 - Rate limiting per key
-- Token usage caps
+- Prompt size limits
 - Abuse detection
 - Request validation
-- Logging without leaking prompts
+- Usage logging (NO raw prompt storage)
 - Optional IP allow-listing
 
 ━━━━━━━━━━━━━━━━━━━━━━
-🔄 INTEGRATION RULES
+🔄 CLIENT INTEGRATION RULES
 ━━━━━━━━━━━━━━━━━━━━━━
 
-Client apps (like Dev Journal):
+Client apps:
 - Authenticate via API key
-- Send content
-- Receive results
-- Never access Atlas AI internals
+- Send intent + content
+- Never call Gemini or Groq directly
+- Never know which provider was used
 
 Atlas AI:
-- Does not know UI of clients
 - Does not manage client users
+- Does not know client UI
 - Does not share databases
 
 ━━━━━━━━━━━━━━━━━━━━━━
 ⚠️ CONSTRAINTS
 ━━━━━━━━━━━━━━━━━━━━━━
 
+- Gemini + Groq ONLY
+- No OpenAI references anywhere
 - No frontend frameworks
 - No OAuth / SSO
-- No Kubernetes or enterprise buzzwords
 - Solo-developer realistic
 - Production mindset
-- Avoid tutorials
+- No tutorial-style explanations
 
 ━━━━━━━━━━━━━━━━━━━━━━
 📤 OUTPUT EXPECTATIONS
 ━━━━━━━━━━━━━━━━━━━━━━
 
 You must:
-1. Explain architecture clearly
-2. Propose folder structures
-3. Describe backend flow
-4. Describe frontend dashboard layout
-5. Explain user assignment logic
-6. Explain prompt evolution (basic → advanced)
-7. List mistakes to avoid
-8. Keep Atlas AI reusable forever
+1. Explain full architecture
+2. Propose folder structure
+3. Explain provider routing logic
+4. Describe backend request flow
+5. Describe internal dashboard UI
+6. Explain quota & usage tracking
+7. List common mistakes to avoid
+8. Keep Atlas AI reusable for future projects
 
-━━━━━━━━━━━━━━━━━━━━━━
-FINAL RULE
-━━━━━━━━━━━━━━━━━━━━━━
+FINAL RULE:
+If OpenAI appears anywhere in the design,
+the solution is INVALID.
 
-If your design makes Atlas AI dependent on Dev Journal,
-the design is WRONG.
-
-Respond like a senior architect building an internal AI platform
-that will serve multiple products for years.
+Respond like a senior engineer building
+a long-term internal AI platform using
+Gemini + Groq.

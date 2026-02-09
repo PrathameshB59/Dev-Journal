@@ -166,15 +166,27 @@ exports.deleteUser = async (req, res) => {
         // Delete user's entries first
         await Entry.deleteMany({ userId: user._id });
 
+        // Delete user's coupons
+        await Coupon.deleteMany({ createdBy: user._id });
+
         // Delete the user
         await User.findByIdAndDelete(req.params.id);
 
         res.json({
             success: true,
-            message: 'User and their entries deleted successfully'
+            message: 'User and their data deleted successfully'
         });
     } catch (error) {
-        res.status(500).json({ success: false, error: error.message });
+        console.error('[DELETE USER ERROR]', {
+            userId: req.params.id,
+            requestUser: req.user._id,
+            error: error.message,
+            stack: error.stack
+        });
+        res.status(500).json({
+            success: false,
+            error: error.message || 'Failed to delete user'
+        });
     }
 };
 
@@ -415,6 +427,29 @@ exports.unlockUser = async (req, res) => {
             success: true,
             message: 'User account unlocked successfully',
             data: user
+        });
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+};
+
+// Admin: Delete any user's entry (moderation)
+exports.deleteAnyEntry = async (req, res) => {
+    try {
+        const entry = await Entry.findById(req.params.id);
+
+        if (!entry) {
+            return res.status(404).json({
+                success: false,
+                error: 'Entry not found'
+            });
+        }
+
+        await Entry.findByIdAndDelete(req.params.id);
+
+        res.json({
+            success: true,
+            message: `Entry "${entry.name}" deleted successfully`
         });
     } catch (error) {
         res.status(500).json({ success: false, error: error.message });

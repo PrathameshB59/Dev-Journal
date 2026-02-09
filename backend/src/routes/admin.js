@@ -26,5 +26,6 @@ router.get('/stats', adminController.getSystemStats);
 
 // Entry management (for moderation)
 router.get('/entries', adminController.getAllEntries);
+router.delete('/entries/:id', adminController.deleteAnyEntry);
 
 module.exports = router;

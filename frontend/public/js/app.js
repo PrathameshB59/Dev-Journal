@@ -245,11 +245,11 @@ const AiAPI = {
         return res.json();
     },
 
-    async quickHelp(question) {
+    async quickHelp(question, entryId = null) {
         const res = await fetch(`${AI_API}/quick-help`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', ...Auth.getAuthHeader() },
-            body: JSON.stringify({ question })
+            body: JSON.stringify({ question, entryId })
         });
         return res.json();
     },
@@ -347,7 +347,11 @@ const AiPanel = {
         input.value = '';
         this.open('Ask AI');
         try {
-            const result = await AiAPI.quickHelp(question);
+            // Get current entry ID if on entry page
+            const urlParams = new URLSearchParams(window.location.search);
+            const entryId = urlParams.get('id');
+
+            const result = await AiAPI.quickHelp(question, entryId);
             if (result.success) {
                 this.showResult(result.data.content);
             } else {

@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Explanation - Dev Journal</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <style>
+        :root {
+            --explain-bg: #f8f9fa;
+            --chat-user-bg: #0066cc;
+            --chat-ai-bg: #ffffff;
+            --chat-border: #e0e0e0;
+        }
+
+        body {
+            background-color: var(--explain-bg);
+        }
+
+        .explain-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+            height: calc(100vh - 180px);
+        }
+
+        .explain-main {
+            display: flex;
+            flex-direction: column;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .explain-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--chat-border);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .explain-header h2 {
+            margin: 0 0 8px 0;
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .explain-header p {
+            margin: 0;
+            opacity: 0.9;
+            font-size: 14px;
+        }
+
+        .conversation-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .message {
+            display: flex;
+            gap: 12px;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message.user {
+            flex-direction: row-reverse;
+        }
+
+        .message-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .message.ai .message-avatar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .message.user .message-avatar {
+            background: var(--chat-user-bg);
+            color: white;
+        }
+
+        .message-content {
+            flex: 1;
+            padding: 12px 16px;
+            border-radius: 12px;
+            line-height: 1.6;
+            max-width: 85%;
+        }
+
+        .message.ai .message-content {
+            background: var(--chat-ai-bg);
+            border: 1px solid var(--chat-border);
+        }
+
+        .message.user .message-content {
+            background: var(--chat-user-bg);
+            color: white;
+        }
+
+        .message-content h1, .message-content h2, .message-content h3 {
+            margin: 16px 0 8px 0;
+            font-weight: 600;
+        }
+
+        .message-content h1 { font-size: 1.5em; }
+        .message-content h2 { font-size: 1.3em; }
+        .message-content h3 { font-size: 1.1em; }
+
+        .message-content p {
+            margin: 8px 0;
+        }
+
+        .message-content ul, .message-content ol {
+            margin: 8px 0;
+            padding-left: 24px;
+        }
+
+        .message-content li {
+            margin: 4px 0;
+        }
+
+        .message-content code {
+            background: #f5f5f5;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+
+        .message.user .message-content code {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .message-content .code-block-wrapper {
+            margin: 12px 0;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid var(--chat-border);
+        }
+
+        .chat-input-area {
+            padding: 16px 20px;
+            border-top: 1px solid var(--chat-border);
+            background: white;
+        }
+
+        .chat-input-container {
+            display: flex;
+            gap: 12px;
+            align-items: flex-end;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid var(--chat-border);
+            border-radius: 24px;
+            font-size: 15px;
+            font-family: inherit;
+            resize: none;
+            max-height: 120px;
+            transition: border-color 0.2s;
+        }
+
+        .chat-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .chat-send-btn {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 24px;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: transform 0.2s, opacity 0.2s;
+        }
+
+        .chat-send-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .chat-send-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .entry-reference {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .reference-header {
+            padding: 16px 20px;
+            background: #f8f9fa;
+            border-bottom: 1px solid var(--chat-border);
+        }
+
+        .reference-header h3 {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .reference-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            font-size: 14px;
+            line-height: 1.6;
+            color: #555;
+        }
+
+        .loading-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .loading-spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 1024px) {
+            .explain-container {
+                grid-template-columns: 1fr;
+                height: auto;
+            }
+
+            .entry-reference {
+                max-height: 400px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .explain-container {
+                padding: 10px;
+                gap: 10px;
+            }
+
+            .message-content {
+                max-width: 90%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <h1><span class="logo-icon">&#129302;</span> AI Explanation</h1>
+            <p>Understand your code better with Atlas AI</p>
+        </div>
+    </header>
+
+    <nav>
+        <div class="nav-container">
+            <a href="/" class="nav-brand">&#128218; Dev Journal</a>
+            <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle menu">
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+            </button>
+            <div class="nav-actions" id="navActions">
+                <button id="backBtn" class="btn-secondary">&#8592; Back</button>
+                <a href="/" class="btn-secondary">&#127968; Home</a>
+                <a href="/settings" class="btn-secondary">&#9881; Settings</a>
+                <span id="userDisplay" class="user-display"></span>
+                <button id="logoutBtn" class="btn-logout">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="explain-container">
+        <div class="explain-main">
+            <div class="explain-header">
+                <h2 id="entryTitle">Loading...</h2>
+                <p id="entryMeta">Preparing explanation...</p>
+            </div>
+
+            <div class="conversation-area" id="conversationArea">
+                <div class="loading-indicator">
+                    <div class="loading-spinner"></div>
+                    <span>Generating explanation...</span>
+                </div>
+            </div>
+
+            <div class="chat-input-area">
+                <div class="chat-input-container">
+                    <textarea
+                        id="chatInput"
+                        class="chat-input"
+                        placeholder="Ask a follow-up question..."
+                        rows="1"
+                        disabled
+                    ></textarea>
+                    <button id="sendBtn" class="chat-send-btn" disabled>
+                        <span>Send &#10148;</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <aside class="entry-reference">
+            <div class="reference-header">
+                <h3>&#128220; Entry Content</h3>
+            </div>
+            <div class="reference-content" id="referenceContent">
+                <div class="loading-indicator">
+                    <div class="loading-spinner"></div>
+                    <span>Loading entry...</span>
+                </div>
+            </div>
+        </aside>
+    </main>
+
+    <script src="/js/auth.js"></script>
+    <script src="/js/explain.js"></script>
+</body>
+</html>

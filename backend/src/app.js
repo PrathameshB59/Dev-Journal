@@ -67,6 +67,10 @@ app.get('/edit/:id', (req, res) => {
     res.sendFile(path.join(__dirname, '../../frontend/views/edit-entry.html'));
 });
 
+app.get('/explain/:id', (req, res) => {
+    res.sendFile(path.join(__dirname, '../../frontend/views/explain.html'));
+});
+
 // Auth pages
 app.get('/login', (req, res) => {
     res.sendFile(path.join(__dirname, '../../frontend/views/login.html'));

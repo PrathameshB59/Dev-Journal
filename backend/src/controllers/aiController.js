@@ -76,22 +76,41 @@ exports.explain = async (req, res) => {
 // POST /api/ai/quick-help — Quick AI question with recent journal context
 exports.quickHelp = async (req, res) => {
     try {
-        const { question } = req.body;
+        const { question, entryId } = req.body;
         if (!question || !question.trim()) {
             return res.status(400).json({ success: false, error: 'question is required' });
         }
 
-        // Fetch recent entries as context
-        const recentFiles = await Entry.find({ userId: req.user._id, type: 'file' })
-            .sort({ updatedAt: -1 })
-            .select('name content')
-            .limit(5)
-            .lean();
+        let contextEntries = [];
 
+        // Priority 1: If specific entry provided, use it as context
+        if (entryId) {
+            const entry = await Entry.findOne({ _id: entryId, userId: req.user._id })
+                .select('name content category tags')
+                .lean();
+            if (entry) {
+                contextEntries = [entry];
+            }
+        }
+
+        // Priority 2: If no specific entry, fetch recent entries
+        if (contextEntries.length === 0) {
+            contextEntries = await Entry.find({ userId: req.user._id, type: 'file' })
+                .sort({ updatedAt: -1 })
+                .select('name content category tags')
+                .limit(5)
+                .lean();
+        }
+
+        // Build prompt with context
         let prompt = `Developer question: ${question.trim()}`;
-        if (recentFiles.length > 0) {
-            prompt += '\n\nContext from recent journal entries:\n' +
-                recentFiles.map(f => `- ${f.name}: ${(f.content || '').slice(0, 300)}`).join('\n');
+        if (contextEntries.length > 0) {
+            prompt += '\n\nContext from journal entry:\n' +
+                contextEntries.map(f =>
+                    `Entry: "${f.name}"\nCategory: ${f.category || 'General'}\n` +
+                    `Content: ${(f.content || '').slice(0, 500)}\n` +
+                    (f.tags?.length ? `Tags: ${f.tags.join(', ')}` : '')
+                ).join('\n---\n');
         }
 
         const result = await callAtlasAI('quick', req.user._id, prompt);

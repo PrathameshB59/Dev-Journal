@@ -309,6 +309,9 @@ const Admin = {
                     <td>${author}</td>
                     <td>${categoryNames[entry.category] || entry.category}</td>
                     <td>${createdDate}</td>
+                    <td>
+                        <button class="user-action-btn danger" onclick="Admin.confirmDeleteEntry('${entry._id}')" title="Delete Entry">&#128465;</button>
+                    </td>
                 </tr>
             `;
         }).join('');
@@ -415,6 +418,34 @@ const Admin = {
                 this.createCoupon(code, days, maxUses);
                 document.getElementById('couponCode').value = '';
             });
+        }
+    },
+
+    // Entry management
+    async deleteEntry(entryId) {
+        try {
+            const response = await fetch(`/api/admin/entries/${entryId}`, {
+                method: 'DELETE',
+                headers: Auth.getAuthHeader()
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                this.showToast('Entry deleted successfully', 'success');
+                this.loadStats(); // Reload stats to refresh recent entries
+            } else {
+                this.showToast(result.error || 'Failed to delete entry', 'error');
+            }
+        } catch (error) {
+            console.error('Delete entry error:', error);
+            this.showToast(`Failed to delete entry: ${error.message}`, 'error');
+        }
+    },
+
+    confirmDeleteEntry(entryId) {
+        if (confirm('Are you sure you want to delete this entry? This action cannot be undone.')) {
+            this.deleteEntry(entryId);
         }
     },
 
@@ -733,21 +764,32 @@ const AdminUsers = {
 
     async deleteUser(userId) {
         try {
+            console.log('[DELETE USER] Starting deletion for:', userId);
+
             const response = await fetch(`/api/admin/users/${userId}`, {
                 method: 'DELETE',
                 headers: Auth.getAuthHeader()
             });
 
+            console.log('[DELETE USER] Response status:', response.status);
+
             const result = await response.json();
+            console.log('[DELETE USER] Response data:', result);
 
             if (result.success) {
-                Admin.showToast('User deleted successfully', 'success');
-                this.loadUsers();
+                Admin.showToast('User and their data deleted successfully', 'success');
+                await this.loadUsers(); // Reload user list
             } else {
+                console.error('[DELETE USER] Server error:', result.error);
                 Admin.showToast(result.error || 'Failed to delete user', 'error');
             }
         } catch (error) {
-            Admin.showToast('Failed to delete user', 'error');
+            console.error('[DELETE USER] Request failed:', {
+                userId,
+                error: error.message,
+                stack: error.stack
+            });
+            Admin.showToast(`Failed to delete user: ${error.message}`, 'error');
         }
     }
 };
