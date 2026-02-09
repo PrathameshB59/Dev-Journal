@@ -23,6 +23,7 @@ const Admin = {
         this.setupLogout();
         this.setupMobileMenu();
         this.setupRefreshButton();
+        this.setupCouponForm();
 
         // Load data
         await this.loadStats();
@@ -121,6 +122,9 @@ const Admin = {
 
         // Render recent entries
         this.renderRecentEntries(recentEntries);
+
+        // Load coupons
+        this.loadCoupons();
     },
 
     renderRoleBreakdown(roles) {
@@ -308,6 +312,110 @@ const Admin = {
                 </tr>
             `;
         }).join('');
+    },
+
+    // Coupon management
+    async loadCoupons() {
+        try {
+            const response = await fetch('/api/admin/coupons', {
+                headers: Auth.getAuthHeader()
+            });
+            const result = await response.json();
+            if (result.success) {
+                this.renderCoupons(result.data);
+            }
+        } catch (error) {
+            console.error('Failed to load coupons:', error);
+        }
+    },
+
+    renderCoupons(coupons) {
+        const tbody = document.getElementById('couponsTable');
+        if (!tbody) return;
+
+        if (!coupons.length) {
+            tbody.innerHTML = '<tr><td colspan="6" style="color:var(--text-muted); text-align:center; padding:var(--space-lg)">No coupons created yet</td></tr>';
+            return;
+        }
+
+        tbody.innerHTML = coupons.map(c => {
+            const created = new Date(c.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+            const isExpired = c.expiresAt && new Date(c.expiresAt) < new Date();
+            const isFull = c.usedCount >= c.maxUses;
+            const statusClass = !c.isActive ? 'inactive' : (isExpired || isFull) ? 'locked' : 'active';
+            const statusText = !c.isActive ? 'Disabled' : isExpired ? 'Expired' : isFull ? 'Used Up' : 'Active';
+
+            return `
+                <tr>
+                    <td><strong style="letter-spacing:1px">${c.code}</strong></td>
+                    <td>${c.durationDays} days</td>
+                    <td>${c.usedCount} / ${c.maxUses}</td>
+                    <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+                    <td>${created}</td>
+                    <td>
+                        ${c.isActive ? `<button class="user-action-btn danger" onclick="Admin.deleteCoupon('${c._id}')" title="Disable">&#128465;</button>` : '-'}
+                    </td>
+                </tr>
+            `;
+        }).join('');
+    },
+
+    async createCoupon(code, durationDays, maxUses) {
+        try {
+            const response = await fetch('/api/admin/coupons', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    ...Auth.getAuthHeader()
+                },
+                body: JSON.stringify({ code, durationDays, maxUses })
+            });
+            const result = await response.json();
+            if (result.success) {
+                this.showToast('Coupon created successfully', 'success');
+                this.loadCoupons();
+            } else {
+                this.showToast(result.error || 'Failed to create coupon', 'error');
+            }
+        } catch (error) {
+            this.showToast('Failed to create coupon', 'error');
+        }
+    },
+
+    async deleteCoupon(couponId) {
+        try {
+            const response = await fetch(`/api/admin/coupons/${couponId}`, {
+                method: 'DELETE',
+                headers: Auth.getAuthHeader()
+            });
+            const result = await response.json();
+            if (result.success) {
+                this.showToast('Coupon deactivated', 'success');
+                this.loadCoupons();
+            } else {
+                this.showToast(result.error || 'Failed to deactivate coupon', 'error');
+            }
+        } catch (error) {
+            this.showToast('Failed to deactivate coupon', 'error');
+        }
+    },
+
+    setupCouponForm() {
+        const form = document.getElementById('createCouponForm');
+        if (form) {
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const code = document.getElementById('couponCode').value.trim();
+                const days = parseInt(document.getElementById('couponDays').value) || 30;
+                const maxUses = parseInt(document.getElementById('couponMaxUses').value) || 100;
+                if (!code) {
+                    this.showToast('Coupon code is required', 'error');
+                    return;
+                }
+                this.createCoupon(code, days, maxUses);
+                document.getElementById('couponCode').value = '';
+            });
+        }
     },
 
     // Toast notification

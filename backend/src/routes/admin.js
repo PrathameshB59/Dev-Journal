@@ -14,6 +14,12 @@ router.get('/users/:id', adminController.getUser);
 router.put('/users/:id', adminController.updateUser);
 router.delete('/users/:id', adminController.deleteUser);
 router.post('/users/:id/unlock', adminController.unlockUser);
+router.patch('/users/:id/ai', adminController.setUserAi);
+
+// Coupon management
+router.post('/coupons', adminController.createCoupon);
+router.get('/coupons', adminController.getCoupons);
+router.delete('/coupons/:id', adminController.deleteCoupon);
 
 // System stats
 router.get('/stats', adminController.getSystemStats);

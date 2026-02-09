@@ -125,6 +125,45 @@
                 <a href="/admin/users" class="view-all-link">View all users &rarr;</a>
             </section>
 
+            <!-- Coupon Management -->
+            <section class="admin-section" aria-labelledby="coupons-heading">
+                <h2 id="coupons-heading">&#127915; AI Coupons</h2>
+                <div style="margin-bottom: var(--space-md);">
+                    <form id="createCouponForm" style="display:flex; gap:var(--space-sm); flex-wrap:wrap; align-items:flex-end;">
+                        <div class="form-group" style="margin-bottom:0">
+                            <label style="font-size:var(--text-xs); color:var(--text-muted)">Code</label>
+                            <input type="text" id="couponCode" placeholder="e.g. FREE30" style="padding:var(--space-sm); background:var(--bg-secondary); border:1px solid var(--border); border-radius:var(--radius-md); color:var(--text); text-transform:uppercase; min-height:38px;">
+                        </div>
+                        <div class="form-group" style="margin-bottom:0">
+                            <label style="font-size:var(--text-xs); color:var(--text-muted)">Days</label>
+                            <input type="number" id="couponDays" value="30" min="1" style="padding:var(--space-sm); background:var(--bg-secondary); border:1px solid var(--border); border-radius:var(--radius-md); color:var(--text); width:80px; min-height:38px;">
+                        </div>
+                        <div class="form-group" style="margin-bottom:0">
+                            <label style="font-size:var(--text-xs); color:var(--text-muted)">Max Uses</label>
+                            <input type="number" id="couponMaxUses" value="100" min="1" style="padding:var(--space-sm); background:var(--bg-secondary); border:1px solid var(--border); border-radius:var(--radius-md); color:var(--text); width:80px; min-height:38px;">
+                        </div>
+                        <button type="submit" class="btn-primary" style="min-height:38px">Create Coupon</button>
+                    </form>
+                </div>
+                <div class="admin-table-container">
+                    <table class="admin-table" role="grid">
+                        <thead>
+                            <tr>
+                                <th scope="col">Code</th>
+                                <th scope="col">Duration</th>
+                                <th scope="col">Usage</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Created</th>
+                                <th scope="col">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="couponsTable">
+                            <tr><td colspan="6" class="loading">Loading...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
             <section class="admin-section" aria-labelledby="recent-entries-heading">
                 <h2 id="recent-entries-heading">&#128196; Recent Entries</h2>
                 <div class="admin-table-container">

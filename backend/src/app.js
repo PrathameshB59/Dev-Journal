@@ -32,6 +32,7 @@ const authRouter = require('./routes/auth');
 const adminRouter = require('./routes/admin');
 const statsRouter = require('./routes/stats');
 const aiRouter = require('./routes/ai');
+const settingsRouter = require('./routes/settings');
 
 // Apply rate limiting to auth routes
 app.use('/api/auth/login', authLimiter);
@@ -47,6 +48,7 @@ app.use('/api/auth', authRouter);
 app.use('/api/admin', adminRouter);
 app.use('/api/stats', statsRouter);
 app.use('/api/ai', aiRouter);
+app.use('/api/settings', settingsRouter);
 
 // Serve HTML pages
 app.get('/', (req, res) => {
@@ -77,6 +79,11 @@ app.get('/register', (req, res) => {
 // Dashboard page
 app.get('/dashboard', (req, res) => {
     res.sendFile(path.join(__dirname, '../../frontend/views/dashboard.html'));
+});
+
+// Settings page
+app.get('/settings', (req, res) => {
+    res.sendFile(path.join(__dirname, '../../frontend/views/settings.html'));
 });
 
 // Admin pages

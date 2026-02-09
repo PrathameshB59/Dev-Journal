@@ -150,14 +150,14 @@ Can you use a cloud VPS like a desktop PC — with Chrome, VSCode, and a GUI?
 
 **Technically yes, but practically no.**
 
-| Task | Best Done On |
-|------|--------------|
-| Writing code | Local (VSCode) |
-| Running Django/Docker | VPS |
-| Browsing | Local |
-| DB / Services | VPS |
-| Logs / Debug | VPS |
-| Git | Both |
+| Task                  | Best Done On   |
+| --------------------- | -------------- |
+| Writing code          | Local (VSCode) |
+| Running Django/Docker | VPS            |
+| Browsing              | Local          |
+| DB / Services         | VPS            |
+| Logs / Debug          | VPS            |
+| Git                   | Both           |
 
 ### If you REALLY want a desktop (not advised)
 
@@ -232,13 +232,13 @@ uptime
 
 ## Current VPS Health Analysis
 
-*Content from HTML - VPS health metrics and analysis*
+_Content from HTML - VPS health metrics and analysis_
 
 ---
 
 ## VPS as Personal Desktop Decision
 
-*Content from HTML - Decision on using VPS as desktop*
+_Content from HTML - Decision on using VPS as desktop_
 
 ---
 
@@ -254,12 +254,12 @@ A development workflow where you:
 
 ### Why This Approach?
 
-| Local PC | VPS |
-|----------|-----|
-| VSCode | Docker |
-| Browser | MySQL |
-| Git | Django |
-| Comfort | Nginx |
+| Local PC | VPS    |
+| -------- | ------ |
+| VSCode   | Docker |
+| Browser  | MySQL  |
+| Git      | Django |
+| Comfort  | Nginx  |
 
 ---
 
@@ -292,7 +292,7 @@ sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/too
 
 ## Oh-My-Zsh Confirmation
 
-*Verification that Oh-My-Zsh is installed and working*
+_Verification that Oh-My-Zsh is installed and working_
 
 ---
 
@@ -374,7 +374,7 @@ Benefits:
 ### docker-compose.yml
 
 ```yaml
-version: '3.8'
+version: "3.8"
 services:
   mysql:
     image: mysql:8.0
@@ -404,7 +404,7 @@ docker-compose up -d
 
 ## MySQL Access Denied (User Fix)
 
-*Troubleshooting MySQL access denied errors*
+_Troubleshooting MySQL access denied errors_
 
 ---
 
@@ -423,19 +423,19 @@ FLUSH PRIVILEGES;
 
 ## Root Access Still Denied
 
-*Additional troubleshooting for root access issues*
+_Additional troubleshooting for root access issues_
 
 ---
 
 ## Root Lockout Recovery
 
-*Steps to recover from MySQL root lockout*
+_Steps to recover from MySQL root lockout_
 
 ---
 
 ## MySQL Reset Error
 
-*Handling MySQL reset errors*
+_Handling MySQL reset errors_
 
 ---
 
@@ -472,37 +472,37 @@ docker exec -it shopease_mysql mysql -u root -p
 
 ## Full Docker + MySQL Reinstall
 
-*Steps for complete reinstallation*
+_Steps for complete reinstallation_
 
 ---
 
 ## MySQL vs Linux Context
 
-*Understanding the difference between MySQL and Linux contexts*
+_Understanding the difference between MySQL and Linux contexts_
 
 ---
 
 ## Root Access Diagnostic
 
-*Diagnostic steps for root access issues*
+_Diagnostic steps for root access issues_
 
 ---
 
 ## Intermittent Root Login Success
 
-*Handling intermittent login issues*
+_Handling intermittent login issues_
 
 ---
 
 ## Calm Root Login Debugging
 
-*Systematic debugging approach*
+_Systematic debugging approach_
 
 ---
 
 ## shopease_user Stabilization
 
-*Stabilizing the application database user*
+_Stabilizing the application database user_
 
 ---
 
@@ -520,7 +520,7 @@ A web-based MySQL administration tool written in PHP.
 
 ## Directory & Workflow Confusion
 
-*Clarifying directory structures and workflows*
+_Clarifying directory structures and workflows_
 
 ---
 
@@ -563,7 +563,7 @@ Open `http://your-vps-ip:8080` in browser
 
 ## phpMyAdmin Access Denied
 
-*Troubleshooting phpMyAdmin access issues*
+_Troubleshooting phpMyAdmin access issues_
 
 ---
 
@@ -594,7 +594,7 @@ sudo ufw deny 8080
 
 ## phpMyAdmin Internet Access
 
-*Configuring internet access for phpMyAdmin*
+_Configuring internet access for phpMyAdmin_
 
 ---
 
@@ -630,7 +630,7 @@ Or install real curl via chocolatey.
 
 ## Firewall Allow-List Decision
 
-*Deciding on firewall configuration approach*
+_Deciding on firewall configuration approach_
 
 ---
 
@@ -807,12 +807,12 @@ Automatic malware removal was enabled to provide real-time protection against ma
 
 ### Security Posture
 
-| Layer | Status |
-|-------|--------|
-| VPS Malware Scan | Enabled |
-| Automatic Removal | Enabled |
-| Docker Isolation | Active |
-| .env Protection | Git Ignored |
+| Layer             | Status      |
+| ----------------- | ----------- |
+| VPS Malware Scan  | Enabled     |
+| Automatic Removal | Enabled     |
+| Docker Isolation  | Active      |
+| .env Protection   | Git Ignored |
 
 > ✔ VPS security baseline complete.
 > Safe for backend development and production use.
@@ -824,11 +824,13 @@ Automatic malware removal was enabled to provide real-time protection against ma
 Multi-provider AI routing, budget enforcement, and cost control.
 
 ### Final Production Architecture
+
 - High-Level Flow: Client → Atlas API (Node.js/Express) → AI Router → Budget Guard (MongoDB) → OpenAI / Groq
 - Core Rules: $5 per user cap, budget checked before every call, usage recorded after every response, MongoDB is single source of truth
 - Why: Predictable costs, production-safe routing, no vendor lock-in, scales across projects
 
 ### Subscription, Budget & Coupons
+
 - Atlas is a universal AI core service (Dev-Journal, StackPilot, future apps)
 - AI features require active subscription: ₹300 per user per month
 - Hard budget limit: once ₹300 reached → AI blocked, resets next month
@@ -836,23 +838,27 @@ Multi-provider AI routing, budget enforcement, and cost control.
 - Coupon system: admin-controlled, 1–6 months free, one per user lifetime
 
 ### Provider Strategy
+
 - Together AI: default provider for docs, summaries, markdown cleanup
 - OpenAI: premium fallback for deep reasoning
 - Groq: instant error help, quick queries
 - Cost-aware routing: route to best-fit if under ₹300, block if over
 
 ### Fallback / Premium Mode
+
 - Default: Together AI (~90% of requests)
 - Premium: OpenAI (triggered when quality critical)
 - Automatic fallback, user doesn't choose provider
 - Budget still enforced during fallback
 
 ### Together AI vs Groq
+
 - Together AI: quality + control, best for docs/summaries/explanations
 - Groq: speed + cost, best for instant answers/quick help
 - Together = thinking layer, Groq = speed layer
 
 ### Cost Breakdown & Budget Planning
+
 - Together AI (70-80%): $1–$4/month
 - Groq (15-20%): $0.20–$1/month
 - OpenAI (5-10%): $2–$5/month
@@ -860,6 +866,7 @@ Multi-provider AI routing, budget enforcement, and cost control.
 - Hard cap: ₹300 per user per month
 
 ### Cost per Feature / Button
+
 - Save Daily Dev Log: Together AI, ~$0.30–$0.60/month
 - Summarize Today's Work: Together AI, ~$0.40–$0.80/month
 - Explain Git Commit: Together AI, ~$0.30–$0.70/month
@@ -869,29 +876,34 @@ Multi-provider AI routing, budget enforcement, and cost control.
 - Total: ~$5–$6 (₹400–₹550) per user per month
 
 ### Multi-Provider Architecture Decision
+
 - Together AI: daily workhorse (70-80%), open-source, low cost
 - Groq: instant help, near-instant latency, extremely low cost
 - OpenAI: premium reasoning, strictly rate-limited
 - Single provider forces trade-offs; multi-provider removes them
 
 ### ₹500 Global Budget Planning
+
 - Initial budget constraint: ₹500/month global
 - Together AI ₹250–₹300, Groq ₹50–₹100, OpenAI ₹80–₹120
 - Rule of thumb: long/routine → Together, fast/short → Groq, hard/important → OpenAI
 
 ### System Architecture (₹500 Budget Plan)
+
 - Frontend → Backend API → Atlas AI Router → Providers → Response stored → Returned
 - Frontend sends intent + content, never chooses provider
 - Budget Guard: blocks requests when provider limit reached
 - Providers fully isolated (together.js, groq.js, openai.js)
 
 ### Node.js VPS Architecture
+
 - Stack: Node.js (Express), PM2, Nginx, MongoDB Atlas, JWT, RBAC
 - Atlas added as dedicated AI module: backend/src/ai/
 - All AI endpoints protected by JWT, RBAC, rate limiting
 - Usage tracking: userId, provider, feature, estimatedCost, createdAt
 
 ### Universal AI Service Design
+
 - Atlas lives beside projects, not inside them
 - Directory: ~/dev/projects/ai-core/
 - Projects consume Atlas over HTTP (localhost:9000)
@@ -899,41 +911,48 @@ Multi-provider AI routing, budget enforcement, and cost control.
 - No duplicated AI logic across projects
 
 ### Naming & Identity Decision
+
 - Names considered: Sentinel, Atlas, Relay, Nimbus, Forge
 - Final choice: Atlas — backbone, universal, infrastructure-focused
 - Rejected: pop-culture, vendor-tied, chatbot-style names
 
 ### Name Lock & Identity
+
 - Official name: Atlas (final, non-negotiable)
 - Role: Universal AI Core / Internal AI Platform
 - Scope: All projects under ~/dev/projects/
 - Operational tone: calm, factual, infrastructure-oriented
 
 ### Per-User Budget Enforcement
+
 - AI usage is per-user, not global pool
 - ₹300/user/month: Together ₹150, Groq ₹50, OpenAI ₹100
 - User-aware request contract requires userId
 - Global safety net: ₹3,000/month system-wide
 
 ### Monetization & Access Model
+
 - Dev-Journal = Free Product, Atlas AI = Paid Add-on
 - Free: CRUD, file explorer, dashboard, auth, RBAC
 - Paid: AI summaries, explanations, doc rewrite, error help
 - User states: aiEnabled = false (free) / true (paid)
 
 ### Coupon & Free Trial System
+
 - Admin-created coupons grant temporary AI access
 - Duration: configurable (e.g. 30 days)
 - One coupon per user lifetime, no stacking
 - Coupon users get same ₹300 budget as paid users
 
 ### Dynamic Coupons & Quota Control
+
 - Configurable duration: 1–6 months
 - Hard stop logic: if monthlyCost >= 300 → reject
 - Lazy monthly reset: usage stored by YYYY-MM
 - Global safety: ₹5,000 system-wide limit
 
 ### File Explorer Architecture
+
 - Virtual filesystem in MongoDB Atlas (files + folders as same entity)
 - Schema: name, type, parentId, content, mime, ownerId, pinned, tags
 - Explorer State Manager (fileExplorer.js) acts like explorer.exe
@@ -941,6 +960,7 @@ Multi-provider AI routing, budget enforcement, and cost control.
 - Keyboard navigation: ↑/↓, Enter, Backspace, Ctrl+N, Delete
 
 ### MongoDB Atlas AI – Dev Journal Architecture
+
 - Vector Search: search by meaning, not keywords
 - Embeddings: every .md entry becomes AI-readable
 - RAG: retrieve relevant entries → inject into LLM prompt → AI answers
@@ -986,6 +1006,12 @@ A production-ready documentation system for tracking VPS progress, infrastructur
 - [x] WCAG 2.2 Accessibility compliance
 - [x] Advanced file explorer with keyboard navigation
 - [x] Windows 11-style File Explorer UI redesign
+- [x] Atlas AI integration (Summarize, Explain, Ask AI)
+- [x] Settings page with sub-tabs (Profile, AI Access, Security)
+- [x] Coupon system for AI access activation
+- [x] Admin coupon management (create/list/disable)
+- [x] Admin user AI toggle (enable/disable per user)
+- [x] Default admin seed script
 
 ---
 
@@ -1039,12 +1065,12 @@ A production-ready documentation system for tracking VPS progress, infrastructur
 
 ### Animation Timing System
 
-| Speed | Duration | Use Case |
-|-------|----------|----------|
-| Fast | 150ms | Quick micro-interactions |
-| Normal | 200ms | Standard transitions |
-| Slow | 300ms | Complex animations |
-| Easing | cubic-bezier(0.1, 0.9, 0.2, 1.0) | Fluent Design |
+| Speed  | Duration                         | Use Case                 |
+| ------ | -------------------------------- | ------------------------ |
+| Fast   | 150ms                            | Quick micro-interactions |
+| Normal | 200ms                            | Standard transitions     |
+| Slow   | 300ms                            | Complex animations       |
+| Easing | cubic-bezier(0.1, 0.9, 0.2, 1.0) | Fluent Design            |
 
 ### New File
 
@@ -1071,16 +1097,16 @@ Contains all keyframe animations, utility classes, and accessibility support.
 
 ### Security Features
 
-| Feature | Implementation |
-|---------|---------------|
-| Password Storage | bcryptjs hash (cost factor 12) |
-| Token Type | JWT (JSON Web Token) |
-| Token Expiry | 7 days |
-| RBAC Roles | user, moderator, admin |
-| Rate Limiting | 5 login attempts/15min, 100 API/min |
-| Account Lockout | 30 min after 5 failed attempts |
-| Security Headers | Helmet.js + CSP configured |
-| User Scoping | All queries filtered by userId |
+| Feature          | Implementation                      |
+| ---------------- | ----------------------------------- |
+| Password Storage | bcryptjs hash (cost factor 12)      |
+| Token Type       | JWT (JSON Web Token)                |
+| Token Expiry     | 7 days                              |
+| RBAC Roles       | user, moderator, admin              |
+| Rate Limiting    | 5 login attempts/15min, 100 API/min |
+| Account Lockout  | 30 min after 5 failed attempts      |
+| Security Headers | Helmet.js + CSP configured          |
+| User Scoping     | All queries filtered by userId      |
 
 > ✔ JWT Authentication with RBAC
 > ✔ Admin panel for user management
@@ -1137,7 +1163,51 @@ Contains all keyframe animations, utility classes, and accessibility support.
 - [ ] GitHub Gist backup integration
 - [ ] Dark/Light mode toggle
 
-> ✅ 15 features completed! Dev-Journal now has Windows 11-style UI, JWT auth, admin panel with RBAC, dashboard, security enhancements, and WCAG 2.2 accessibility.
+> ✅ 21 features completed! Dev-Journal now has Windows 11-style UI, JWT auth, admin panel with RBAC, dashboard, security, WCAG 2.2 accessibility, Atlas AI integration, settings page, and coupon system.
+
+---
+
+## Settings & AI Access System (Completed)
+
+- [x] Dedicated Settings page (/settings) with 3 sub-tabs
+- [x] Profile tab: edit name, view account info
+- [x] AI Access tab: view AI status, redeem coupon codes
+- [x] Security tab: change password
+- [x] Coupon model (code, durationDays, maxUses, usedCount, isActive)
+- [x] Coupon redemption API (POST /api/settings/redeem-coupon)
+- [x] Admin coupon CRUD (POST/GET/DELETE /api/admin/coupons)
+- [x] Admin per-user AI toggle (PATCH /api/admin/users/:id/ai)
+- [x] Atlas AI client integration (POST /ai/:action via x-api-key)
+- [x] AI access middleware (checkAiAccess)
+- [x] Default admin seed script (backend/src/scripts/seedAdmin.js)
+
+### AI Access Flow
+
+| Step | Action                                               |
+| ---- | ---------------------------------------------------- |
+| 1    | Admin creates coupon (e.g. FREE30) via admin panel   |
+| 2    | User enters coupon code in Settings > AI Access      |
+| 3    | System validates coupon and activates AI (30 days)   |
+| 4    | User can now use Summarize, Explain, Ask AI buttons  |
+| 5    | Atlas AI processes request via Groq/OpenAI providers |
+
+### Settings API Endpoints
+
+```
+GET    /api/settings              → User profile + AI status
+PUT    /api/settings/profile      → Update display name
+PUT    /api/settings/password     → Change password
+POST   /api/settings/redeem-coupon → Redeem coupon code
+```
+
+### Admin Coupon API
+
+```
+POST   /api/admin/coupons         → Create coupon
+GET    /api/admin/coupons         → List all coupons
+DELETE /api/admin/coupons/:id     → Deactivate coupon
+PATCH  /api/admin/users/:id/ai   → Toggle user AI access
+```
 
 ---
 
@@ -1152,23 +1222,32 @@ Dev-Journal/
 │   │   ├── config/
 │   │   │   └── db.js
 │   │   ├── controllers/
-│   │   │   ├── adminController.js    # Admin panel actions
+│   │   │   ├── adminController.js    # Admin + coupon management
+│   │   │   ├── aiController.js       # AI endpoints
 │   │   │   ├── authController.js
 │   │   │   ├── entryController.js
+│   │   │   ├── settingsController.js # Settings + coupon redemption
 │   │   │   └── statsController.js    # Dashboard stats
 │   │   ├── middleware/
 │   │   │   ├── auth.js
 │   │   │   ├── authorize.js          # RBAC authorization
 │   │   │   └── security.js           # Rate limiting, Helmet, CSP
 │   │   ├── models/
+│   │   │   ├── Coupon.js             # AI coupon codes
 │   │   │   ├── Entry.js
-│   │   │   └── User.js               # + role, isActive, lockout fields
+│   │   │   └── User.js               # + role, AI fields
+│   │   ├── services/
+│   │   │   └── atlasClient.js        # Atlas AI HTTP client
+│   │   ├── scripts/
+│   │   │   └── seedAdmin.js          # Admin + coupon seed
 │   │   └── routes/
-│   │       ├── admin.js              # Admin API routes
+│   │       ├── admin.js              # Admin + coupon routes
+│   │       ├── ai.js                 # AI action routes
 │   │       ├── auth.js
 │   │       ├── entries.js
+│   │       ├── explorer.js           # File explorer routes
+│   │       ├── settings.js           # User settings routes
 │   │       └── stats.js              # Dashboard stats routes
-│   ├── scripts/
 │   ├── package.json
 │   └── .env
 ├── frontend/
@@ -1179,12 +1258,13 @@ Dev-Journal/
 │   │   │   ├── win11-explorer.css    # Windows 11 File Explorer UI
 │   │   │   └── animations.css        # Animations & micro-interactions
 │   │   └── js/
-│   │       ├── app.js
+│   │       ├── app.js                # + AI panel integration
 │   │       ├── auth.js
-│   │       ├── admin.js              # Admin panel logic
+│   │       ├── admin.js              # Admin + coupon management
 │   │       ├── dashboard.js          # Dashboard with Chart.js
 │   │       ├── fileExplorer.js       # Advanced file explorer
-│   │       └── passwordStrength.js   # Password strength meter
+│   │       ├── passwordStrength.js   # Password strength meter
+│   │       └── settings.js           # Settings page logic
 │   └── views/
 │       ├── index.html
 │       ├── entry.html
@@ -1193,13 +1273,14 @@ Dev-Journal/
 │       ├── login.html
 │       ├── register.html
 │       ├── dashboard.html            # User dashboard
+│       ├── settings.html             # Settings (Profile/AI/Security)
 │       └── admin/
-│           ├── index.html            # Admin dashboard
+│           ├── index.html            # Admin dashboard + coupons
 │           └── users.html            # User management
 ├── VPS/
 │   ├── vps_progress.html
 │   └── vps_progress.md
-├── .env.example
+├── .env
 ├── README.md
 └── CHANGELOG.md
 ```
@@ -1275,12 +1356,12 @@ Live at: [stackpilot.in](http://stackpilot.in)
 
 ### Animation Timing System
 
-| Speed | Duration | Use Case |
-|-------|----------|----------|
-| Fast | 150ms | Quick micro-interactions |
-| Normal | 200ms | Standard transitions |
-| Slow | 300ms | Complex animations |
-| Easing | cubic-bezier(0.1, 0.9, 0.2, 1.0) | Fluent Design |
+| Speed  | Duration                         | Use Case                 |
+| ------ | -------------------------------- | ------------------------ |
+| Fast   | 150ms                            | Quick micro-interactions |
+| Normal | 200ms                            | Standard transitions     |
+| Slow   | 300ms                            | Complex animations       |
+| Easing | cubic-bezier(0.1, 0.9, 0.2, 1.0) | Fluent Design            |
 
 ### New File
 
@@ -1307,16 +1388,16 @@ Contains all keyframe animations, utility classes, and accessibility support.
 
 ### Security Features
 
-| Feature | Implementation |
-|---------|---------------|
-| Password Storage | bcryptjs hash (cost factor 12) |
-| Token Type | JWT (JSON Web Token) |
-| Token Expiry | 7 days |
-| RBAC Roles | user, moderator, admin |
-| Rate Limiting | 5 login attempts/15min, 100 API/min |
-| Account Lockout | 30 min after 5 failed attempts |
-| Security Headers | Helmet.js + CSP configured |
-| User Scoping | All queries filtered by userId |
+| Feature          | Implementation                      |
+| ---------------- | ----------------------------------- |
+| Password Storage | bcryptjs hash (cost factor 12)      |
+| Token Type       | JWT (JSON Web Token)                |
+| Token Expiry     | 7 days                              |
+| RBAC Roles       | user, moderator, admin              |
+| Rate Limiting    | 5 login attempts/15min, 100 API/min |
+| Account Lockout  | 30 min after 5 failed attempts      |
+| Security Headers | Helmet.js + CSP configured          |
+| User Scoping     | All queries filtered by userId      |
 
 > ✔ JWT Authentication with RBAC
 > ✔ Admin panel for user management
@@ -1510,7 +1591,7 @@ Dev-Journal/
 ├── VPS/
 │   ├── vps_progress.html
 │   └── vps_progress.md
-├── .env.example
+├── .env
 ├── README.md
 └── CHANGELOG.md
 ```
@@ -1522,7 +1603,7 @@ Dev-Journal/
 **ShopEase VPS Setup**
 
 - Version: 1.0
-- Last Updated: 03/02/2026
+- Last Updated: 08/02/2026
 - Tech Stack: Ubuntu 24.04 | Docker | MySQL 8.0 | Django | Python 3.12
 
 ---

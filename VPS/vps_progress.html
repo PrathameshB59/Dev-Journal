@@ -135,6 +135,7 @@
                     <a href="#dev-journal" class="nav-link">Dev-Journal ▾</a>
                     <div class="dropdown-menu">
                         <a href="#dev-journal-done" class="dropdown-link">✅ What We Have Done</a>
+                        <a href="#dev-journal-settings" class="dropdown-link">⚙️ Settings & AI Access</a>
                         <a href="#dev-journal-uiux" class="dropdown-link">🎨 UI/UX Enhancements</a>
                         <a href="#dev-journal-animations" class="dropdown-link">✨ Animations</a>
                         <a href="#dev-journal-security" class="dropdown-link">🔐 Security & Auth</a>
@@ -9095,6 +9096,12 @@ AI answers using your history
             <li><span class="status done"></span>WCAG 2.2 Accessibility compliance</li>
             <li><span class="status done"></span>Advanced file explorer with keyboard navigation</li>
             <li><span class="status done"></span>Windows 11-style File Explorer UI redesign</li>
+            <li><span class="status done"></span>Atlas AI integration (Summarize, Explain, Ask AI)</li>
+            <li><span class="status done"></span>Settings page with sub-tabs (Profile, AI Access, Security)</li>
+            <li><span class="status done"></span>Coupon system for AI access activation</li>
+            <li><span class="status done"></span>Admin coupon management (create/list/disable)</li>
+            <li><span class="status done"></span>Admin user AI toggle (enable/disable per user)</li>
+            <li><span class="status done"></span>Default admin seed script</li>
         </ul>
     </div>
 
@@ -9148,6 +9155,70 @@ AI answers using your history
             <li><span class="status done"></span>Semantic HTML structure</li>
             <li><span class="status done"></span>Color contrast ratio 4.5:1 for text</li>
         </ul>
+    </div>
+
+    <div class="card full" id="dev-journal-settings">
+        <h2>⚙️ Settings & AI Access System (Completed)</h2>
+        <p class="muted">Dedicated settings page, coupon-based AI access, and admin AI management</p>
+
+        <h3>📄 Settings Page (/settings)</h3>
+        <ul class="list">
+            <li><span class="status done"></span>Dedicated Settings page with 3 sub-tabs</li>
+            <li><span class="status done"></span>Profile tab: edit name, view account info</li>
+            <li><span class="status done"></span>AI Access tab: view AI status, redeem coupon codes</li>
+            <li><span class="status done"></span>Security tab: change password</li>
+            <li><span class="status done"></span>Hash-based tab navigation (#profile, #ai, #security)</li>
+        </ul>
+
+        <h3>🎟️ Coupon System</h3>
+        <ul class="list">
+            <li><span class="status done"></span>Coupon model (code, durationDays, maxUses, usedCount, isActive)</li>
+            <li><span class="status done"></span>Coupon redemption API (POST /api/settings/redeem-coupon)</li>
+            <li><span class="status done"></span>Admin coupon CRUD (POST/GET/DELETE /api/admin/coupons)</li>
+            <li><span class="status done"></span>Default FREE30 coupon created via seed script</li>
+            <li><span class="status done"></span>Usage tracking and max-use enforcement</li>
+        </ul>
+
+        <h3>🤖 Atlas AI Integration</h3>
+        <ul class="list">
+            <li><span class="status done"></span>Atlas AI client integration (POST /ai/:action via x-api-key)</li>
+            <li><span class="status done"></span>AI access middleware (checkAiAccess)</li>
+            <li><span class="status done"></span>Admin per-user AI toggle (PATCH /api/admin/users/:id/ai)</li>
+            <li><span class="status done"></span>AI actions: Summarize, Explain, Ask AI</li>
+            <li><span class="status done"></span>User AI fields: aiEnabled, aiPlan, aiExpiresAt, couponUsed</li>
+        </ul>
+
+        <h3>🔑 Default Admin Setup</h3>
+        <ul class="list">
+            <li><span class="status done"></span>Admin seed script (backend/src/scripts/seedAdmin.js)</li>
+            <li><span class="status done"></span>npm run seed creates/promotes admin user from .env</li>
+            <li><span class="status done"></span>Single admin user model (identified by email in .env)</li>
+        </ul>
+
+        <h3>🛠️ API Endpoints Added</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Method</th>
+                    <th>Endpoint</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>GET</td><td>/api/settings</td><td>Get user settings + AI status</td></tr>
+                <tr><td>PUT</td><td>/api/settings/profile</td><td>Update profile (name)</td></tr>
+                <tr><td>PUT</td><td>/api/settings/password</td><td>Change password</td></tr>
+                <tr><td>POST</td><td>/api/settings/redeem-coupon</td><td>Redeem AI access coupon</td></tr>
+                <tr><td>PATCH</td><td>/api/admin/users/:id/ai</td><td>Toggle user AI access</td></tr>
+                <tr><td>POST</td><td>/api/admin/coupons</td><td>Create coupon</td></tr>
+                <tr><td>GET</td><td>/api/admin/coupons</td><td>List all coupons</td></tr>
+                <tr><td>DELETE</td><td>/api/admin/coupons/:id</td><td>Disable coupon</td></tr>
+            </tbody>
+        </table>
+
+        <blockquote class="success">
+            ✅ Settings page, coupon system, Atlas AI integration, and admin seed script all completed and deployed.
+        </blockquote>
     </div>
 
     <div class="card" id="dev-journal-uiux">
@@ -9313,6 +9384,12 @@ AI answers using your history
             <li><span class="status done"></span>Account lockout after 5 failed login attempts</li>
             <li><span class="status done"></span>Advanced file explorer (context menu, keyboard nav, favorites)</li>
             <li><span class="status done"></span>Windows 11 File Explorer UI (toolbar, address bar, tabs, sidebar)</li>
+            <li><span class="status done"></span>Atlas AI integration (Summarize, Explain, Ask AI)</li>
+            <li><span class="status done"></span>Settings page with sub-tabs (Profile, AI Access, Security)</li>
+            <li><span class="status done"></span>Coupon system for AI access activation</li>
+            <li><span class="status done"></span>Admin coupon management (create/list/disable)</li>
+            <li><span class="status done"></span>Admin per-user AI toggle</li>
+            <li><span class="status done"></span>Default admin seed script (seedAdmin.js)</li>
             <li><span class="status todo"></span>Markdown live preview while editing</li>
             <li><span class="status todo"></span>Export entries to Markdown/PDF</li>
             <li><span class="status todo"></span>Entry templates for different categories</li>
@@ -9322,7 +9399,7 @@ AI answers using your history
         </ul>
 
         <blockquote class="success">
-            ✅ 15 features completed! Dev-Journal now has Windows 11-style UI, JWT auth, admin panel with RBAC, dashboard, security enhancements, and WCAG 2.2 accessibility.
+            ✅ 21 features completed! Dev-Journal now has Windows 11-style UI, JWT auth, admin panel with RBAC, dashboard, security enhancements, WCAG 2.2 accessibility, Atlas AI integration, settings page, and coupon system.
         </blockquote>
     </div>
 
@@ -9337,23 +9414,32 @@ AI answers using your history
             │ │ ├── config/
             │ │ │ └── db.js
             │ │ ├── controllers/
-            │ │ │ ├── adminController.js    # Admin panel actions
+            │ │ │ ├── adminController.js    # Admin panel + coupon CRUD
+            │ │ │ ├── aiController.js       # AI proxy + checkAiAccess
             │ │ │ ├── authController.js
             │ │ │ ├── entryController.js
+            │ │ │ ├── settingsController.js # Settings + coupon redemption
             │ │ │ └── statsController.js    # Dashboard stats
             │ │ ├── middleware/
             │ │ │ ├── auth.js
             │ │ │ ├── authorize.js          # RBAC authorization
             │ │ │ └── security.js           # Rate limiting, Helmet, CSP
             │ │ ├── models/
+            │ │ │ ├── Coupon.js             # AI access coupon model
             │ │ │ ├── Entry.js
-            │ │ │ └── User.js               # + role, isActive, lockout fields
-            │ │ └── routes/
-            │ │   ├── admin.js              # Admin API routes
-            │ │   ├── auth.js
-            │ │   ├── entries.js
-            │ │   └── stats.js              # Dashboard stats routes
-            │ ├── scripts/
+            │ │ │ └── User.js               # + aiEnabled, aiPlan, aiExpiresAt
+            │ │ ├── routes/
+            │ │ │ ├── admin.js              # Admin API + coupon routes
+            │ │ │ ├── ai.js                 # AI proxy routes
+            │ │ │ ├── auth.js
+            │ │ │ ├── entries.js
+            │ │ │ ├── explorer.js           # File explorer API
+            │ │ │ ├── settings.js           # Settings API routes
+            │ │ │ └── stats.js              # Dashboard stats routes
+            │ │ ├── scripts/
+            │ │ │ └── seedAdmin.js          # Default admin + coupon seed
+            │ │ └── services/
+            │ │   └── atlasClient.js        # Atlas AI HTTP client
             │ ├── package.json
             │ └── .env
             ├── frontend/
@@ -9366,9 +9452,10 @@ AI answers using your history
             │ │ └── js/
             │ │   ├── app.js
             │ │   ├── auth.js
-            │ │   ├── admin.js              # Admin panel logic
+            │ │   ├── admin.js              # Admin panel + coupon mgmt
             │ │   ├── dashboard.js          # Dashboard with Chart.js
             │ │   ├── fileExplorer.js       # Advanced file explorer
+            │ │   ├── settings.js           # Settings page logic
             │ │   └── passwordStrength.js   # Password strength meter
             │ └── views/
             │   ├── index.html
@@ -9378,8 +9465,9 @@ AI answers using your history
             │   ├── login.html
             │   ├── register.html
             │   ├── dashboard.html          # User dashboard
+            │   ├── settings.html           # Settings (Profile/AI/Security)
             │   └── admin/
-            │     ├── index.html            # Admin dashboard
+            │     ├── index.html            # Admin dashboard + coupons
             │     └── users.html            # User management
             ├── VPS/
             │ ├── vps_progress.html

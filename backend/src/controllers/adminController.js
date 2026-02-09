@@ -1,5 +1,6 @@
 const User = require('../models/User');
 const Entry = require('../models/Entry');
+const Coupon = require('../models/Coupon');
 
 // Get all users (admin only)
 exports.getAllUsers = async (req, res) => {
@@ -290,6 +291,102 @@ exports.getAllEntries = async (req, res) => {
                 }
             }
         });
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+};
+
+// PATCH /api/admin/users/:id/ai — Set user AI access (admin only)
+exports.setUserAi = async (req, res) => {
+    try {
+        const { aiEnabled, aiPlan, durationDays } = req.body;
+
+        const updateFields = {};
+        if (aiEnabled !== undefined) updateFields.aiEnabled = aiEnabled;
+        if (aiPlan !== undefined) updateFields.aiPlan = aiPlan;
+
+        if (durationDays) {
+            const expiresAt = new Date();
+            expiresAt.setDate(expiresAt.getDate() + durationDays);
+            updateFields.aiExpiresAt = expiresAt;
+        }
+
+        // If disabling, clear expiry
+        if (aiEnabled === false || aiPlan === 'NONE') {
+            updateFields.aiEnabled = false;
+            updateFields.aiPlan = 'NONE';
+            updateFields.aiExpiresAt = null;
+        }
+
+        const user = await User.findByIdAndUpdate(
+            req.params.id,
+            updateFields,
+            { new: true, runValidators: true }
+        ).select('-password');
+
+        if (!user) {
+            return res.status(404).json({ success: false, error: 'User not found' });
+        }
+
+        res.json({ success: true, data: user });
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+};
+
+// POST /api/admin/coupons — Create a new coupon (admin only)
+exports.createCoupon = async (req, res) => {
+    try {
+        const { code, durationDays, maxUses, expiresAt } = req.body;
+
+        if (!code || !code.trim()) {
+            return res.status(400).json({ success: false, error: 'Coupon code is required' });
+        }
+
+        const coupon = await Coupon.create({
+            code: code.trim().toUpperCase(),
+            durationDays: durationDays || 30,
+            maxUses: maxUses || 1,
+            expiresAt: expiresAt || null,
+            createdBy: req.user._id
+        });
+
+        res.status(201).json({ success: true, data: coupon });
+    } catch (error) {
+        if (error.code === 11000) {
+            return res.status(400).json({ success: false, error: 'Coupon code already exists' });
+        }
+        res.status(500).json({ success: false, error: error.message });
+    }
+};
+
+// GET /api/admin/coupons — List all coupons (admin only)
+exports.getCoupons = async (req, res) => {
+    try {
+        const coupons = await Coupon.find()
+            .populate('createdBy', 'name email')
+            .sort({ createdAt: -1 });
+
+        res.json({ success: true, data: coupons });
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+};
+
+// DELETE /api/admin/coupons/:id — Deactivate a coupon (admin only)
+exports.deleteCoupon = async (req, res) => {
+    try {
+        const coupon = await Coupon.findByIdAndUpdate(
+            req.params.id,
+            { isActive: false },
+            { new: true }
+        );
+
+        if (!coupon) {
+            return res.status(404).json({ success: false, error: 'Coupon not found' });
+        }
+
+        res.json({ success: true, message: 'Coupon deactivated', data: coupon });
     } catch (error) {
         res.status(500).json({ success: false, error: error.message });
     }
