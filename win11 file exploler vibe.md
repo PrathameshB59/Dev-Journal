@@ -1,122 +1,167 @@
-You are a senior software architect and full-stack engineer.
+You are a senior product engineer and UI systems architect.
 
-I am building a production-grade Dev Journal application that mimics the
-Windows 11 File Explorer experience, but uses a virtual filesystem backed
-by MongoDB Atlas (not a real OS filesystem).
+Your task is to DESIGN and IMPLEMENT a Windows 11–style “Desktop Home Page”
+for my Dev Journal web app.
 
-Here is the architecture and design I have finalized:
+This is NOT just UI.
+You must design BOTH frontend behavior and backend logic together.
 
-GOAL
-- Windows-11-like File Explorer UI
-- Virtual filesystem stored in MongoDB
-- OS-level interactions (single click select, double click open, context menu, keyboard navigation)
-- Scalable, secure, production-ready system
+━━━━━━━━━━━━━━━━━━━━━━
+1️⃣ PRODUCT GOAL
+━━━━━━━━━━━━━━━━━━━━━━
 
-CORE PRINCIPLE
-- The File Explorer is NOT the data
-- It is a VIEW over the data
+Build a Dev Journal HOME page that behaves like the Windows 11 desktop.
 
-LAYERS
-1. UI Layer (Explorer Shell: HTML + CSS)
-2. State Layer (Explorer Brain: fileExplorer.js)
-3. Data Layer (Virtual Filesystem: MongoDB)
+Concept:
+- The Home page = Desktop
+- Folders = Categories / Collections
+- Files = Markdown journal entries
+- Pinning a folder = Adding it to Desktop
+- Removing a folder = Removing from Desktop (not deleting data)
 
-HIGH-LEVEL FLOW
-Browser (User)
-↓
-Explorer UI (HTML + CSS)
-↓
-Explorer State Manager (fileExplorer.js)
-↓
-Explorer API (Express.js)
-↓
-MongoDB Atlas (Virtual File System)
+The UX should feel like:
+Windows 11 Desktop + File Explorer
 
-VIRTUAL FILESYSTEM SCHEMA (MongoDB)
-- Files and folders are the SAME entity
-- Only the "type" field differs
+━━━━━━━━━━━━━━━━━━━━━━
+2️⃣ CORE UX BEHAVIOR (MANDATORY)
+━━━━━━━━━━━━━━━━━━━━━━
 
-Entry schema:
-{
-  _id: ObjectId,
-  name: "firewall.md",
-  type: "file" | "folder",
-  parentId: ObjectId | null,
-  content: String,        // files only
-  mime: "text/markdown",
-  ownerId: ObjectId,
-  pinned: Boolean,
-  favorite: Boolean,
-  tags: ["vps", "security"],
-  createdAt,
-  updatedAt
-}
+Desktop (Home Page):
+- Grid-based layout (icons with labels)
+- Folder icons displayed like Windows 11
+- Supports:
+  - Single click → select
+  - Double click → open folder
+  - Right click → context menu
+  - Keyboard navigation (Enter, Delete, Arrow keys)
+- Empty desktop state shown cleanly
 
-ROOT STRUCTURE (PER USER)
-ROOT
- ├── Daily Learning
- ├── Project Notes
- │    └── Dev Journal
- ├── Bug Fixes
- ├── Code Snippets
- └── Concepts
+Folder Behavior:
+- Any folder created in Dev Journal can be:
+  - Pinned to Desktop
+  - Unpinned from Desktop
+- Desktop only shows pinned folders
+- Opening a folder navigates into File Explorer view
 
-EXPLORER-SPECIFIC APIs (NOT GENERIC CRUD)
-GET    /api/explorer/root
-GET    /api/explorer/folder/:id
-POST   /api/explorer/file
-POST   /api/explorer/folder
-PATCH  /api/explorer/:id
-DELETE /api/explorer/:id
-GET    /api/explorer/breadcrumb/:id
+Visual Rules:
+- Windows 11 dark theme
+- Rounded corners
+- Subtle shadows
+- Smooth hover & focus states
+- Accessible contrast (WCAG)
 
-STATE MANAGER (fileExplorer.js)
-const ExplorerState = {
-  currentFolderId: null,
-  selectedEntryId: null,
-  viewMode: "grid", // grid | list
-  sortBy: "name",
-  history: []
-};
+━━━━━━━━━━━━━━━━━━━━━━
+3️⃣ BACKEND LOGIC (CRITICAL)
+━━━━━━━━━━━━━━━━━━━━━━
 
-INTERACTION RULES
-- Single click → select
-- Double click → open
-- Right click → context menu
-- Keyboard:
-  ↑ ↓ navigate
-  Enter open
-  Backspace go up
-  Ctrl+N new file
-  Ctrl+Shift+N new folder
-  Delete delete
+Design backend data flow using MongoDB.
 
-SECURITY
-- JWT authentication
-- ownerId isolation on every query
-- RBAC
-- Rate limiting
-- Input sanitization
+Required concepts:
+- Folder entity
+- Entry (file) entity
+- Desktop state (pinned folders)
 
-PERFORMANCE
-Indexes:
-- { parentId, ownerId }
-- { name }
-- { tags }
+Example logic (conceptual):
+- Folder schema includes:
+  - name
+  - type = "folder"
+  - ownerId
+  - isPinned (boolean)
+  - createdAt
+- Desktop is NOT a real folder
+- Desktop = query of folders where isPinned = true
 
-MENTAL MODEL
-- MongoDB = Disk
-- Express = Kernel
-- fileExplorer.js = explorer.exe
-- Dev Journal = Virtual OS panel
+Required APIs:
+- GET  /api/desktop
+  → returns all pinned folders for logged-in user
 
-TASK FOR YOU:
-1. Review this architecture critically like a production system.
-2. Point out any weaknesses, missing pieces, or edge cases.
-3. Suggest improvements ONLY if they are production-grade.
-4. Propose a clean implementation plan (step-by-step).
-5. Avoid beginner explanations, tutorials, or UI fluff.
-6. Think like this will be used daily by a real developer.
+- POST /api/folders
+  → create folder
 
-Respond like a senior engineer doing a design review.
-Keep the response structured, concise, and opinionated.
+- PATCH /api/folders/:id/pin
+  → pin / unpin folder from desktop
+
+- DELETE /api/folders/:id
+  → delete folder (remove everywhere)
+
+Security:
+- JWT protected
+- User isolation (ownerId enforced)
+- No cross-user visibility
+
+━━━━━━━━━━━━━━━━━━━━━━
+4️⃣ FRONTEND IMPLEMENTATION
+━━━━━━━━━━━━━━━━━━━━━━
+
+Home Page Responsibilities:
+- Fetch desktop folders from backend
+- Render grid layout dynamically
+- Show loading skeletons
+- Handle empty state
+- Cache UI state safely
+- Re-render after pin/unpin without refresh
+
+Context Menu (Right Click):
+- Open
+- Rename
+- Pin / Unpin from Desktop
+- Delete (with confirmation)
+
+Navigation:
+- Desktop → Folder → File
+- Breadcrumb updates correctly
+- Back button works logically
+
+━━━━━━━━━━━━━━━━━━━━━━
+5️⃣ STATE MANAGEMENT RULES
+━━━━━━━━━━━━━━━━━━━━━━
+
+- Desktop state is backend-driven (not frontend-only)
+- Refreshing page MUST preserve desktop layout
+- No hardcoded folders
+- Everything comes from API
+
+━━━━━━━━━━━━━━━━━━━━━━
+6️⃣ EDGE CASES TO HANDLE
+━━━━━━━━━━━━━━━━━━━━━━
+
+- User has no folders
+- User unpins last folder
+- Folder deleted while open
+- Network failure
+- Token expired
+- Rapid pin/unpin actions
+
+━━━━━━━━━━━━━━━━━━━━━━
+7️⃣ OUTPUT FORMAT REQUIRED
+━━━━━━━━━━━━━━━━━━━━━━
+
+You must provide:
+
+1. High-level architecture explanation
+2. Backend schema & API design
+3. Frontend UI structure (HTML layout)
+4. Frontend JS logic flow
+5. UX rules matching Windows 11 behavior
+6. Accessibility considerations
+7. Clear separation of concerns
+
+━━━━━━━━━━━━━━━━━━━━━━
+8️⃣ CONSTRAINTS
+━━━━━━━━━━━━━━━━━━━━━━
+
+- No frameworks (React/Vue/etc)
+- Use vanilla JS + HTML + CSS
+- No overengineering
+- This is a production feature
+- Must feel like a real OS desktop
+
+━━━━━━━━━━━━━━━━━━━━━━
+FINAL GOAL
+━━━━━━━━━━━━━━━━━━━━━━
+
+After implementation:
+- Dev Journal Home feels like Windows 11 Desktop
+- Any folder can appear on Desktop
+- Desktop survives refresh
+- UX feels native, clean, and intentional
