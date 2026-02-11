@@ -17,7 +17,7 @@ exports.getDashboardStats = async (req, res) => {
 
         // Get recent entries
         const recentEntries = await Entry.find({ userId })
-            .select('title category createdAt updatedAt')
+            .select('title name category createdAt updatedAt')
             .sort({ createdAt: -1 })
             .limit(5);
 

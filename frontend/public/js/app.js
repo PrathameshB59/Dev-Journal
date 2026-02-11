@@ -743,6 +743,17 @@ const setupSearch = () => {
     searchInput.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') performSearch();
     });
+    searchInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            searchInput.value = '';
+            searchInput.blur();
+            if (document.querySelector('.win11-explorer')) {
+                Win11.loadCurrentView();
+            } else {
+                loadEntries();
+            }
+        }
+    });
 };
 
 // Form Handling - Create Entry
@@ -1059,22 +1070,37 @@ const setupMobileMenu = () => {
 
     if (!mobileMenuBtn || !navActions) return;
 
+    mobileMenuBtn.setAttribute('aria-expanded', 'false');
+
+    const closeMenu = () => {
+        mobileMenuBtn.classList.remove('active');
+        navActions.classList.remove('open');
+        mobileMenuBtn.setAttribute('aria-expanded', 'false');
+    };
+
     mobileMenuBtn.addEventListener('click', () => {
+        const isOpen = navActions.classList.contains('open');
         mobileMenuBtn.classList.toggle('active');
         navActions.classList.toggle('open');
+        mobileMenuBtn.setAttribute('aria-expanded', String(!isOpen));
+    });
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && navActions.classList.contains('open')) {
+            closeMenu();
+            mobileMenuBtn.focus();
+        }
     });
 
     document.addEventListener('click', (e) => {
         if (!mobileMenuBtn.contains(e.target) && !navActions.contains(e.target)) {
-            mobileMenuBtn.classList.remove('active');
-            navActions.classList.remove('open');
+            closeMenu();
         }
     });
 
     window.addEventListener('resize', () => {
         if (window.innerWidth > 768) {
-            mobileMenuBtn.classList.remove('active');
-            navActions.classList.remove('open');
+            closeMenu();
         }
     });
 };
@@ -1147,15 +1173,15 @@ const renderFileItem = (entry) => {
     // Folders get folder-specific styling and behavior
     const itemClass = isFolder ? 'file-item folder-item' : 'file-item';
     const href = isFolder ? '#' : `/entry/${entry._id}`;
-    const dblClickAttr = isFolder
-        ? `ondblclick="event.preventDefault(); Win11.navigateToFolder('${entry._id}')" onclick="event.preventDefault();"`
+    const clickAttr = isFolder
+        ? `onclick="event.preventDefault(); Win11.navigateToFolder('${entry._id}')"`
         : '';
 
-    const pinnedIcon = entry.pinned ? '<span class="pinned-indicator" title="Pinned">&#128204;</span>' : '';
-    const favIcon = entry.favorite ? '<span class="fav-indicator" title="Favorite">&#9733;</span>' : '';
+    const pinnedIcon = entry.pinned ? '<span class="pinned-indicator" title="Pinned" aria-label="Pinned">&#128204;</span>' : '';
+    const favIcon = entry.favorite ? '<span class="fav-indicator" title="Favorite" aria-label="Favorite">&#9733;</span>' : '';
 
     return `
-        <a href="${href}" class="${itemClass}" data-entry-id="${entry._id}" data-type="${entry.type}" ${dblClickAttr}>
+        <a href="${href}" class="${itemClass}" data-entry-id="${entry._id}" data-type="${entry.type}" ${clickAttr}>
             <div class="file-name">
                 <input type="checkbox" class="file-checkbox" onclick="event.stopPropagation(); Win11.toggleSelect('${entry._id}')">
                 <span class="file-icon ${isFolder ? 'folder' : ''}">${icon}</span>
@@ -1407,16 +1433,37 @@ const Win11 = {
 
         if (!toggleBtn || !sidebar) return;
 
+        toggleBtn.setAttribute('aria-expanded', 'false');
+
+        const openSidebar = () => {
+            sidebar.classList.add('open');
+            if (overlay) overlay.classList.add('show');
+            toggleBtn.setAttribute('aria-expanded', 'true');
+            const firstLink = sidebar.querySelector('a, button');
+            if (firstLink) firstLink.focus();
+        };
+
+        const closeSidebar = () => {
+            sidebar.classList.remove('open');
+            if (overlay) overlay.classList.remove('show');
+            toggleBtn.setAttribute('aria-expanded', 'false');
+            toggleBtn.focus();
+        };
+
         toggleBtn.addEventListener('click', () => {
-            sidebar.classList.toggle('open');
-            if (overlay) overlay.classList.toggle('show');
+            const isOpen = sidebar.classList.contains('open');
+            if (isOpen) closeSidebar();
+            else openSidebar();
+        });
+
+        sidebar.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && sidebar.classList.contains('open')) {
+                closeSidebar();
+            }
         });
 
         if (overlay) {
-            overlay.addEventListener('click', () => {
-                sidebar.classList.remove('open');
-                overlay.classList.remove('show');
-            });
+            overlay.addEventListener('click', closeSidebar);
         }
     },
 
@@ -1424,13 +1471,15 @@ const Win11 = {
     setupCollapsibleSections() {
         document.querySelectorAll('.section-header').forEach(header => {
             header.addEventListener('click', () => {
-                const targetId = header.dataset.collapse;
+                const targetId = header.dataset.collapse || header.getAttribute('aria-controls');
                 const content = document.getElementById(targetId);
                 const arrow = header.querySelector('.collapse-arrow');
 
                 if (content && arrow) {
                     content.classList.toggle('collapsed');
                     arrow.classList.toggle('collapsed');
+                    const isCollapsed = content.classList.contains('collapsed');
+                    header.setAttribute('aria-expanded', String(!isCollapsed));
                 }
             });
         });
@@ -1540,66 +1589,111 @@ const Win11 = {
 
     // Setup dropdown menus
     setupDropdowns() {
-        // Sort dropdown
-        const sortDropdown = document.getElementById('sortDropdown');
-        const sortMenu = document.getElementById('sortMenu');
+        const self = this;
 
-        if (sortDropdown && sortMenu) {
-            sortDropdown.addEventListener('click', (e) => {
-                e.stopPropagation();
-                sortMenu.classList.toggle('show');
-                document.getElementById('viewMenu')?.classList.remove('show');
+        const setupDropdown = (buttonId, menuId, onSelect) => {
+            const button = document.getElementById(buttonId);
+            const menu = document.getElementById(menuId);
+            if (!button || !menu) return;
+
+            button.setAttribute('aria-haspopup', 'true');
+            button.setAttribute('aria-expanded', 'false');
+            menu.setAttribute('role', 'menu');
+            menu.querySelectorAll('.dropdown-item').forEach(item => {
+                item.setAttribute('role', 'menuitem');
+                item.setAttribute('tabindex', '-1');
             });
 
-            sortMenu.querySelectorAll('.dropdown-item').forEach(item => {
+            const openMenu = () => {
+                menu.classList.add('show');
+                button.setAttribute('aria-expanded', 'true');
+                const firstItem = menu.querySelector('.dropdown-item');
+                if (firstItem) firstItem.focus();
+            };
+
+            const closeMenu = () => {
+                menu.classList.remove('show');
+                button.setAttribute('aria-expanded', 'false');
+                button.focus();
+            };
+
+            button.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const isOpen = menu.classList.contains('show');
+                // Close other menus
+                document.querySelectorAll('.dropdown-menu.show').forEach(m => m.classList.remove('show'));
+                document.querySelectorAll('[aria-haspopup="true"]').forEach(b => b.setAttribute('aria-expanded', 'false'));
+                if (!isOpen) openMenu();
+            });
+
+            button.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowDown' || e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    openMenu();
+                }
+            });
+
+            menu.addEventListener('keydown', (e) => {
+                const items = Array.from(menu.querySelectorAll('.dropdown-item'));
+                const currentIndex = items.indexOf(document.activeElement);
+
+                switch (e.key) {
+                    case 'ArrowDown':
+                        e.preventDefault();
+                        items[(currentIndex + 1) % items.length].focus();
+                        break;
+                    case 'ArrowUp':
+                        e.preventDefault();
+                        items[(currentIndex - 1 + items.length) % items.length].focus();
+                        break;
+                    case 'Enter':
+                    case ' ':
+                        e.preventDefault();
+                        if (document.activeElement.classList.contains('dropdown-item')) {
+                            document.activeElement.click();
+                        }
+                        break;
+                    case 'Escape':
+                    case 'Tab':
+                        e.preventDefault();
+                        closeMenu();
+                        break;
+                }
+            });
+
+            menu.querySelectorAll('.dropdown-item').forEach(item => {
                 item.addEventListener('click', () => {
-                    const sortVal = item.dataset.sort;
-                    const parts = sortVal.split('-');
-                    Win11State.sortOrder = parts.pop();
-                    Win11State.sortBy = parts.join('-');
-
-                    // Update active state
-                    sortMenu.querySelectorAll('.dropdown-item').forEach(i => i.classList.remove('active'));
+                    menu.querySelectorAll('.dropdown-item').forEach(i => i.classList.remove('active'));
                     item.classList.add('active');
-                    sortMenu.classList.remove('show');
-
-                    // Reload
-                    this.loadFileList(Win11State.currentFolderId, Win11State.currentTab);
+                    menu.classList.remove('show');
+                    button.setAttribute('aria-expanded', 'false');
+                    onSelect(item);
                 });
             });
-        }
+        };
+
+        // Sort dropdown
+        setupDropdown('sortDropdown', 'sortMenu', (item) => {
+            const sortVal = item.dataset.sort;
+            const parts = sortVal.split('-');
+            Win11State.sortOrder = parts.pop();
+            Win11State.sortBy = parts.join('-');
+            self.loadFileList(Win11State.currentFolderId, Win11State.currentTab);
+        });
 
         // View dropdown
-        const viewDropdown = document.getElementById('viewDropdown');
-        const viewMenu = document.getElementById('viewMenu');
-
-        if (viewDropdown && viewMenu) {
-            viewDropdown.addEventListener('click', (e) => {
-                e.stopPropagation();
-                viewMenu.classList.toggle('show');
-                document.getElementById('sortMenu')?.classList.remove('show');
-            });
-
-            viewMenu.querySelectorAll('.dropdown-item').forEach(item => {
-                item.addEventListener('click', () => {
-                    Win11State.viewMode = item.dataset.view;
-
-                    viewMenu.querySelectorAll('.dropdown-item').forEach(i => i.classList.remove('active'));
-                    item.classList.add('active');
-                    viewMenu.classList.remove('show');
-
-                    const detailsBtn = document.getElementById('detailsViewBtn');
-                    const tilesBtn = document.getElementById('tilesViewBtn');
-                    if (detailsBtn) detailsBtn.classList.toggle('active', Win11State.viewMode === 'details');
-                    if (tilesBtn) tilesBtn.classList.toggle('active', Win11State.viewMode === 'tiles');
-                });
-            });
-        }
+        setupDropdown('viewDropdown', 'viewMenu', (item) => {
+            Win11State.viewMode = item.dataset.view;
+            const detailsBtn = document.getElementById('detailsViewBtn');
+            const tilesBtn = document.getElementById('tilesViewBtn');
+            if (detailsBtn) detailsBtn.classList.toggle('active', Win11State.viewMode === 'details');
+            if (tilesBtn) tilesBtn.classList.toggle('active', Win11State.viewMode === 'tiles');
+        });
 
         // Close dropdowns on outside click
         document.addEventListener('click', () => {
-            sortMenu?.classList.remove('show');
-            viewMenu?.classList.remove('show');
+            document.querySelectorAll('.dropdown-menu.show').forEach(m => m.classList.remove('show'));
+            document.querySelectorAll('[aria-haspopup="true"]').forEach(b => b.setAttribute('aria-expanded', 'false'));
         });
     },
 

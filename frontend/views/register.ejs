@@ -1,12 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register - Dev Journal</title>
-    <link rel="stylesheet" href="/css/styles.css">
+    <%- include('includes/head', { title: 'Register', styles: [], extraHead: '' }) %>
 </head>
 <body>
+    <%- include('includes/skip-link') %>
+
     <header>
         <div class="header-content">
             <h1><span class="logo-icon">&#128100;</span> Register</h1>
@@ -14,16 +13,12 @@
         </div>
     </header>
 
-    <nav>
-        <div class="nav-container">
-            <a href="/login" class="nav-brand">&#128218; Dev Journal</a>
-        </div>
-    </nav>
+    <%- include('includes/nav-auth', { brandHref: '/login' }) %>
 
-    <main class="container">
+    <main id="main-content" class="container">
         <div class="auth-container">
             <form id="registerForm" class="entry-form auth-form">
-                <div id="formMessage" class="form-message" role="alert" aria-live="assertive" style="display: none;"></div>
+                <%- include('includes/message') %>
 
                 <div class="form-group">
                     <label for="name">Name (optional)</label>
@@ -61,20 +56,14 @@
         </div>
     </main>
 
-    <footer>
-        <div class="footer-content">
-            <p>Dev Journal - Personal Developer Documentation System</p>
-        </div>
-    </footer>
+    <%- include('includes/footer', { showTech: false }) %>
 
     <script src="/js/auth.js"></script>
     <script src="/js/passwordStrength.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // Redirect if already logged in
             if (Auth.redirectIfAuthenticated()) return;
 
-            // Initialize password strength meter
             PasswordStrength.init('password', 'passwordStrength');
 
             const form = document.getElementById('registerForm');
@@ -89,7 +78,6 @@
                 const password = document.getElementById('password').value;
                 const confirmPassword = document.getElementById('confirmPassword').value;
 
-                // Validate passwords match
                 if (password !== confirmPassword) {
                     formMessage.className = 'form-message error';
                     formMessage.textContent = 'Passwords do not match';
@@ -97,7 +85,6 @@
                     return;
                 }
 
-                // Disable submit button
                 const submitBtn = form.querySelector('button[type="submit"]');
                 submitBtn.disabled = true;
                 submitBtn.innerHTML = '&#8987; Creating account...';

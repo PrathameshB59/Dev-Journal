@@ -93,24 +93,24 @@
                         <span>Sort</span>
                         <span class="dropdown-arrow">&#9660;</span>
                     </button>
-                    <div class="dropdown-menu" id="sortMenu">
-                        <div class="dropdown-item active" data-sort="date-desc">
+                    <div class="dropdown-menu" id="sortMenu" role="menu" aria-label="Sort options">
+                        <div class="dropdown-item active" data-sort="date-desc" role="menuitem" tabindex="-1">
                             <span class="check-icon">&#10003;</span>
                             <span>Date (Newest)</span>
                         </div>
-                        <div class="dropdown-item" data-sort="date-asc">
+                        <div class="dropdown-item" data-sort="date-asc" role="menuitem" tabindex="-1">
                             <span class="check-icon">&#10003;</span>
                             <span>Date (Oldest)</span>
                         </div>
-                        <div class="dropdown-item" data-sort="name-asc">
+                        <div class="dropdown-item" data-sort="name-asc" role="menuitem" tabindex="-1">
                             <span class="check-icon">&#10003;</span>
                             <span>Name (A-Z)</span>
                         </div>
-                        <div class="dropdown-item" data-sort="name-desc">
+                        <div class="dropdown-item" data-sort="name-desc" role="menuitem" tabindex="-1">
                             <span class="check-icon">&#10003;</span>
                             <span>Name (Z-A)</span>
                         </div>
-                        <div class="dropdown-item" data-sort="type-asc">
+                        <div class="dropdown-item" data-sort="type-asc" role="menuitem" tabindex="-1">
                             <span class="check-icon">&#10003;</span>
                             <span>Type</span>
                         </div>
@@ -121,12 +121,12 @@
                         <span>View</span>
                         <span class="dropdown-arrow">&#9660;</span>
                     </button>
-                    <div class="dropdown-menu" id="viewMenu">
-                        <div class="dropdown-item active" data-view="details">
+                    <div class="dropdown-menu" id="viewMenu" role="menu" aria-label="View options">
+                        <div class="dropdown-item active" data-view="details" role="menuitem" tabindex="-1">
                             <span class="check-icon">&#10003;</span>
                             <span>&#9776; Details</span>
                         </div>
-                        <div class="dropdown-item" data-view="tiles">
+                        <div class="dropdown-item" data-view="tiles" role="menuitem" tabindex="-1">
                             <span class="check-icon">&#10003;</span>
                             <span>&#9638; Tiles</span>
                         </div>
@@ -194,10 +194,10 @@
 
                 <!-- Quick Access (Categories) -->
                 <div class="sidebar-section">
-                    <div class="section-header" data-collapse="quickaccess">
+                    <button class="section-header" type="button" aria-expanded="true" aria-controls="quickaccess">
                         <span class="collapse-arrow">&#9660;</span>
                         <span class="section-title">Quick Access</span>
-                    </div>
+                    </button>
                     <div class="section-content" id="quickaccess">
                         <a href="#" class="sidebar-item" data-category="daily-learning">
                             <span class="item-icon folder-icon blue">&#128193;</span>
@@ -229,10 +229,10 @@
 
                 <!-- Favorites -->
                 <div class="sidebar-section">
-                    <div class="section-header" data-collapse="favorites-section">
+                    <button class="section-header" type="button" aria-expanded="true" aria-controls="favorites-section">
                         <span class="collapse-arrow">&#9660;</span>
                         <span class="section-title">Favorites</span>
-                    </div>
+                    </button>
                     <div class="section-content" id="favorites-section">
                         <div id="favoritesList">
                             <div class="sidebar-item" style="color: var(--win11-text-muted); font-style: italic;">
@@ -244,10 +244,10 @@
 
                 <!-- Tags -->
                 <div class="sidebar-section">
-                    <div class="section-header" data-collapse="tags-section">
+                    <button class="section-header" type="button" aria-expanded="false" aria-controls="tags-section">
                         <span class="collapse-arrow collapsed">&#9660;</span>
                         <span class="section-title">Tags</span>
-                    </div>
+                    </button>
                     <div class="section-content collapsed" id="tags-section">
                         <div id="tagsList">
                             <!-- Tags loaded dynamically -->

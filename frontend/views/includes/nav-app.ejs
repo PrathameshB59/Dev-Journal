@@ -1,0 +1,22 @@
+<nav role="navigation" aria-label="Main navigation">
+    <div class="nav-container">
+        <a href="/" class="nav-brand">&#128218; Dev Journal</a>
+        <button class="mobile-menu-btn" aria-label="Toggle menu" aria-expanded="false">
+            <span class="hamburger"></span>
+        </button>
+        <div class="nav-content">
+            <div class="nav-links">
+                <a href="/" class="nav-link<%= currentPage === 'entries' ? ' active' : '' %>">&#128196; Entries</a>
+                <a href="/dashboard" class="nav-link<%= currentPage === 'dashboard' ? ' active' : '' %>">&#128202; Dashboard</a>
+                <a href="/settings" class="nav-link<%= currentPage === 'settings' ? ' active' : '' %>">&#9881; Settings</a>
+                <% if (typeof showNewEntry !== 'undefined' && showNewEntry) { %>
+                    <a href="/new" class="nav-link">&#10133; New Entry</a>
+                <% } %>
+            </div>
+            <div class="nav-actions">
+                <span id="userDisplay" class="user-display"></span>
+                <button id="logoutBtn" class="btn-secondary btn-sm" aria-label="Logout">Logout</button>
+            </div>
+        </div>
+    </div>
+</nav>

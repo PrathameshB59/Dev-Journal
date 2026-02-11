@@ -1,0 +1,21 @@
+<nav role="navigation" aria-label="Main navigation">
+    <div class="nav-container">
+        <a href="/" class="nav-brand">&#128218; Dev Journal</a>
+        <button class="mobile-menu-btn" aria-label="Toggle menu" aria-expanded="false">
+            <span class="hamburger"></span>
+        </button>
+        <div class="nav-content">
+            <div class="nav-links">
+                <a href="/" class="nav-link">&#128196; Entries</a>
+                <a href="/dashboard" class="nav-link">&#128202; Dashboard</a>
+                <a href="/admin" class="nav-link<%= currentPage === 'admin' ? ' active' : '' %>">&#9881; Admin</a>
+                <a href="/admin/users" class="nav-link<%= currentPage === 'admin-users' ? ' active' : '' %>">&#128101; Users</a>
+            </div>
+            <div class="nav-actions">
+                <span id="userDisplay" class="user-display"></span>
+                <span class="admin-badge">Admin</span>
+                <button id="logoutBtn" class="btn-secondary btn-sm" aria-label="Logout">Logout</button>
+            </div>
+        </div>
+    </div>
+</nav>

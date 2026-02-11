@@ -124,6 +124,7 @@ const Dashboard = {
         };
 
         const sortedCategories = Object.entries(categories)
+            .filter(([category]) => category && category !== 'null' && category !== 'undefined')
             .sort((a, b) => b[1] - a[1]);
 
         container.innerHTML = sortedCategories.map(([category, count]) => {
@@ -187,7 +188,7 @@ const Dashboard = {
             return `
                 <a href="/entry/${entry._id}" class="recent-entry">
                     <span class="entry-title">
-                        ${categoryIcons[entry.category] || '&#128196;'} ${entry.title}
+                        ${categoryIcons[entry.category] || '&#128196;'} ${entry.title || entry.name || 'Untitled'}
                     </span>
                     <span class="entry-meta">${date}</span>
                 </a>

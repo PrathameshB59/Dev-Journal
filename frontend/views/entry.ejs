@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('includes/head', { title: 'View Entry', styles: [], extraHead: '' }) %>
+</head>
+<body>
+    <%- include('includes/skip-link') %>
+
+    <header>
+        <div class="header-content">
+            <h1 id="entryTitle"><span class="logo-icon">&#128196;</span> Loading...</h1>
+            <p id="entryMeta">Loading entry...</p>
+        </div>
+    </header>
+
+    <%- include('includes/nav-form', {
+        backUrl: '/',
+        backLabel: 'Back to Journal',
+        extraButtons: '<a href="/settings" class="btn-secondary">&#9881; Settings</a><a href="#" id="editBtn" class="btn-primary">&#9998; Edit</a><button id="exportBtn" class="btn-secondary" aria-label="Export entry">&#128230; Export</button><button id="explainBtn" class="btn-ai" aria-label="Explain entry with AI">&#129302; Explain</button><button id="deleteBtn" class="btn-danger" aria-label="Delete entry">&#128465; Delete</button>'
+    }) %>
+
+    <main id="main-content" class="container entry-view-container">
+        <article id="entryContent" class="entry-view">
+            <div id="loadingIndicator" class="loading">
+                <div class="spinner"></div>
+                <p>Loading entry...</p>
+            </div>
+        </article>
+
+        <aside class="entry-sidebar">
+            <div class="sidebar-section">
+                <h3>Details</h3>
+                <div id="entryDetails" class="entry-details"></div>
+            </div>
+
+            <div class="sidebar-section" id="tagsSection" style="display: none;">
+                <h3>Tags</h3>
+                <div id="entryTags" class="tags-list"></div>
+            </div>
+
+            <div class="sidebar-section" id="codeSection" style="display: none;">
+                <h3>Code Block</h3>
+                <div class="code-header">
+                    <span id="codeLanguageLabel" class="code-lang"></span>
+                    <button id="copyCodeBtn" class="copy-btn">&#128203; Copy</button>
+                </div>
+                <pre id="entryCodeBlock" class="code-block"></pre>
+            </div>
+
+            <div class="sidebar-section" id="historySection">
+                <h3>Version History</h3>
+                <button id="viewHistoryBtn" class="btn-secondary btn-sm btn-full">&#128337; View History</button>
+                <div id="versionList" class="version-list" style="display: none;"></div>
+            </div>
+        </aside>
+    </main>
+
+    <%- include('includes/delete-modal') %>
+
+    <!-- Export Dropdown -->
+    <div id="exportMenu" class="dropdown-menu export-menu" style="display: none;">
+        <div class="dropdown-item" data-export="md">&#128196; Download as Markdown</div>
+        <div class="dropdown-item" data-export="pdf">&#128462; Download as PDF</div>
+    </div>
+
+    <%- include('includes/footer', { showTech: false }) %>
+
+    <script src="/js/auth.js"></script>
+    <script src="/js/app.js"></script>
+</body>
+</html>

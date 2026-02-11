@@ -761,8 +761,8 @@ nav {
 }
 
 .view-btn {
-    width: 36px;
-    height: 36px;
+    min-width: 44px;
+    min-height: 44px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1851,7 +1851,8 @@ footer {
    ======================================== */
 
 .auth-container {
-    max-width: 400px;
+    max-width: 480px;
+    width: 100%;
     margin: var(--space-xl) auto;
     padding: 0 var(--space-md);
 }

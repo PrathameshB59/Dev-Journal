@@ -91,7 +91,7 @@
     color: var(--win11-text);
     cursor: pointer;
     font-size: var(--text-sm);
-    min-height: 32px;
+    min-height: 44px;
     /* Animation: Hover scale + shadow */
     transition: background var(--anim-fast, 150ms) var(--anim-easing, ease),
                 transform var(--anim-fast, 150ms) var(--anim-easing, ease),
@@ -229,7 +229,8 @@
 .win11-addressbar {
     display: flex;
     align-items: center;
-    height: var(--win11-addressbar-height);
+    min-height: 48px;
+    height: auto;
     background: var(--win11-toolbar-bg);
     border-bottom: 1px solid var(--win11-border);
     padding: 0 var(--space-md);
@@ -245,8 +246,8 @@
 }
 
 .nav-btn {
-    width: 28px;
-    height: 28px;
+    min-width: 44px;
+    min-height: 44px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -338,7 +339,8 @@
     border-radius: var(--win11-radius);
     overflow: hidden;
     min-width: 220px;
-    height: 28px;
+    min-height: 36px;
+    height: auto;
     /* Animation: Focus expansion + glow */
     transition: min-width var(--anim-normal, 200ms) var(--anim-easing, ease),
                 border-color var(--anim-fast, 150ms) var(--anim-easing, ease),
@@ -366,8 +368,8 @@
 }
 
 .win11-search .search-btn {
-    width: 28px;
-    height: 26px;
+    min-width: 36px;
+    min-height: 36px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -485,9 +487,17 @@
     align-items: center;
     gap: var(--space-sm);
     padding: 6px var(--space-md);
+    min-height: 44px;
     cursor: pointer;
     user-select: none;
     transition: background var(--transition-fast);
+    /* Button reset for semantic <button> element */
+    background: none;
+    border: none;
+    width: 100%;
+    text-align: left;
+    font: inherit;
+    color: inherit;
 }
 
 .section-header:hover {
@@ -535,6 +545,7 @@
     align-items: center;
     gap: var(--space-sm);
     padding: 6px var(--space-md) 6px 28px;
+    min-height: 44px;
     color: var(--win11-text);
     text-decoration: none;
     font-size: var(--text-sm);
@@ -744,6 +755,7 @@
     grid-template-columns: minmax(200px, 2fr) 140px 100px minmax(100px, 1fr);
     gap: var(--space-md);
     padding: 8px var(--space-md);
+    min-height: 44px;
     align-items: center;
     border-bottom: 1px solid var(--win11-border);
     cursor: pointer;
@@ -785,6 +797,11 @@
 .file-item.focused {
     outline: 1px solid var(--win11-selected);
     outline-offset: -1px;
+}
+
+.file-item:focus-visible {
+    outline: 2px solid var(--win11-selected);
+    outline-offset: -2px;
 }
 
 /* File Name Column */
@@ -895,8 +912,8 @@
 }
 
 .view-mode-btn {
-    width: 20px;
-    height: 20px;
+    min-width: 44px;
+    min-height: 44px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1096,6 +1113,26 @@
 
     .pinned-folders {
         grid-template-columns: repeat(2, 1fr);
+    }
+
+    .toolbar-dropdown-container {
+        position: static;
+    }
+
+    .dropdown-menu {
+        position: fixed;
+        left: var(--space-sm);
+        right: var(--space-sm);
+        bottom: var(--space-lg);
+        top: auto;
+        min-width: unset;
+        max-height: 60vh;
+        overflow-y: auto;
+    }
+
+    .dropdown-item {
+        min-height: 44px;
+        padding: 12px 16px;
     }
 }
 

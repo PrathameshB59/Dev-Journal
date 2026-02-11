@@ -1,47 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Entry - Dev Journal</title>
-    <link rel="stylesheet" href="/css/styles.css">
+    <%- include('includes/head', { title: 'New Entry', styles: [], extraHead: '' }) %>
 </head>
 <body>
+    <%- include('includes/skip-link') %>
+
     <header>
         <div class="header-content">
-            <h1><span class="logo-icon">&#9998;</span> Edit Entry</h1>
-            <p>Update your journal entry</p>
+            <h1><span class="logo-icon">&#10133;</span> New Entry</h1>
+            <p>Create a new journal entry</p>
         </div>
     </header>
 
-    <nav>
-        <div class="nav-container">
-            <a href="/" class="nav-brand">&#128218; Dev Journal</a>
-            <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle menu">
-                <span class="hamburger-line"></span>
-                <span class="hamburger-line"></span>
-                <span class="hamburger-line"></span>
-            </button>
-            <div class="nav-actions" id="navActions">
-                <a href="/" class="btn-secondary">&#8592; Back to Journal</a>
-                <span id="userDisplay" class="user-display"></span>
-                <button id="logoutBtn" class="btn-logout">Logout</button>
-            </div>
-        </div>
-    </nav>
+    <%- include('includes/nav-form', { backUrl: '/', backLabel: 'Back to Journal' }) %>
 
-    <main class="container form-container">
-        <div id="loadingIndicator" class="loading">
-            <div class="spinner"></div>
-            <p>Loading entry...</p>
-        </div>
-
-        <form id="editForm" class="entry-form" style="display: none;">
-            <input type="hidden" id="entryId">
-
+    <main id="main-content" class="container form-container">
+        <form id="entryForm" class="entry-form">
             <div class="form-group">
                 <label for="title">Title *</label>
                 <input type="text" id="title" name="title" required maxlength="200" placeholder="Enter entry title...">
+            </div>
+
+            <div class="form-group">
+                <label for="parentFolder">Save to Folder</label>
+                <select id="parentFolder" name="parentFolder">
+                    <option value="">Root (Home)</option>
+                </select>
             </div>
 
             <div class="form-group">
@@ -58,7 +43,15 @@
 
             <div class="form-group">
                 <label for="content">Content *</label>
-                <textarea id="content" name="content" required rows="12" placeholder="Write your entry content here... (Markdown supported)"></textarea>
+                <div class="editor-toolbar">
+                    <button type="button" class="editor-mode-btn active" data-mode="edit">Edit</button>
+                    <button type="button" class="editor-mode-btn" data-mode="split">Split</button>
+                    <button type="button" class="editor-mode-btn" data-mode="preview">Preview</button>
+                </div>
+                <div class="editor-container" data-mode="edit">
+                    <textarea id="content" name="content" required rows="12" placeholder="Write your entry content here... (Markdown supported)"></textarea>
+                    <div id="markdownPreview" class="markdown-preview"></div>
+                </div>
             </div>
 
             <div class="form-group">
@@ -75,21 +68,19 @@
             </div>
 
             <div class="form-actions">
-                <button type="button" class="btn-secondary" onclick="history.back()">Cancel</button>
-                <button type="submit" class="btn-primary">&#10003; Save Changes</button>
+                <button type="button" class="btn-secondary" onclick="window.location='/'">Cancel</button>
+                <button type="submit" class="btn-primary">&#10003; Create Entry</button>
             </div>
         </form>
 
-        <div id="formMessage" class="form-message" style="display: none;"></div>
+        <%- include('includes/message') %>
     </main>
 
-    <footer>
-        <div class="footer-content">
-            <p>Dev Journal - Personal Developer Documentation System</p>
-        </div>
-    </footer>
+    <%- include('includes/footer', { showTech: false }) %>
 
     <script src="/js/auth.js"></script>
     <script src="/js/app.js"></script>
+    <script src="/js/templates.js"></script>
+    <script src="/js/markdownPreview.js"></script>
 </body>
 </html>

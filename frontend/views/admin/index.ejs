@@ -131,15 +131,15 @@
                 <div style="margin-bottom: var(--space-md);">
                     <form id="createCouponForm" style="display:flex; gap:var(--space-sm); flex-wrap:wrap; align-items:flex-end;">
                         <div class="form-group" style="margin-bottom:0">
-                            <label style="font-size:var(--text-xs); color:var(--text-muted)">Code</label>
+                            <label for="couponCode" style="font-size:var(--text-xs); color:var(--text-muted)">Code</label>
                             <input type="text" id="couponCode" placeholder="e.g. FREE30" style="padding:var(--space-sm); background:var(--bg-secondary); border:1px solid var(--border); border-radius:var(--radius-md); color:var(--text); text-transform:uppercase; min-height:38px;">
                         </div>
                         <div class="form-group" style="margin-bottom:0">
-                            <label style="font-size:var(--text-xs); color:var(--text-muted)">Days</label>
+                            <label for="couponDays" style="font-size:var(--text-xs); color:var(--text-muted)">Days</label>
                             <input type="number" id="couponDays" value="30" min="1" style="padding:var(--space-sm); background:var(--bg-secondary); border:1px solid var(--border); border-radius:var(--radius-md); color:var(--text); width:80px; min-height:38px;">
                         </div>
                         <div class="form-group" style="margin-bottom:0">
-                            <label style="font-size:var(--text-xs); color:var(--text-muted)">Max Uses</label>
+                            <label for="couponMaxUses" style="font-size:var(--text-xs); color:var(--text-muted)">Max Uses</label>
                             <input type="number" id="couponMaxUses" value="100" min="1" style="padding:var(--space-sm); background:var(--bg-secondary); border:1px solid var(--border); border-radius:var(--radius-md); color:var(--text); width:80px; min-height:38px;">
                         </div>
                         <button type="submit" class="btn-primary" style="min-height:38px">Create Coupon</button>

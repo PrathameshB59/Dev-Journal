@@ -1,10 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Explanation - Dev Journal</title>
-    <link rel="stylesheet" href="/css/styles.css">
+    <%- include('includes/head', { title: 'AI Explanation', styles: [], extraHead: `
     <style>
         .explain-container {
             max-width: var(--content-max-width);
@@ -15,7 +12,6 @@
             gap: var(--space-lg);
             height: calc(100vh - 180px);
         }
-
         .explain-main {
             display: flex;
             flex-direction: column;
@@ -25,26 +21,22 @@
             box-shadow: var(--shadow-md);
             overflow: hidden;
         }
-
         .explain-header {
             padding: var(--space-lg);
             border-bottom: 1px solid var(--border);
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
         }
-
         .explain-header h2 {
             margin: 0 0 var(--space-sm) 0;
             font-size: var(--text-2xl);
             font-weight: 600;
         }
-
         .explain-header p {
             margin: 0;
             opacity: 0.9;
             font-size: var(--text-sm);
         }
-
         .conversation-area {
             flex: 1;
             overflow-y: auto;
@@ -53,22 +45,16 @@
             flex-direction: column;
             gap: var(--space-md);
         }
-
         .message {
             display: flex;
             gap: var(--space-md);
             animation: fadeIn 0.3s var(--anim-easing);
         }
-
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
-
-        .message.user {
-            flex-direction: row-reverse;
-        }
-
+        .message.user { flex-direction: row-reverse; }
         .message-avatar {
             width: 36px;
             height: 36px;
@@ -79,17 +65,11 @@
             font-size: 18px;
             flex-shrink: 0;
         }
-
         .message.ai .message-avatar {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
         }
-
-        .message.user .message-avatar {
-            background: var(--primary);
-            color: white;
-        }
-
+        .message.user .message-avatar { background: var(--primary); color: white; }
         .message-content {
             flex: 1;
             padding: var(--space-md) var(--space-lg);
@@ -98,46 +78,22 @@
             max-width: 85%;
             color: var(--text);
         }
-
-        .message.ai .message-content {
-            background: var(--card);
-            border: 1px solid var(--border);
-        }
-
-        .message.user .message-content {
-            background: var(--primary);
-            color: white;
-        }
-
+        .message.ai .message-content { background: var(--card); border: 1px solid var(--border); }
+        .message.user .message-content { background: var(--primary); color: white; }
         .message-content h1, .message-content h2, .message-content h3 {
             margin: var(--space-md) 0 var(--space-sm) 0;
             font-weight: 600;
             color: var(--text);
         }
-
         .message.user .message-content h1,
         .message.user .message-content h2,
-        .message.user .message-content h3 {
-            color: white;
-        }
-
+        .message.user .message-content h3 { color: white; }
         .message-content h1 { font-size: 1.5em; }
         .message-content h2 { font-size: 1.3em; }
         .message-content h3 { font-size: 1.1em; }
-
-        .message-content p {
-            margin: var(--space-sm) 0;
-        }
-
-        .message-content ul, .message-content ol {
-            margin: var(--space-sm) 0;
-            padding-left: var(--space-lg);
-        }
-
-        .message-content li {
-            margin: var(--space-xs) 0;
-        }
-
+        .message-content p { margin: var(--space-sm) 0; }
+        .message-content ul, .message-content ol { margin: var(--space-sm) 0; padding-left: var(--space-lg); }
+        .message-content li { margin: var(--space-xs) 0; }
         .message-content code {
             background: var(--bg);
             color: var(--primary);
@@ -146,12 +102,7 @@
             font-family: 'Consolas', 'Monaco', 'Fira Code', monospace;
             font-size: 0.9em;
         }
-
-        .message.user .message-content code {
-            background: rgba(255,255,255,0.2);
-            color: white;
-        }
-
+        .message.user .message-content code { background: rgba(255,255,255,0.2); color: white; }
         .message-content .code-block-wrapper {
             margin: var(--space-md) 0;
             border-radius: var(--radius-md);
@@ -159,19 +110,12 @@
             border: 1px solid var(--border);
             background: var(--bg-secondary);
         }
-
         .chat-input-area {
             padding: var(--space-md) var(--space-lg);
             border-top: 1px solid var(--border);
             background: var(--bg-secondary);
         }
-
-        .chat-input-container {
-            display: flex;
-            gap: var(--space-md);
-            align-items: flex-end;
-        }
-
+        .chat-input-container { display: flex; gap: var(--space-md); align-items: flex-end; }
         .chat-input {
             flex: 1;
             padding: 12px var(--space-md);
@@ -185,22 +129,9 @@
             max-height: 120px;
             transition: border-color var(--transition-fast);
         }
-
-        .chat-input::placeholder {
-            color: var(--text-dim);
-        }
-
-        .chat-input:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: var(--focus-ring);
-        }
-
-        .chat-input:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
+        .chat-input::placeholder { color: var(--text-dim); }
+        .chat-input:focus { outline: none; border-color: var(--primary); box-shadow: var(--focus-ring); }
+        .chat-input:disabled { opacity: 0.5; cursor: not-allowed; }
         .chat-send-btn {
             padding: 12px var(--space-lg);
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -213,22 +144,9 @@
             min-height: var(--min-touch-target);
             transition: transform var(--transition-fast), opacity var(--transition-fast);
         }
-
-        .chat-send-btn:focus {
-            outline: none;
-            box-shadow: var(--focus-ring);
-        }
-
-        .chat-send-btn:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
-        }
-
-        .chat-send-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
+        .chat-send-btn:focus { outline: none; box-shadow: var(--focus-ring); }
+        .chat-send-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4); }
+        .chat-send-btn:disabled { opacity: 0.5; cursor: not-allowed; }
         .entry-reference {
             background: var(--bg-secondary);
             border-radius: var(--radius-lg);
@@ -238,20 +156,12 @@
             display: flex;
             flex-direction: column;
         }
-
         .reference-header {
             padding: var(--space-md) var(--space-lg);
             background: var(--card);
             border-bottom: 1px solid var(--border);
         }
-
-        .reference-header h3 {
-            margin: 0;
-            font-size: var(--text-base);
-            font-weight: 600;
-            color: var(--text);
-        }
-
+        .reference-header h3 { margin: 0; font-size: var(--text-base); font-weight: 600; color: var(--text); }
         .reference-content {
             flex: 1;
             overflow-y: auto;
@@ -260,53 +170,29 @@
             line-height: 1.6;
             color: var(--text-muted);
         }
-
-        .loading-indicator {
-            display: flex;
-            align-items: center;
-            gap: var(--space-sm);
-            color: var(--text-muted);
-            font-size: var(--text-sm);
-        }
-
+        .loading-indicator { display: flex; align-items: center; gap: var(--space-sm); color: var(--text-muted); font-size: var(--text-sm); }
         .loading-spinner {
-            width: 16px;
-            height: 16px;
+            width: 16px; height: 16px;
             border: 2px solid var(--border);
             border-top: 2px solid var(--primary);
             border-radius: 50%;
             animation: spin 1s linear infinite;
         }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         @media (max-width: 1024px) {
-            .explain-container {
-                grid-template-columns: 1fr;
-                height: auto;
-            }
-
-            .entry-reference {
-                max-height: 400px;
-            }
+            .explain-container { grid-template-columns: 1fr; height: auto; }
+            .entry-reference { max-height: 400px; }
         }
-
         @media (max-width: 768px) {
-            .explain-container {
-                padding: var(--space-sm);
-                gap: var(--space-sm);
-            }
-
-            .message-content {
-                max-width: 90%;
-            }
+            .explain-container { padding: var(--space-sm); gap: var(--space-sm); }
+            .message-content { max-width: 90%; }
         }
     </style>
+    ` }) %>
 </head>
 <body>
+    <%- include('includes/skip-link') %>
+
     <header>
         <div class="header-content">
             <h1><span class="logo-icon">&#129302;</span> AI Explanation</h1>
@@ -314,25 +200,13 @@
         </div>
     </header>
 
-    <nav>
-        <div class="nav-container">
-            <a href="/" class="nav-brand">&#128218; Dev Journal</a>
-            <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle menu">
-                <span class="hamburger-line"></span>
-                <span class="hamburger-line"></span>
-                <span class="hamburger-line"></span>
-            </button>
-            <div class="nav-actions" id="navActions">
-                <button id="backBtn" class="btn-secondary">&#8592; Back</button>
-                <a href="/" class="btn-secondary">&#127968; Home</a>
-                <a href="/settings" class="btn-secondary">&#9881; Settings</a>
-                <span id="userDisplay" class="user-display"></span>
-                <button id="logoutBtn" class="btn-logout">Logout</button>
-            </div>
-        </div>
-    </nav>
+    <%- include('includes/nav-form', {
+        backUrl: '/',
+        backLabel: 'Back',
+        extraButtons: '<a href="/" class="btn-secondary">&#127968; Home</a><a href="/settings" class="btn-secondary">&#9881; Settings</a>'
+    }) %>
 
-    <main class="explain-container">
+    <main id="main-content" class="explain-container">
         <div class="explain-main">
             <div class="explain-header">
                 <h2 id="entryTitle">Loading...</h2>
@@ -348,13 +222,7 @@
 
             <div class="chat-input-area">
                 <div class="chat-input-container">
-                    <textarea
-                        id="chatInput"
-                        class="chat-input"
-                        placeholder="Ask a follow-up question..."
-                        rows="1"
-                        disabled
-                    ></textarea>
+                    <textarea id="chatInput" class="chat-input" placeholder="Ask a follow-up question..." rows="1" disabled></textarea>
                     <button id="sendBtn" class="chat-send-btn" disabled aria-label="Send message">
                         <span>Send &#10148;</span>
                     </button>
