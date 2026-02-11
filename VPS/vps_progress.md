@@ -825,7 +825,7 @@ Multi-provider AI routing, budget enforcement, and cost control.
 
 ### Final Production Architecture
 
-- High-Level Flow: Client → Atlas API (Node.js/Express) → AI Router → Budget Guard (MongoDB) → OpenAI / Groq
+- High-Level Flow: Client → Atlas API (Node.js/Express) → AI Router → Budget Guard (MongoDB) → Gemini (deep reasoning) | Groq (fast help)
 - Core Rules: $5 per user cap, budget checked before every call, usage recorded after every response, MongoDB is single source of truth
 - Why: Predictable costs, production-safe routing, no vendor lock-in, scales across projects
 
@@ -834,66 +834,51 @@ Multi-provider AI routing, budget enforcement, and cost control.
 - Atlas is a universal AI core service (Dev-Journal, StackPilot, future apps)
 - AI features require active subscription: ₹300 per user per month
 - Hard budget limit: once ₹300 reached → AI blocked, resets next month
-- Provider split: Together AI ₹150, Groq ₹50, OpenAI ₹100
+- Provider split: Gemini $4.00/month, Groq $1.00/month
 - Coupon system: admin-controlled, 1–6 months free, one per user lifetime
 
-### Provider Strategy
+### Provider Strategy (Gemini + Groq)
 
-- Together AI: default provider for docs, summaries, markdown cleanup
-- OpenAI: premium fallback for deep reasoning
-- Groq: instant error help, quick queries
-- Cost-aware routing: route to best-fit if under ₹300, block if over
+- Gemini 2.5 Flash: default provider for deep reasoning, summaries, explanations, planning
+- Groq (LLaMA 3.3 70B): fast provider for quick Q&A, error help, instant feedback
+- Cost-aware routing: route to best-fit provider, block if budget exceeded
+- User never chooses provider — Atlas AI decides automatically
 
-### Fallback / Premium Mode
+### Gemini vs Groq
 
-- Default: Together AI (~90% of requests)
-- Premium: OpenAI (triggered when quality critical)
-- Automatic fallback, user doesn't choose provider
-- Budget still enforced during fallback
-
-### Together AI vs Groq
-
-- Together AI: quality + control, best for docs/summaries/explanations
-- Groq: speed + cost, best for instant answers/quick help
-- Together = thinking layer, Groq = speed layer
+- Gemini: quality + depth, best for docs/summaries/explanations/planning
+- Groq: speed + cost, best for instant answers/quick help/clarifications
+- Gemini = thinking layer, Groq = speed layer
 
 ### Cost Breakdown & Budget Planning
 
-- Together AI (70-80%): $1–$4/month
-- Groq (15-20%): $0.20–$1/month
-- OpenAI (5-10%): $2–$5/month
-- Conservative total: ~$4/month, Heavy: ~$10/month
-- Hard cap: ₹300 per user per month
+- Gemini (80-90%): $1–$4/month
+- Groq (10-20%): $0.10–$1/month
+- Total budget: $5.00/user/month (env: ATLAS_MONTHLY_LIMIT_USD)
+- Gemini limit: $4.00/month (env: GEMINI_MONTHLY_LIMIT_USD)
+- Groq limit: $1.00/month (env: GROQ_MONTHLY_LIMIT_USD)
 
 ### Cost per Feature / Button
 
-- Save Daily Dev Log: Together AI, ~$0.30–$0.60/month
-- Summarize Today's Work: Together AI, ~$0.40–$0.80/month
-- Explain Git Commit: Together AI, ~$0.30–$0.70/month
+- Summarize Entry: Gemini, ~$0.30–$0.60/month
+- Explain Entry: Gemini, ~$0.40–$0.80/month
+- Ask AI (Explain Page): Gemini, ~$0.30–$0.70/month
 - Quick Error Help: Groq, ~$0.10–$0.30/month
-- Explain Concept (Premium): OpenAI, ~$1.50–$3.00/month
-- Rewrite as Documentation: Together AI, ~$0.40–$0.90/month
-- Total: ~$5–$6 (₹400–₹550) per user per month
+- Total: ~$2–$4 per user per month
 
-### Multi-Provider Architecture Decision
+### Two-Provider Architecture
 
-- Together AI: daily workhorse (70-80%), open-source, low cost
-- Groq: instant help, near-instant latency, extremely low cost
-- OpenAI: premium reasoning, strictly rate-limited
-- Single provider forces trade-offs; multi-provider removes them
+- Gemini 2.5 Flash: primary provider (80-90% of requests), deep reasoning
+- Groq (LLaMA 3.3 70B): speed layer, near-instant latency, low cost
+- Two providers optimally cover all use cases without trade-offs
+- Providers fully isolated (gemini.js, groq.js)
 
-### ₹500 Global Budget Planning
-
-- Initial budget constraint: ₹500/month global
-- Together AI ₹250–₹300, Groq ₹50–₹100, OpenAI ₹80–₹120
-- Rule of thumb: long/routine → Together, fast/short → Groq, hard/important → OpenAI
-
-### System Architecture (₹500 Budget Plan)
+### System Architecture
 
 - Frontend → Backend API → Atlas AI Router → Providers → Response stored → Returned
 - Frontend sends intent + content, never chooses provider
 - Budget Guard: blocks requests when provider limit reached
-- Providers fully isolated (together.js, groq.js, openai.js)
+- Each provider call: budget checked before, usage recorded after
 
 ### Node.js VPS Architecture
 
@@ -926,7 +911,7 @@ Multi-provider AI routing, budget enforcement, and cost control.
 ### Per-User Budget Enforcement
 
 - AI usage is per-user, not global pool
-- ₹300/user/month: Together ₹150, Groq ₹50, OpenAI ₹100
+- $5.00/user/month: Gemini $4.00, Groq $1.00
 - User-aware request contract requires userId
 - Global safety net: ₹3,000/month system-wide
 
@@ -942,12 +927,12 @@ Multi-provider AI routing, budget enforcement, and cost control.
 - Admin-created coupons grant temporary AI access
 - Duration: configurable (e.g. 30 days)
 - One coupon per user lifetime, no stacking
-- Coupon users get same ₹300 budget as paid users
+- Coupon users get same $5.00 budget as paid users
 
 ### Dynamic Coupons & Quota Control
 
 - Configurable duration: 1–6 months
-- Hard stop logic: if monthlyCost >= 300 → reject
+- Hard stop logic: if monthlyCost >= $5.00 → reject
 - Lazy monthly reset: usage stored by YYYY-MM
 - Global safety: ₹5,000 system-wide limit
 
@@ -967,6 +952,37 @@ Multi-provider AI routing, budget enforcement, and cost control.
 - Embedding generation happens once per save, not per search
 - UI: search bar toggle (Keyword | AI), folder summarize, entry explain
 - Security: only top-N entries sent to LLM, rate limits, access control
+
+### Atlas AI Admin Dashboard (v0.2.0)
+
+- [x] SPA dashboard (vanilla JS) at port 9000
+- [x] Overview page with stats, health, spending breakdown
+- [x] Clients page with CRUD management and budget per client
+- [x] API Keys page with one-time key display
+- [x] Usage page with monthly usage table and request logs
+- [x] Loading spinners on all pages
+- [x] Budget warning alerts at 75% and 90% thresholds
+- [x] Trend indicators (current vs previous month)
+- [x] Per-provider health display (Gemini/Groq status + model names)
+- [x] Responsive sidebar with hamburger menu (< 768px)
+- [x] Accessibility: skip link, ARIA roles, focus indicators
+- [x] Provider filter dropdown on usage page
+- [x] Retry buttons on all error states
+- [x] Gemini (amber) + Groq (green) cost bar visualization
+
+### Atlas Agent Architecture
+
+- Atlas Agent: internal system agent (NOT a chatbot)
+- Role: universal knowledge agent, research assistant, context-aware reasoning engine
+- Three-layer memory model:
+  - Session Memory: current request context, 30-min TTL, auto-cleanup
+  - User Profile Memory: skill level, tech stack, tools, goals (persistent)
+  - Knowledge Memory: saved summaries, decisions, notes, insights (persistent)
+- Provider routing: Gemini for deep reasoning/planning, Groq for fast Q&A/clarification
+- Intent classification: fast Groq call categorizes user intent before provider selection
+- Safety: never fabricates facts, states uncertainty explicitly, never exposes internals
+- API: POST /ai/agent (main), session management, memory CRUD
+- Internet access: deferred to Phase 2 (controlled search, whitelisted sources)
 
 ---
 
@@ -1012,6 +1028,11 @@ A production-ready documentation system for tracking VPS progress, infrastructur
 - [x] Admin coupon management (create/list/disable)
 - [x] Admin user AI toggle (enable/disable per user)
 - [x] Default admin seed script
+- [x] Explain page with conversational AI chat (/entry/:id/explain)
+- [x] Explain page dark theme matching Dev-Journal UI
+- [x] Prompt truncation (8,000 char limit for explain, 400 per file for summarize)
+- [x] Mongoose pre-delete hooks for cascade deletion (User → Entries + Coupons)
+- [x] Admin delete cascade (user deletion cleans up all data)
 
 ---
 
@@ -1163,7 +1184,7 @@ Contains all keyframe animations, utility classes, and accessibility support.
 - [ ] GitHub Gist backup integration
 - [ ] Dark/Light mode toggle
 
-> ✅ 21 features completed! Dev-Journal now has Windows 11-style UI, JWT auth, admin panel with RBAC, dashboard, security, WCAG 2.2 accessibility, Atlas AI integration, settings page, and coupon system.
+> ✅ 26 features completed! Dev-Journal now has Windows 11-style UI, JWT auth, admin panel with RBAC, dashboard, security, WCAG 2.2 accessibility, Atlas AI integration (Gemini + Groq), explain page, settings page, coupon system, and cascade deletion.
 
 ---
 
@@ -1189,7 +1210,7 @@ Contains all keyframe animations, utility classes, and accessibility support.
 | 2    | User enters coupon code in Settings > AI Access      |
 | 3    | System validates coupon and activates AI (30 days)   |
 | 4    | User can now use Summarize, Explain, Ask AI buttons  |
-| 5    | Atlas AI processes request via Groq/OpenAI providers |
+| 5    | Atlas AI processes request via Gemini/Groq providers |
 
 ### Settings API Endpoints
 
@@ -1261,6 +1282,7 @@ Dev-Journal/
 │   │       ├── app.js                # + AI panel integration
 │   │       ├── auth.js
 │   │       ├── admin.js              # Admin + coupon management
+│   │       ├── explain.js            # Explain page AI chat
 │   │       ├── dashboard.js          # Dashboard with Chart.js
 │   │       ├── fileExplorer.js       # Advanced file explorer
 │   │       ├── passwordStrength.js   # Password strength meter
@@ -1274,6 +1296,7 @@ Dev-Journal/
 │       ├── register.html
 │       ├── dashboard.html            # User dashboard
 │       ├── settings.html             # Settings (Profile/AI/Security)
+│       ├── explain.html             # AI Explain conversation page
 │       └── admin/
 │           ├── index.html            # Admin dashboard + coupons
 │           └── users.html            # User management

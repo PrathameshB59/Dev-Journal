@@ -2,6 +2,8 @@ const User = require('../models/User');
 const Entry = require('../models/Entry');
 const Coupon = require('../models/Coupon');
 
+const escapeRegex = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
 // Get all users (admin only)
 exports.getAllUsers = async (req, res) => {
     try {
@@ -14,9 +16,10 @@ exports.getAllUsers = async (req, res) => {
         if (req.query.role) filter.role = req.query.role;
         if (req.query.isActive !== undefined) filter.isActive = req.query.isActive === 'true';
         if (req.query.search) {
+            const safeSearch = escapeRegex(req.query.search);
             filter.$or = [
-                { email: { $regex: req.query.search, $options: 'i' } },
-                { name: { $regex: req.query.search, $options: 'i' } }
+                { email: { $regex: safeSearch, $options: 'i' } },
+                { name: { $regex: safeSearch, $options: 'i' } }
             ];
         }
 
@@ -59,7 +62,8 @@ exports.getAllUsers = async (req, res) => {
             }
         });
     } catch (error) {
-        res.status(500).json({ success: false, error: error.message });
+        console.error(error);
+        res.status(500).json({ success: false, error: 'Internal server error' });
     }
 };
 
@@ -99,7 +103,8 @@ exports.getUser = async (req, res) => {
             }
         });
     } catch (error) {
-        res.status(500).json({ success: false, error: error.message });
+        console.error(error);
+        res.status(500).json({ success: false, error: 'Internal server error' });
     }
 };
 
@@ -139,7 +144,8 @@ exports.updateUser = async (req, res) => {
             data: user
         });
     } catch (error) {
-        res.status(500).json({ success: false, error: error.message });
+        console.error(error);
+        res.status(500).json({ success: false, error: 'Internal server error' });
     }
 };
 
@@ -185,7 +191,7 @@ exports.deleteUser = async (req, res) => {
         });
         res.status(500).json({
             success: false,
-            error: error.message || 'Failed to delete user'
+            error: 'Internal server error'
         });
     }
 };
@@ -260,7 +266,8 @@ exports.getSystemStats = async (req, res) => {
             }
         });
     } catch (error) {
-        res.status(500).json({ success: false, error: error.message });
+        console.error(error);
+        res.status(500).json({ success: false, error: 'Internal server error' });
     }
 };
 
@@ -276,9 +283,10 @@ exports.getAllEntries = async (req, res) => {
         if (req.query.category) filter.category = req.query.category;
         if (req.query.userId) filter.userId = req.query.userId;
         if (req.query.search) {
+            const safeSearch = escapeRegex(req.query.search);
             filter.$or = [
-                { title: { $regex: req.query.search, $options: 'i' } },
-                { content: { $regex: req.query.search, $options: 'i' } }
+                { title: { $regex: safeSearch, $options: 'i' } },
+                { content: { $regex: safeSearch, $options: 'i' } }
             ];
         }
 
@@ -304,7 +312,8 @@ exports.getAllEntries = async (req, res) => {
             }
         });
     } catch (error) {
-        res.status(500).json({ success: false, error: error.message });
+        console.error(error);
+        res.status(500).json({ success: false, error: 'Internal server error' });
     }
 };
 
@@ -342,7 +351,8 @@ exports.setUserAi = async (req, res) => {
 
         res.json({ success: true, data: user });
     } catch (error) {
-        res.status(500).json({ success: false, error: error.message });
+        console.error(error);
+        res.status(500).json({ success: false, error: 'Internal server error' });
     }
 };
 
@@ -368,7 +378,8 @@ exports.createCoupon = async (req, res) => {
         if (error.code === 11000) {
             return res.status(400).json({ success: false, error: 'Coupon code already exists' });
         }
-        res.status(500).json({ success: false, error: error.message });
+        console.error(error);
+        res.status(500).json({ success: false, error: 'Internal server error' });
     }
 };
 
@@ -381,7 +392,8 @@ exports.getCoupons = async (req, res) => {
 
         res.json({ success: true, data: coupons });
     } catch (error) {
-        res.status(500).json({ success: false, error: error.message });
+        console.error(error);
+        res.status(500).json({ success: false, error: 'Internal server error' });
     }
 };
 
@@ -400,7 +412,8 @@ exports.deleteCoupon = async (req, res) => {
 
         res.json({ success: true, message: 'Coupon deactivated', data: coupon });
     } catch (error) {
-        res.status(500).json({ success: false, error: error.message });
+        console.error(error);
+        res.status(500).json({ success: false, error: 'Internal server error' });
     }
 };
 
@@ -429,7 +442,8 @@ exports.unlockUser = async (req, res) => {
             data: user
         });
     } catch (error) {
-        res.status(500).json({ success: false, error: error.message });
+        console.error(error);
+        res.status(500).json({ success: false, error: 'Internal server error' });
     }
 };
 
@@ -452,6 +466,7 @@ exports.deleteAnyEntry = async (req, res) => {
             message: `Entry "${entry.name}" deleted successfully`
         });
     } catch (error) {
-        res.status(500).json({ success: false, error: error.message });
+        console.error(error);
+        res.status(500).json({ success: false, error: 'Internal server error' });
     }
 };

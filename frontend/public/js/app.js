@@ -78,7 +78,7 @@ const detectAndRenderCode = (content) => {
     });
 
     // Detect inline `code` (but not inside code blocks)
-    content = content.replace(/`([^`\n]+)`/g, '<code class="inline-code">$1</code>');
+    content = content.replace(/`([^`\n]+)`/g, (m, code) => '<code class="inline-code">' + escapeHtml(code) + '</code>');
 
     return content;
 };
@@ -277,11 +277,14 @@ const AiPanel = {
         const modal = document.createElement('div');
         modal.id = 'aiModal';
         modal.className = 'ai-modal';
+        modal.setAttribute('role', 'dialog');
+        modal.setAttribute('aria-modal', 'true');
+        modal.setAttribute('aria-labelledby', 'aiModalTitle');
         modal.innerHTML = `
             <div class="ai-modal-content">
                 <div class="ai-modal-header">
-                    <h3 class="ai-modal-title">Atlas AI</h3>
-                    <button class="ai-modal-close" id="aiModalClose">&times;</button>
+                    <h3 class="ai-modal-title" id="aiModalTitle">Atlas AI</h3>
+                    <button class="ai-modal-close" id="aiModalClose" aria-label="Close AI panel">&times;</button>
                 </div>
                 <div class="ai-modal-body" id="aiModalBody">
                     <div class="ai-loading" id="aiLoading">
@@ -304,6 +307,25 @@ const AiPanel = {
         modal.querySelector('#aiModalClose').addEventListener('click', () => this.close());
         modal.addEventListener('click', (e) => { if (e.target === modal) this.close(); });
 
+        // Escape key to close
+        modal.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') { this.close(); return; }
+            // Focus trap: keep Tab/Shift+Tab within modal
+            if (e.key === 'Tab') {
+                const focusable = modal.querySelectorAll('button, input, [tabindex]:not([tabindex="-1"])');
+                if (focusable.length === 0) return;
+                const first = focusable[0];
+                const last = focusable[focusable.length - 1];
+                if (e.shiftKey && document.activeElement === first) {
+                    e.preventDefault();
+                    last.focus();
+                } else if (!e.shiftKey && document.activeElement === last) {
+                    e.preventDefault();
+                    first.focus();
+                }
+            }
+        });
+
         // Quick ask
         const sendBtn = modal.querySelector('#aiQuickSend');
         const input = modal.querySelector('#aiQuickInput');
@@ -314,12 +336,17 @@ const AiPanel = {
         return modal;
     },
 
+    _previousFocus: null,
+
     open(title) {
+        this._previousFocus = document.activeElement;
         const modal = this.getModal();
         if (title) modal.querySelector('.ai-modal-title').textContent = title;
         modal.querySelector('#aiLoading').style.display = 'flex';
         modal.querySelector('#aiResult').innerHTML = '';
         modal.style.display = 'flex';
+        // Move focus into modal
+        modal.querySelector('#aiModalClose').focus();
     },
 
     showResult(content) {
@@ -337,6 +364,10 @@ const AiPanel = {
     close() {
         const modal = this.getModal();
         modal.style.display = 'none';
+        if (this._previousFocus) {
+            this._previousFocus.focus();
+            this._previousFocus = null;
+        }
     },
 
     async askQuick() {
@@ -675,7 +706,7 @@ const setupSearch = () => {
                 }
             } catch (error) {
                 loadingState.style.display = 'none';
-                fileList.innerHTML = `<p class="error" style="padding: var(--space-lg);">Error: ${error.message}</p>`;
+                fileList.innerHTML = `<p class="error" style="padding: var(--space-lg);">Error: ${escapeHtml(error.message)}</p>`;
             }
         } else {
             // Legacy search
@@ -719,8 +750,14 @@ const setupCreateForm = () => {
     const form = getElement('entryForm');
     if (!form) return;
 
+    let submitting = false;
+
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
+        if (submitting) return;
+        submitting = true;
+        const submitBtn = form.querySelector('button[type="submit"]');
+        if (submitBtn) submitBtn.disabled = true;
 
         const formMessage = getElement('formMessage');
 
@@ -756,11 +793,15 @@ const setupCreateForm = () => {
                 formMessage.className = 'form-message error';
                 formMessage.textContent = result.error || 'Error creating entry';
                 formMessage.style.display = 'block';
+                submitting = false;
+                if (submitBtn) submitBtn.disabled = false;
             }
         } catch (error) {
             formMessage.className = 'form-message error';
             formMessage.textContent = 'Error creating entry: ' + error.message;
             formMessage.style.display = 'block';
+            submitting = false;
+            if (submitBtn) submitBtn.disabled = false;
         }
     });
 };
@@ -807,8 +848,14 @@ const setupEditForm = () => {
     loadEntryData();
 
     // Handle form submission
+    let submitting = false;
+
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
+        if (submitting) return;
+        submitting = true;
+        const submitBtn = form.querySelector('button[type="submit"]');
+        if (submitBtn) submitBtn.disabled = true;
 
         const formMessage = getElement('formMessage');
         const id = getElement('entryId').value;
@@ -837,11 +884,15 @@ const setupEditForm = () => {
                 formMessage.className = 'form-message error';
                 formMessage.textContent = result.error || 'Error updating entry';
                 formMessage.style.display = 'block';
+                submitting = false;
+                if (submitBtn) submitBtn.disabled = false;
             }
         } catch (error) {
             formMessage.className = 'form-message error';
             formMessage.textContent = 'Error updating entry: ' + error.message;
             formMessage.style.display = 'block';
+            submitting = false;
+            if (submitBtn) submitBtn.disabled = false;
         }
     });
 };
@@ -921,11 +972,11 @@ const setupEntryView = () => {
                 // Setup delete button
                 setupDeleteModal(entry._id, entry.type);
 
-                // Setup AI explain button
+                // Setup AI explain button — navigate to dedicated explain page
                 const explainBtn = getElement('explainBtn');
                 if (explainBtn) {
                     explainBtn.addEventListener('click', () => {
-                        AiPanel.explainEntry(entry._id);
+                        window.location.href = '/explain/' + entry._id;
                     });
                 }
 
@@ -949,13 +1000,20 @@ const setupDeleteModal = (entryId, entryType) => {
 
     if (!deleteBtn || !deleteModal) return;
 
+    let previousFocus = null;
+
+    const closeDeleteModal = () => {
+        deleteModal.style.display = 'none';
+        if (previousFocus) { previousFocus.focus(); previousFocus = null; }
+    };
+
     deleteBtn.addEventListener('click', () => {
+        previousFocus = document.activeElement;
         deleteModal.style.display = 'flex';
+        cancelDelete.focus();
     });
 
-    cancelDelete.addEventListener('click', () => {
-        deleteModal.style.display = 'none';
-    });
+    cancelDelete.addEventListener('click', closeDeleteModal);
 
     confirmDelete.addEventListener('click', async () => {
         try {
@@ -965,18 +1023,31 @@ const setupDeleteModal = (entryId, entryType) => {
                 window.location.href = '/';
             } else {
                 alert('Error deleting entry: ' + (result.error || 'Unknown error'));
-                deleteModal.style.display = 'none';
+                closeDeleteModal();
             }
         } catch (error) {
             alert('Error deleting entry: ' + error.message);
-            deleteModal.style.display = 'none';
+            closeDeleteModal();
         }
     });
 
     // Close modal on outside click
     deleteModal.addEventListener('click', (e) => {
-        if (e.target === deleteModal) {
-            deleteModal.style.display = 'none';
+        if (e.target === deleteModal) closeDeleteModal();
+    });
+
+    // Escape key + focus trap
+    deleteModal.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') { closeDeleteModal(); return; }
+        if (e.key === 'Tab') {
+            const focusable = deleteModal.querySelectorAll('button');
+            const first = focusable[0];
+            const last = focusable[focusable.length - 1];
+            if (e.shiftKey && document.activeElement === first) {
+                e.preventDefault(); last.focus();
+            } else if (!e.shiftKey && document.activeElement === last) {
+                e.preventDefault(); first.focus();
+            }
         }
     });
 };
@@ -1118,8 +1189,11 @@ const Win11State = {
 
 // Windows 11 Explorer Module
 const Win11 = {
+    _loadVersion: 0,
+
     // Load entries for the current view (root or folder)
     async loadFileList(folderId = null, tab = 'recent') {
+        const thisVersion = ++this._loadVersion;
         const fileList = document.getElementById('fileList');
         const loadingState = document.getElementById('loadingState');
         const emptyState = document.getElementById('emptyState');
@@ -1168,6 +1242,9 @@ const Win11 = {
                 if (quickAccessGrid) quickAccessGrid.style.display = 'none';
             }
 
+            // Discard stale response if a newer load was triggered
+            if (this._loadVersion !== thisVersion) return;
+
             loadingState.style.display = 'none';
 
             if (entries.length > 0) {
@@ -1181,14 +1258,18 @@ const Win11 = {
             // Update sidebar folder counts
             this.updateSidebarCounts();
         } catch (error) {
+            if (this._loadVersion !== thisVersion) return;
             loadingState.style.display = 'none';
-            fileList.innerHTML = `<p class="error" style="padding: var(--space-lg);">Error loading entries: ${error.message}</p>`;
+            fileList.innerHTML = `<div class="error-state" style="padding: var(--space-lg); text-align: center;">
+                <p class="error">Error loading entries: ${escapeHtml(error.message)}</p>
+                <button onclick="Win11.loadFileList(Win11State.currentFolderId, Win11State.currentTab)" class="btn-secondary" style="margin-top: var(--space-sm);">Retry</button>
+            </div>`;
         }
     },
 
     // Load current view (convenience method)
     loadCurrentView() {
-        this.loadFileList(Win11State.currentFolderId, Win11State.currentTab);
+        return this.loadFileList(Win11State.currentFolderId, Win11State.currentTab);
     },
 
     // Navigate into a folder (double-click)
@@ -1285,9 +1366,9 @@ const Win11 = {
         if (!folderId) {
             // Root level
             breadcrumbPath.innerHTML = `
-                <a href="#" class="breadcrumb-item" onclick="event.preventDefault(); Win11.navigateToRoot()">&#127968; Home</a>
-                <span class="breadcrumb-separator">&#8250;</span>
-                <span class="breadcrumb-current" id="breadcrumbCurrent">All Entries</span>
+                <li><a href="#" class="breadcrumb-item" onclick="event.preventDefault(); Win11.navigateToRoot()">&#127968; Home</a></li>
+                <li class="breadcrumb-separator" aria-hidden="true">&#8250;</li>
+                <li aria-current="location"><span class="breadcrumb-current" id="breadcrumbCurrent">All Entries</span></li>
             `;
             return;
         }
@@ -1296,15 +1377,14 @@ const Win11 = {
             const result = await ExplorerAPI.getBreadcrumb(folderId);
             if (!result.success) return;
 
-            let html = `<a href="#" class="breadcrumb-item" onclick="event.preventDefault(); Win11.navigateToRoot()">&#127968; Home</a>`;
+            let html = `<li><a href="#" class="breadcrumb-item" onclick="event.preventDefault(); Win11.navigateToRoot()">&#127968; Home</a></li>`;
 
             result.data.forEach((crumb, i) => {
-                html += `<span class="breadcrumb-separator">&#8250;</span>`;
+                html += `<li class="breadcrumb-separator" aria-hidden="true">&#8250;</li>`;
                 if (i === result.data.length - 1) {
-                    // Last item is current
-                    html += `<span class="breadcrumb-current" id="breadcrumbCurrent">${escapeHtml(crumb.name)}</span>`;
+                    html += `<li aria-current="location"><span class="breadcrumb-current" id="breadcrumbCurrent">${escapeHtml(crumb.name)}</span></li>`;
                 } else {
-                    html += `<a href="#" class="breadcrumb-item" onclick="event.preventDefault(); Win11.navigateToFolder('${crumb._id}')">${escapeHtml(crumb.name)}</a>`;
+                    html += `<li><a href="#" class="breadcrumb-item" onclick="event.preventDefault(); Win11.navigateToFolder('${crumb._id}')">${escapeHtml(crumb.name)}</a></li>`;
                 }
             });
 
@@ -1312,9 +1392,9 @@ const Win11 = {
         } catch (error) {
             // Fallback
             breadcrumbPath.innerHTML = `
-                <a href="#" class="breadcrumb-item" onclick="event.preventDefault(); Win11.navigateToRoot()">&#127968; Home</a>
-                <span class="breadcrumb-separator">&#8250;</span>
-                <span class="breadcrumb-current" id="breadcrumbCurrent">...</span>
+                <li><a href="#" class="breadcrumb-item" onclick="event.preventDefault(); Win11.navigateToRoot()">&#127968; Home</a></li>
+                <li class="breadcrumb-separator" aria-hidden="true">&#8250;</li>
+                <li aria-current="location"><span class="breadcrumb-current" id="breadcrumbCurrent">...</span></li>
             `;
         }
     },
@@ -1761,6 +1841,6 @@ const loadEntriesByTagWin11 = async (tag) => {
         }
     } catch (error) {
         loadingState.style.display = 'none';
-        fileList.innerHTML = `<p class="error" style="padding: var(--space-lg);">Error: ${error.message}</p>`;
+        fileList.innerHTML = `<p class="error" style="padding: var(--space-lg);">Error: ${escapeHtml(error.message)}</p>`;
     }
 };

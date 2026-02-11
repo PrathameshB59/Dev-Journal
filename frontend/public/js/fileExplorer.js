@@ -140,16 +140,16 @@ const FileExplorer = {
         menu.className = 'context-menu';
         menu.innerHTML = `
             <ul role="menu">
-                <li role="menuitem" data-action="open"><span>&#128194;</span> Open</li>
-                <li role="menuitem" data-action="edit"><span>&#9998;</span> Edit</li>
-                <li role="menuitem" data-action="rename"><span>&#128221;</span> Rename</li>
-                <li role="menuitem" data-action="favorite"><span>&#9733;</span> Toggle Favorite</li>
-                <li role="menuitem" data-action="pin"><span>&#128204;</span> Toggle Pin</li>
+                <li role="menuitem" tabindex="-1" data-action="open"><span>&#128194;</span> Open</li>
+                <li role="menuitem" tabindex="-1" data-action="edit"><span>&#9998;</span> Edit</li>
+                <li role="menuitem" tabindex="-1" data-action="rename"><span>&#128221;</span> Rename</li>
+                <li role="menuitem" tabindex="-1" data-action="favorite"><span>&#9733;</span> Toggle Favorite</li>
+                <li role="menuitem" tabindex="-1" data-action="pin"><span>&#128204;</span> Toggle Pin</li>
                 <li class="divider"></li>
-                <li role="menuitem" data-action="ai-summarize" class="ai-action"><span>&#129302;</span> Summarize</li>
-                <li role="menuitem" data-action="ai-explain" class="ai-action"><span>&#129302;</span> Explain</li>
+                <li role="menuitem" tabindex="-1" data-action="ai-summarize" class="ai-action"><span>&#129302;</span> Summarize</li>
+                <li role="menuitem" tabindex="-1" data-action="ai-explain" class="ai-action"><span>&#129302;</span> Explain</li>
                 <li class="divider"></li>
-                <li role="menuitem" data-action="delete" class="danger"><span>&#128465;</span> Delete</li>
+                <li role="menuitem" tabindex="-1" data-action="delete" class="danger"><span>&#128465;</span> Delete</li>
             </ul>
         `;
         document.body.appendChild(menu);
@@ -223,6 +223,31 @@ const FileExplorer = {
                 this.closeContextMenu();
             }
         });
+
+        // Keyboard navigation for context menu
+        menu.addEventListener('keydown', (e) => {
+            const items = [...menu.querySelectorAll('[role="menuitem"]')].filter(el => el.style.display !== 'none');
+            const idx = items.indexOf(document.activeElement);
+
+            switch (e.key) {
+                case 'ArrowDown':
+                    e.preventDefault();
+                    items[(idx + 1) % items.length].focus();
+                    break;
+                case 'ArrowUp':
+                    e.preventDefault();
+                    items[(idx - 1 + items.length) % items.length].focus();
+                    break;
+                case 'Enter':
+                    e.preventDefault();
+                    if (document.activeElement.dataset.action) document.activeElement.click();
+                    break;
+                case 'Escape':
+                    e.preventDefault();
+                    this.closeContextMenu();
+                    break;
+            }
+        });
     },
 
     // Show context menu
@@ -258,6 +283,10 @@ const FileExplorer = {
 
         menu.style.left = `${x}px`;
         menu.style.top = `${y}px`;
+
+        // Focus first visible menu item for keyboard access
+        const firstItem = menu.querySelector('[role="menuitem"]:not([style*="display: none"])');
+        if (firstItem) firstItem.focus();
     },
 
     // Close context menu
@@ -363,7 +392,12 @@ const FileExplorer = {
         try {
             const result = await window.ExplorerAPI.updateEntry(entryId, { name: newName.trim() });
             if (result.success) {
-                if (window.Win11) Win11.loadCurrentView();
+                if (window.Win11) {
+                    await Win11.loadCurrentView();
+                    // Focus the renamed item
+                    const renamed = document.querySelector(`[data-entry-id="${entryId}"]`);
+                    if (renamed) renamed.focus();
+                }
                 this.showToast('Renamed successfully');
             } else {
                 this.showToast('Failed to rename: ' + (result.error || 'Unknown error'), 'error');
@@ -429,7 +463,13 @@ const FileExplorer = {
             if (result.success) {
                 // Remove from DOM
                 const card = document.querySelector(`[data-entry-id="${entryId}"]`);
+                const nextSibling = card?.nextElementSibling || card?.previousElementSibling;
                 if (card) card.remove();
+                // Move focus to next item or file list
+                if (nextSibling) { nextSibling.focus(); } else {
+                    const fileList = document.getElementById('fileList');
+                    if (fileList) fileList.focus();
+                }
                 this.showToast('Deleted');
             } else {
                 this.showToast('Failed to delete', 'error');

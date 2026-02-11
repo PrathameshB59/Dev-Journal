@@ -26,8 +26,8 @@
                 <a href="/" class="btn-secondary">&#8592; Back to Journal</a>
                 <a href="/settings" class="btn-secondary">&#9881; Settings</a>
                 <a href="#" id="editBtn" class="btn-primary">&#9998; Edit</a>
-                <button id="explainBtn" class="btn-ai" onclick="window.location.href='/explain/' + window.location.pathname.split('/').pop()">&#129302; Explain</button>
-                <button id="deleteBtn" class="btn-danger">&#128465; Delete</button>
+                <button id="explainBtn" class="btn-ai" aria-label="Explain entry with AI" onclick="window.location.href='/explain/' + window.location.pathname.split('/').pop()">&#129302; Explain</button>
+                <button id="deleteBtn" class="btn-danger" aria-label="Delete entry">&#128465; Delete</button>
                 <span id="userDisplay" class="user-display"></span>
                 <button id="logoutBtn" class="btn-logout">Logout</button>
             </div>
@@ -69,9 +69,9 @@
     </main>
 
     <!-- Delete Confirmation Modal -->
-    <div id="deleteModal" class="modal" style="display: none;">
+    <div id="deleteModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="deleteModalTitle" style="display: none;">
         <div class="modal-content">
-            <h3>&#9888; Confirm Delete</h3>
+            <h3 id="deleteModalTitle">&#9888; Confirm Delete</h3>
             <p>Are you sure you want to delete this entry? This action cannot be undone.</p>
             <div class="modal-actions">
                 <button id="cancelDelete" class="btn-secondary">Cancel</button>

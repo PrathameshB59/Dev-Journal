@@ -41,12 +41,13 @@ exports.summarize = async (req, res) => {
         }
 
         const prompt = `Summarize the following developer journal entries from the folder "${folder.name}":\n\n` +
-            files.map((f, i) => `--- Entry ${i + 1}: ${f.name} ---\n${f.content || '(empty)'}\n`).join('\n');
+            files.map((f, i) => `--- Entry ${i + 1}: ${f.name} ---\n${(f.content || '(empty)').slice(0, 400)}\n`).join('\n');
 
         const result = await callAtlasAI('summarize', req.user._id, prompt);
         res.json({ success: true, data: result });
     } catch (error) {
-        res.status(500).json({ success: false, error: error.message });
+        console.error(error);
+        res.status(500).json({ success: false, error: 'Internal server error' });
     }
 };
 
@@ -63,13 +64,15 @@ exports.explain = async (req, res) => {
             return res.status(404).json({ success: false, error: 'Entry not found' });
         }
 
-        const prompt = `Explain the following developer journal entry titled "${entry.name}":\n\n${entry.content || '(empty)'}` +
+        const truncatedContent = (entry.content || '(empty)').slice(0, 8000);
+        const prompt = `Explain the following developer journal entry titled "${entry.name}":\n\n${truncatedContent}` +
             (entry.codeBlock ? `\n\nCode:\n\`\`\`${entry.codeLanguage || ''}\n${entry.codeBlock}\n\`\`\`` : '');
 
         const result = await callAtlasAI('explain', req.user._id, prompt);
         res.json({ success: true, data: result });
     } catch (error) {
-        res.status(500).json({ success: false, error: error.message });
+        console.error(error);
+        res.status(500).json({ success: false, error: 'Internal server error' });
     }
 };
 
@@ -116,7 +119,8 @@ exports.quickHelp = async (req, res) => {
         const result = await callAtlasAI('quick', req.user._id, prompt);
         res.json({ success: true, data: result });
     } catch (error) {
-        res.status(500).json({ success: false, error: error.message });
+        console.error(error);
+        res.status(500).json({ success: false, error: 'Internal server error' });
     }
 };
 
@@ -136,6 +140,7 @@ exports.getStatus = async (req, res) => {
             }
         });
     } catch (error) {
-        res.status(500).json({ success: false, error: error.message });
+        console.error(error);
+        res.status(500).json({ success: false, error: 'Internal server error' });
     }
 };

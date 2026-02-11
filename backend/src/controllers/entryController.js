@@ -3,7 +3,9 @@ const Entry = require('../models/Entry');
 // Get all entries with optional filtering
 exports.getAllEntries = async (req, res) => {
     try {
-        const { category, tag, sort = '-createdAt', limit = 50, page = 1 } = req.query;
+        const ALLOWED_SORT = ['createdAt', '-createdAt', 'updatedAt', '-updatedAt', 'title', '-title', 'category', '-category'];
+        const { category, tag, sort: rawSort = '-createdAt', limit = 50, page = 1 } = req.query;
+        const sort = ALLOWED_SORT.includes(rawSort) ? rawSort : '-createdAt';
 
         // Scope by authenticated user
         const query = { userId: req.user._id };
@@ -36,7 +38,8 @@ exports.getAllEntries = async (req, res) => {
             }
         });
     } catch (error) {
-        res.status(500).json({ success: false, error: error.message });
+        console.error(error);
+        res.status(500).json({ success: false, error: 'Internal server error' });
     }
 };
 
@@ -52,7 +55,8 @@ exports.getEntry = async (req, res) => {
 
         res.json({ success: true, data: entry });
     } catch (error) {
-        res.status(500).json({ success: false, error: error.message });
+        console.error(error);
+        res.status(500).json({ success: false, error: 'Internal server error' });
     }
 };
 
@@ -77,7 +81,8 @@ exports.createEntry = async (req, res) => {
             const messages = Object.values(error.errors).map(e => e.message);
             return res.status(400).json({ success: false, error: messages.join(', ') });
         }
-        res.status(500).json({ success: false, error: error.message });
+        console.error(error);
+        res.status(500).json({ success: false, error: 'Internal server error' });
     }
 };
 
@@ -103,7 +108,8 @@ exports.updateEntry = async (req, res) => {
             const messages = Object.values(error.errors).map(e => e.message);
             return res.status(400).json({ success: false, error: messages.join(', ') });
         }
-        res.status(500).json({ success: false, error: error.message });
+        console.error(error);
+        res.status(500).json({ success: false, error: 'Internal server error' });
     }
 };
 
@@ -119,7 +125,8 @@ exports.deleteEntry = async (req, res) => {
 
         res.json({ success: true, data: {} });
     } catch (error) {
-        res.status(500).json({ success: false, error: error.message });
+        console.error(error);
+        res.status(500).json({ success: false, error: 'Internal server error' });
     }
 };
 
@@ -140,7 +147,8 @@ exports.searchEntries = async (req, res) => {
 
         res.json({ success: true, data: entries });
     } catch (error) {
-        res.status(500).json({ success: false, error: error.message });
+        console.error(error);
+        res.status(500).json({ success: false, error: 'Internal server error' });
     }
 };
 
@@ -151,7 +159,8 @@ exports.getAllTags = async (req, res) => {
         const tags = await Entry.distinct('tags', { userId: req.user._id });
         res.json({ success: true, data: tags.filter(t => t) });
     } catch (error) {
-        res.status(500).json({ success: false, error: error.message });
+        console.error(error);
+        res.status(500).json({ success: false, error: 'Internal server error' });
     }
 };
 
@@ -172,6 +181,7 @@ exports.getCategoryStats = async (req, res) => {
 
         res.json({ success: true, data: stats });
     } catch (error) {
-        res.status(500).json({ success: false, error: error.message });
+        console.error(error);
+        res.status(500).json({ success: false, error: 'Internal server error' });
     }
 };

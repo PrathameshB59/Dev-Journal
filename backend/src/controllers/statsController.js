@@ -108,7 +108,8 @@ exports.getDashboardStats = async (req, res) => {
             }
         });
     } catch (error) {
-        res.status(500).json({ success: false, error: error.message });
+        console.error(error);
+        res.status(500).json({ success: false, error: 'Internal server error' });
     }
 };
 
@@ -145,7 +146,8 @@ exports.getActivityHeatmap = async (req, res) => {
             }, {})
         });
     } catch (error) {
-        res.status(500).json({ success: false, error: error.message });
+        console.error(error);
+        res.status(500).json({ success: false, error: 'Internal server error' });
     }
 };
 
@@ -221,6 +223,7 @@ exports.getStreaks = async (req, res) => {
             }
         });
     } catch (error) {
-        res.status(500).json({ success: false, error: error.message });
+        console.error(error);
+        res.status(500).json({ success: false, error: 'Internal server error' });
     }
 };

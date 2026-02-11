@@ -47,7 +47,8 @@ exports.register = async (req, res) => {
             const messages = Object.values(error.errors).map(e => e.message);
             return res.status(400).json({ success: false, error: messages.join(', ') });
         }
-        res.status(500).json({ success: false, error: error.message });
+        console.error(error);
+        res.status(500).json({ success: false, error: 'Internal server error' });
     }
 };
 
@@ -136,7 +137,8 @@ exports.login = async (req, res) => {
             }
         });
     } catch (error) {
-        res.status(500).json({ success: false, error: error.message });
+        console.error(error);
+        res.status(500).json({ success: false, error: 'Internal server error' });
     }
 };
 

@@ -83,4 +83,17 @@ userSchema.methods.comparePassword = async function(candidatePassword) {
     return await bcrypt.compare(candidatePassword, this.password);
 };
 
+// Cascade delete user data when user is deleted
+userSchema.pre('findOneAndDelete', async function() {
+    const userId = this.getQuery()._id;
+    await mongoose.model('Entry').deleteMany({ userId });
+    await mongoose.model('Coupon').deleteMany({ createdBy: userId });
+});
+
+userSchema.pre('deleteOne', async function() {
+    const userId = this.getQuery()._id;
+    await mongoose.model('Entry').deleteMany({ userId });
+    await mongoose.model('Coupon').deleteMany({ createdBy: userId });
+});
+
 module.exports = mongoose.model('User', userSchema);

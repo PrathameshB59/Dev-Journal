@@ -69,7 +69,8 @@ const securityHeaders = helmet({
         }
     },
     crossOriginEmbedderPolicy: false, // Allow loading external resources
-    crossOriginResourcePolicy: { policy: "cross-origin" }
+    crossOriginResourcePolicy: { policy: "cross-origin" },
+    hsts: { maxAge: 31536000, includeSubDomains: true }
 });
 
 // XSS protection middleware

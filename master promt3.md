@@ -1,8 +1,3 @@
-Perfect 👍
-What you want now is ONE solid “system health & correctness” prompt that you can give to Claude AI so it reviews Dev Journal as a working product, not as code snippets.
-
-Below is a copy-paste ready prompt that tells Claude to behave like a QA lead + senior full-stack engineer and verify frontend + backend integration, flows, and edge cases.
-
 ✅ Claude AI Prompt — Dev Journal Full System Check (Frontend + Backend)
 You are a senior QA engineer and full-stack architect
 reviewing a production web application.

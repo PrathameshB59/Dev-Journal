@@ -32,7 +32,9 @@ exports.getRoot = async (req, res) => {
             await Entry.insertMany(folders);
         }
 
-        const { sort = 'name', order = 'asc' } = req.query;
+        const ALLOWED_SORT = ['name', 'createdAt', 'updatedAt', 'category', 'title'];
+        const { sort: rawSort = 'name', order = 'asc' } = req.query;
+        const sort = ALLOWED_SORT.includes(rawSort) ? rawSort : 'name';
         const sortObj = {};
         sortObj.type = -1; // folders first
         sortObj[sort] = order === 'desc' ? -1 : 1;
@@ -43,7 +45,8 @@ exports.getRoot = async (req, res) => {
 
         res.json({ success: true, data: entries });
     } catch (error) {
-        res.status(500).json({ success: false, error: error.message });
+        console.error(error);
+        res.status(500).json({ success: false, error: 'Internal server error' });
     }
 };
 
@@ -59,7 +62,9 @@ exports.getFolder = async (req, res) => {
             return res.status(404).json({ success: false, error: 'Folder not found' });
         }
 
-        const { sort = 'name', order = 'asc' } = req.query;
+        const ALLOWED_SORT = ['name', 'createdAt', 'updatedAt', 'category', 'title'];
+        const { sort: rawSort = 'name', order = 'asc' } = req.query;
+        const sort = ALLOWED_SORT.includes(rawSort) ? rawSort : 'name';
         const sortObj = {};
         sortObj.type = -1; // folders first
         sortObj[sort] = order === 'desc' ? -1 : 1;
@@ -76,7 +81,8 @@ exports.getFolder = async (req, res) => {
             }
         });
     } catch (error) {
-        res.status(500).json({ success: false, error: error.message });
+        console.error(error);
+        res.status(500).json({ success: false, error: 'Internal server error' });
     }
 };
 
@@ -113,7 +119,8 @@ exports.createFile = async (req, res) => {
             const messages = Object.values(error.errors).map(e => e.message);
             return res.status(400).json({ success: false, error: messages.join(', ') });
         }
-        res.status(500).json({ success: false, error: error.message });
+        console.error(error);
+        res.status(500).json({ success: false, error: 'Internal server error' });
     }
 };
 
@@ -148,7 +155,8 @@ exports.createFolder = async (req, res) => {
             const messages = Object.values(error.errors).map(e => e.message);
             return res.status(400).json({ success: false, error: messages.join(', ') });
         }
-        res.status(500).json({ success: false, error: error.message });
+        console.error(error);
+        res.status(500).json({ success: false, error: 'Internal server error' });
     }
 };
 
@@ -179,7 +187,8 @@ exports.updateEntry = async (req, res) => {
             const messages = Object.values(error.errors).map(e => e.message);
             return res.status(400).json({ success: false, error: messages.join(', ') });
         }
-        res.status(500).json({ success: false, error: error.message });
+        console.error(error);
+        res.status(500).json({ success: false, error: 'Internal server error' });
     }
 };
 
@@ -216,7 +225,8 @@ exports.deleteEntry = async (req, res) => {
             res.json({ success: true, data: { deletedCount: 1 } });
         }
     } catch (error) {
-        res.status(500).json({ success: false, error: error.message });
+        console.error(error);
+        res.status(500).json({ success: false, error: 'Internal server error' });
     }
 };
 
@@ -243,7 +253,8 @@ exports.getBreadcrumb = async (req, res) => {
 
         res.json({ success: true, data: crumbs });
     } catch (error) {
-        res.status(500).json({ success: false, error: error.message });
+        console.error(error);
+        res.status(500).json({ success: false, error: 'Internal server error' });
     }
 };
 
@@ -283,7 +294,8 @@ exports.moveEntry = async (req, res) => {
 
         res.json({ success: true, data: entry });
     } catch (error) {
-        res.status(500).json({ success: false, error: error.message });
+        console.error(error);
+        res.status(500).json({ success: false, error: 'Internal server error' });
     }
 };
 
@@ -306,7 +318,8 @@ exports.searchEntries = async (req, res) => {
 
         res.json({ success: true, data: entries });
     } catch (error) {
-        res.status(500).json({ success: false, error: error.message });
+        console.error(error);
+        res.status(500).json({ success: false, error: 'Internal server error' });
     }
 };
 
@@ -319,7 +332,8 @@ exports.getFavorites = async (req, res) => {
 
         res.json({ success: true, data: entries });
     } catch (error) {
-        res.status(500).json({ success: false, error: error.message });
+        console.error(error);
+        res.status(500).json({ success: false, error: 'Internal server error' });
     }
 };
 
@@ -335,7 +349,8 @@ exports.getRecent = async (req, res) => {
 
         res.json({ success: true, data: entries });
     } catch (error) {
-        res.status(500).json({ success: false, error: error.message });
+        console.error(error);
+        res.status(500).json({ success: false, error: 'Internal server error' });
     }
 };
 
@@ -345,6 +360,7 @@ exports.getAllTags = async (req, res) => {
         const tags = await Entry.distinct('tags', { userId: req.user._id });
         res.json({ success: true, data: tags.filter(t => t) });
     } catch (error) {
-        res.status(500).json({ success: false, error: error.message });
+        console.error(error);
+        res.status(500).json({ success: false, error: 'Internal server error' });
     }
 };

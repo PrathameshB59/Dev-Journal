@@ -1,245 +1,143 @@
-You are a senior AI platform architect and backend engineer
-designing a long-term internal AI service.
+Atlas AI Dashboard — Full Improvement Plan
+Context
+Per improve atlas ai.md and master prompt2.md: Atlas AI dashboard needs frontend + backend improvements. Critical issue: frontend still references "OpenAI" in multiple places (must be Gemini + Groq ONLY). Beyond that, the dashboard needs better UX states, responsiveness, accessibility, budget warnings, and provider health visibility.
 
-PROJECT NAME:
-Atlas AI — Universal AI Core Platform
+Constraints: Gemini + Groq only. No frameworks. Vanilla JS/CSS. Incremental improvements. Dark UI.
 
-IMPORTANT PROVIDER DECISION (LOCKED):
-- OpenAI is NOT used
-- Together AI is NOT used
-- ONLY the following providers are allowed:
-  1) Google Gemini API
-  2) Groq API
-- Do NOT suggest OpenAI as fallback
-- Do NOT design for OpenAI compatibility
-- Assume Gemini + Groq are production-ready
+Phase 1: Critical — Remove All OpenAI References
+1a. overview.js (lines 28, 63, 67)
+Path: /home/devuser/dev/projects/atlas-ai/frontend/js/pages/overview.js
 
-Atlas AI is a STANDALONE, UNIVERSAL AI SERVICE.
-It is NOT tied to any single product.
+Line 28: month.openaiUsd → month.geminiUsd
+Line 63: .cost-bar-fill openai → .cost-bar-fill gemini
+Line 67: OpenAI $${(month.openaiUsd... → Gemini $${(month.geminiUsd...
+1b. usage.js (lines 57, 67, 96)
+Path: /home/devuser/dev/projects/atlas-ai/frontend/js/pages/usage.js
 
-Client apps (Dev Journal, StackPilot, future apps)
-consume Atlas AI via HTTP APIs.
+Line 57: Column label "OpenAI" → "Gemini", r.openaiUsd → r.geminiUsd
+Line 67: r.openaiUsd → r.geminiUsd (spend bar)
+Line 96: Badge 'OpenAI' → 'Gemini', badge-info → badge-warning
+1c. clients.js (line 124)
+Path: /home/devuser/dev/projects/atlas-ai/frontend/js/pages/clients.js
 
-━━━━━━━━━━━━━━━━━━━━━━
-1️⃣ ROLE OF EACH PROVIDER
-━━━━━━━━━━━━━━━━━━━━━━
+Line 124: allowedProviders: ["openai", "groq"] → ["gemini", "groq"]
+1d. styles.css (line 479)
+Path: /home/devuser/dev/projects/atlas-ai/frontend/css/styles.css
 
-Gemini:
-- Primary reasoning and content model
-- Summarization
-- Explanation
-- Documentation writing
-- Concept breakdown
-- Long-form responses
+Line 479: .cost-bar-fill.openai → .cost-bar-fill.gemini
+Change color to var(--warning) (amber for Gemini, green stays for Groq)
+Phase 2: Frontend UI/UX Improvements
+2a. Loading States — Spinners
+Files: styles.css, all page JS files
 
-Groq:
-- Ultra-fast responses
-- Error explanations
-- Quick fixes
-- Instant Q&A
-- Lightweight prompts
+Add to styles.css:
 
-RULE:
-Clients NEVER choose the provider.
-Atlas AI decides internally.
 
-━━━━━━━━━━━━━━━━━━━━━━
-2️⃣ WHAT ATLAS AI IS
-━━━━━━━━━━━━━━━━━━━━━━
+.loading-spinner { display:inline-block; width:16px; height:16px; border:2px solid var(--border); border-top-color:var(--accent); border-radius:50%; animation:spin 0.8s linear infinite; }
+@keyframes spin { to { transform:rotate(360deg); } }
+.loading-inline { display:flex; align-items:center; gap:8px; color:var(--text-secondary); padding:1rem 0; }
+Replace Loading... in all pages with <div class="loading-inline"><span class="loading-spinner"></span> Loading...</div>
 
-Atlas AI provides:
-- Prompt orchestration
-- Provider routing (Gemini vs Groq)
-- Budget & quota enforcement
-- Usage tracking
-- Prompt versioning
-- RAG-style workflows (MongoDB Atlas + Gemini/Groq)
-- Security & abuse protection
+2b. Budget Warnings on Overview
+File: overview.js
 
-Atlas behaves like an internal AI SaaS.
+Show warning bar when spend >= 80% of budget. Read budget from new budgetLimits field in stats response (Phase 3a).
 
-━━━━━━━━━━━━━━━━━━━━━━
-3️⃣ WHAT ATLAS AI IS NOT
-━━━━━━━━━━━━━━━━━━━━━━
+2c. Provider Health Display
+File: overview.js
 
-❌ Not embedded inside Dev Journal  
-❌ Not sharing databases with clients  
-❌ Not aware of client users  
-❌ Not frontend-heavy  
-❌ Not provider-exposing  
+Show individual provider configured status using new /health response (Phase 3b).
 
-Atlas AI only knows:
-- Client applications
-- AI users / API keys
-- Prompts, requests, and usage
+2d. Responsive Sidebar
+Files: styles.css, index.html, app.js
 
-━━━━━━━━━━━━━━━━━━━━━━
-4️⃣ TECH STACK (FINAL)
-━━━━━━━━━━━━━━━━━━━━━━
+Media query for < 768px: sidebar slides off-screen, hamburger button toggles it.
 
-BACKEND:
-- Node.js + Express
-- MongoDB Atlas
-- Gemini API
-- Groq API
-- REST APIs only
+2e. Accessibility
+Files: index.html, nav.js, modal.js, styles.css
 
-FRONTEND (INTERNAL DASHBOARD):
-- HTML, CSS, Vanilla JS
-- Dark, serious internal-tool UI
-- Admin-only access
-- No public auth pages
+Skip link: <a href="#content" class="skip-link">Skip to content</a>
+ARIA: role="navigation" on sidebar, role="main" on content, role="dialog" aria-modal="true" on modals
+Skip link CSS with focus reveal
+2f. Table Scroll on Mobile
+File: styles.css
 
-━━━━━━━━━━━━━━━━━━━━━━
-5️⃣ CORE BACKEND ARCHITECTURE
-━━━━━━━━━━━━━━━━━━━━━━
+Change .table-wrap from overflow: hidden to overflow-x: auto.
 
-Atlas AI backend must include:
+2g. Error States with Retry
+Files: all page JS files
 
-- API Gateway
-- Provider Router (Gemini vs Groq)
-- Gemini Service Layer
-- Groq Service Layer
-- Prompt Engine
-- Context Builder (RAG)
-- Usage & quota tracker
-- API key management
-- Security middleware
+Add retry button to error messages.
 
-IMPORTANT:
-- All AI logic lives ONLY in Atlas AI
-- API keys for Gemini/Groq are NEVER exposed
-- Client apps only send text & intent
+Phase 3: Backend Improvements
+3a. Stats — Budget Limits + Previous Month
+File: /home/devuser/dev/projects/atlas-ai/backend/src/api/admin.routes.js (lines 142-175)
 
-━━━━━━━━━━━━━━━━━━━━━━
-6️⃣ PROVIDER ROUTING LOGIC
-━━━━━━━━━━━━━━━━━━━━━━
+Add to /admin/stats response:
 
-Design routing rules such as:
 
-- Long / structured prompts → Gemini
-- Short / instant queries → Groq
-- Error explanations → Groq
-- Documentation & summaries → Gemini
+budgetLimits: {
+  global: parseFloat(process.env.ATLAS_MONTHLY_LIMIT_USD) || 5.0,
+  gemini: parseFloat(process.env.GEMINI_MONTHLY_LIMIT_USD) || 4.0,
+  groq: parseFloat(process.env.GROQ_MONTHLY_LIMIT_USD) || 1.0
+},
+previousMonth: { totalUsd, geminiUsd, groqUsd, userCount }
+Add previous month aggregation to the existing Promise.all.
 
-Explain:
-- How routing is decided
-- How fallback works (Gemini ↔ Groq)
-- How failures are handled gracefully
+3b. Health — Provider Status
+File: Where /health is defined (main server file or routes)
 
-━━━━━━━━━━━━━━━━━━━━━━
-7️⃣ USER & API KEY MANAGEMENT
-━━━━━━━━━━━━━━━━━━━━━━
+Add to response: providers: { gemini: !!process.env.GEMINI_API_KEY, groq: !!process.env.GROQ_API_KEY }
 
-Atlas AI must support:
+Phase 4: Feature Enhancements
+4a. Trend Indicators on Overview
+Show up/down arrow on stat cards comparing current vs previous month spend.
 
-A) Manual user creation
-- Admin creates AI users
-- Assigns API keys
-- Sets quotas (requests/day, tokens/month)
-- Assigns users to client apps
+4b. Provider Filter on Usage Page
+Add provider dropdown to usage filters. Backend already supports provider query param.
 
-B) Automatic provisioning
-- Client app requests user creation
-- Atlas creates user + key
-- Applies default quotas
-- Logs ownership & origin
+4c. Gemini Badge Styling
+Gemini: badge-warning (amber). Groq: badge-success (green). Distinct at a glance.
 
-━━━━━━━━━━━━━━━━━━━━━━
-8️⃣ DATA MODELS (CONCEPTUAL)
-━━━━━━━━━━━━━━━━━━━━━━
+Files Summary
+#	File	Key Changes
+1	atlas-ai/frontend/css/styles.css	.openai→.gemini, Gemini color, spinner, responsive sidebar, skip link, table scroll
+2	atlas-ai/frontend/index.html	ARIA roles, skip link, hamburger menu button
+3	atlas-ai/frontend/js/app.js	Mobile menu toggle
+4	atlas-ai/frontend/js/pages/overview.js	OpenAI→Gemini, budget warning, trend, spinner, provider health
+5	atlas-ai/frontend/js/pages/usage.js	OpenAI→Gemini, provider filter, spinner, badge colors
+6	atlas-ai/frontend/js/pages/clients.js	allowedProviders fix, spinner
+7	atlas-ai/frontend/js/pages/keys.js	Spinner
+8	atlas-ai/frontend/js/components/nav.js	ARIA
+9	atlas-ai/frontend/js/components/modal.js	ARIA dialog
+10	atlas-ai/frontend/js/components/table.js	Custom empty messages
+11	atlas-ai/backend/src/api/admin.routes.js	Stats: budgetLimits + prevMonth. Health: providers
+Verification
+pm2 restart atlas-ai
+Dashboard: zero "OpenAI" references, cost bars show "Gemini" (amber) + "Groq" (green)
+Budget warning visible when spend > 80%
+Loading spinners on all pages
+Resize to < 768px: sidebar collapses, hamburger works
+Tab through interface: visible focus indicators
+Usage page: provider filter dropdown filters logs
+Stat cards show trend arrows vs previous month
+User approved the plan
+Update Todos
 
-Design and justify models such as:
-- ClientApp
-- AIUser
-- ApiKey
-- PromptTemplate
-- PromptVersion
-- ContextSource
-- UsageLog
-- MonthlyQuota
+Phase 1: Remove all OpenAI references (overview.js, usage.js, clients.js, styles.css)
 
-Explain WHY each exists.
+Phase 2a: Add loading spinners to CSS and all page JS files
 
-━━━━━━━━━━━━━━━━━━━━━━
-9️⃣ PROMPT SYSTEM (BASIC → ADVANCED)
-━━━━━━━━━━━━━━━━━━━━━━
+Phase 2b-c: Budget warnings + provider health on overview
 
-Atlas AI must support:
+Phase 2d: Responsive sidebar with hamburger menu
 
-BASIC:
-- Simple system + user prompt
+Phase 2e-f: Accessibility (ARIA, skip link) + table scroll
 
-INTERMEDIATE:
-- Structured prompts
-- Safety constraints
-- Context injection
+Phase 2g: Error states with retry buttons
 
-ADVANCED:
-- Versioned prompt templates
-- Role-based prompting
-- Dynamic context sizing
-- Provider-aware prompt tuning
+Phase 3: Backend - stats budgetLimits + prevMonth, health providers
 
-Explain how prompts evolve WITHOUT breaking clients.
+Phase 4: Trend indicators, provider filter, badge colors
 
-━━━━━━━━━━━━━━━━━━━━━━
-🔐 SECURITY REQUIREMENTS
-━━━━━━━━━━━━━━━━━━━━━━
-
-- API key authentication
-- Rate limiting per key
-- Prompt size limits
-- Abuse detection
-- Request validation
-- Usage logging (NO raw prompt storage)
-- Optional IP allow-listing
-
-━━━━━━━━━━━━━━━━━━━━━━
-🔄 CLIENT INTEGRATION RULES
-━━━━━━━━━━━━━━━━━━━━━━
-
-Client apps:
-- Authenticate via API key
-- Send intent + content
-- Never call Gemini or Groq directly
-- Never know which provider was used
-
-Atlas AI:
-- Does not manage client users
-- Does not know client UI
-- Does not share databases
-
-━━━━━━━━━━━━━━━━━━━━━━
-⚠️ CONSTRAINTS
-━━━━━━━━━━━━━━━━━━━━━━
-
-- Gemini + Groq ONLY
-- No OpenAI references anywhere
-- No frontend frameworks
-- No OAuth / SSO
-- Solo-developer realistic
-- Production mindset
-- No tutorial-style explanations
-
-━━━━━━━━━━━━━━━━━━━━━━
-📤 OUTPUT EXPECTATIONS
-━━━━━━━━━━━━━━━━━━━━━━
-
-You must:
-1. Explain full architecture
-2. Propose folder structure
-3. Explain provider routing logic
-4. Describe backend request flow
-5. Describe internal dashboard UI
-6. Explain quota & usage tracking
-7. List common mistakes to avoid
-8. Keep Atlas AI reusable for future projects
-
-FINAL RULE:
-If OpenAI appears anywhere in the design,
-the solution is INVALID.
-
-Respond like a senior engineer building
-a long-term internal AI platform using
-Gemini + Groq.
+Restart Atlas AI and verify all changes

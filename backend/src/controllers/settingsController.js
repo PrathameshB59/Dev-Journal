@@ -19,7 +19,8 @@ exports.getSettings = async (req, res) => {
             }
         });
     } catch (error) {
-        res.status(500).json({ success: false, error: error.message });
+        console.error(error);
+        res.status(500).json({ success: false, error: 'Internal server error' });
     }
 };
 
@@ -39,7 +40,8 @@ exports.updateProfile = async (req, res) => {
 
         res.json({ success: true, data: { name: user.name } });
     } catch (error) {
-        res.status(500).json({ success: false, error: error.message });
+        console.error(error);
+        res.status(500).json({ success: false, error: 'Internal server error' });
     }
 };
 
@@ -70,7 +72,8 @@ exports.changePassword = async (req, res) => {
 
         res.json({ success: true, message: 'Password changed successfully' });
     } catch (error) {
-        res.status(500).json({ success: false, error: error.message });
+        console.error(error);
+        res.status(500).json({ success: false, error: 'Internal server error' });
     }
 };
 
@@ -135,6 +138,7 @@ exports.redeemCoupon = async (req, res) => {
             }
         });
     } catch (error) {
-        res.status(500).json({ success: false, error: error.message });
+        console.error(error);
+        res.status(500).json({ success: false, error: 'Internal server error' });
     }
 };

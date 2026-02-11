@@ -57,4 +57,43 @@ async function isAtlasHealthy() {
     }
 }
 
-module.exports = { callAtlasAI, isAtlasHealthy };
+/**
+ * Call Atlas Agent — context-aware, memory-backed AI agent.
+ * @param {string} userId - The user's ID
+ * @param {string} message - The message to send
+ * @param {string|null} sessionId - Optional session ID for conversation continuity
+ * @param {object} context - Optional context (project, source)
+ * @returns {Promise<{sessionId: string, provider: string, content: string, reasoning: object}>}
+ */
+async function callAtlasAgent(userId, message, sessionId = null, context = {}) {
+    const url = `${ATLAS_AI_URL}/ai/agent`;
+
+    const res = await fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            ...(ATLAS_AI_KEY && { 'x-api-key': ATLAS_AI_KEY })
+        },
+        body: JSON.stringify({
+            userId: userId.toString(),
+            message,
+            ...(sessionId && { sessionId }),
+            context
+        })
+    });
+
+    if (!res.ok) {
+        let errorMsg = 'Atlas Agent request failed';
+        try {
+            const err = await res.json();
+            errorMsg = err.error || errorMsg;
+        } catch {
+            // Response wasn't JSON
+        }
+        throw new Error(errorMsg);
+    }
+
+    return res.json();
+}
+
+module.exports = { callAtlasAI, callAtlasAgent, isAtlasHealthy };

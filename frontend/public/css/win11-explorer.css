@@ -296,6 +296,9 @@
     gap: 2px;
     flex: 1;
     overflow: hidden;
+    list-style: none;
+    margin: 0;
+    padding: 0;
 }
 
 .breadcrumb-item {
@@ -688,7 +691,7 @@
 /* File List Header */
 .file-list-header {
     display: grid;
-    grid-template-columns: minmax(250px, 2fr) 150px 120px 120px;
+    grid-template-columns: minmax(200px, 2fr) 140px 100px minmax(100px, 1fr);
     gap: var(--space-md);
     padding: 8px var(--space-md);
     background: var(--win11-toolbar-bg);
@@ -738,7 +741,7 @@
 
 .file-item {
     display: grid;
-    grid-template-columns: minmax(250px, 2fr) 150px 120px 120px;
+    grid-template-columns: minmax(200px, 2fr) 140px 100px minmax(100px, 1fr);
     gap: var(--space-md);
     padding: 8px var(--space-md);
     align-items: center;
@@ -850,11 +853,11 @@
     border-radius: 50%;
 }
 
-.category-badge.daily-learning .badge-dot { background: var(--folder-blue); }
-.category-badge.project-note .badge-dot { background: var(--folder-green); }
-.category-badge.bug-fix .badge-dot { background: var(--folder-red); }
-.category-badge.code-snippet .badge-dot { background: var(--folder-purple); }
-.category-badge.concept .badge-dot { background: var(--folder-yellow); }
+.category-badge.daily-learning .badge-dot { background: var(--folder-blue); border-radius: 50%; }
+.category-badge.project-note .badge-dot { background: var(--folder-green); border-radius: 2px; }
+.category-badge.bug-fix .badge-dot { background: var(--folder-red); border-radius: 50%; border: 1.5px solid var(--folder-red); background: transparent; }
+.category-badge.code-snippet .badge-dot { background: var(--folder-purple); border-radius: 0; transform: rotate(45deg); }
+.category-badge.concept .badge-dot { background: var(--folder-yellow); clip-path: polygon(50% 0%, 0% 100%, 100% 100%); border-radius: 0; }
 
 /* ========================================
    WINDOWS 11 STATUS BAR
@@ -988,6 +991,14 @@
    RESPONSIVE - MOBILE
    ======================================== */
 @media (max-width: 768px) {
+    .win11-explorer {
+        height: calc(100vh - 60px);
+    }
+
+    .win11-nav-links {
+        display: none;
+    }
+
     .win11-sidebar {
         position: fixed;
         left: -100%;
@@ -1039,9 +1050,44 @@
 }
 
 @media (max-width: 480px) {
+    .win11-toolbar {
+        flex-wrap: wrap;
+        height: auto;
+        min-height: var(--win11-toolbar-height);
+        padding: var(--space-xs) var(--space-sm);
+    }
+
+    .toolbar-separator {
+        display: none;
+    }
+
+    .toolbar-btn {
+        padding: 4px 8px;
+    }
+
     .win11-tabs {
         overflow-x: auto;
         -webkit-overflow-scrolling: touch;
+    }
+
+    .win11-tab {
+        white-space: nowrap;
+        flex-shrink: 0;
+        padding: 6px 12px;
+        font-size: var(--text-xs);
+    }
+
+    .win11-addressbar {
+        flex-wrap: wrap;
+        height: auto;
+        min-height: var(--win11-addressbar-height);
+        gap: var(--space-xs);
+        padding: var(--space-xs) var(--space-sm);
+    }
+
+    .win11-search {
+        min-width: 120px;
+        flex: 1;
     }
 
     .breadcrumb-container {
@@ -1050,6 +1096,18 @@
 
     .pinned-folders {
         grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 360px) {
+    .win11-toolbar {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        flex-wrap: nowrap;
+    }
+
+    .toolbar-left, .toolbar-right {
+        flex-shrink: 0;
     }
 }
 

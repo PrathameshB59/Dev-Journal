@@ -113,11 +113,11 @@
                         <a href="#atlas-subscription" class="dropdown-link">🧠 Subscription & Budget</a>
                         <a href="#atlas-providers" class="dropdown-link">🤖 Provider Strategy</a>
                         <a href="#atlas-fallback" class="dropdown-link">🔁 Fallback / Premium</a>
-                        <a href="#atlas-together-vs-groq" class="dropdown-link">⚡ Together AI vs Groq</a>
+                        <a href="#atlas-gemini-vs-groq" class="dropdown-link">⚡ Gemini vs Groq</a>
                         <a href="#atlas-cost-breakdown" class="dropdown-link">💸 Cost Breakdown</a>
                         <a href="#atlas-cost-per-feature" class="dropdown-link">🧩 Cost per Feature</a>
                         <a href="#atlas-multi-provider" class="dropdown-link">🧠 Multi-Provider Decision</a>
-                        <a href="#atlas-budget-500" class="dropdown-link">💰 ₹500 Budget Plan</a>
+                        <a href="#atlas-budget-500" class="dropdown-link">💰 $5 Budget Plan</a>
                         <a href="#atlas-system-arch" class="dropdown-link">🧱 System Architecture</a>
                         <a href="#atlas-nodejs-arch" class="dropdown-link">🧱 Node.js Architecture</a>
                         <a href="#atlas-universal-design" class="dropdown-link">🌍 Universal Service</a>
@@ -6947,7 +6947,7 @@ AI Router (aiRouter.js)
     ↓
 Budget Guard (MongoDB)
     ↓
-OpenAI (deep reasoning) | Groq (fast help)
+Gemini (deep reasoning) | Groq (fast help)
         </pre>
         <p class="muted">
             Applications never talk to AI providers directly.
@@ -6985,15 +6985,15 @@ OpenAI (deep reasoning) | Groq (fast help)
         <ul>
             <li>All Dev-Journal features are <strong>free</strong></li>
             <li>AI features require an active Atlas AI subscription</li>
-            <li>Cost: <strong>₹300 per user per month</strong></li>
+            <li>Cost: <strong>$5.00 per user per month</strong></li>
             <li>Subscription is optional and user-specific</li>
         </ul>
 
         <h3>Monthly AI Budget (Hard Limit)</h3>
         <ul>
-            <li>Each paid user gets <strong>₹300 AI usage per month</strong></li>
+            <li>Each paid user gets <strong>$5.00 AI usage per month</strong></li>
             <li>Budget is enforced strictly by Atlas</li>
-            <li>Once ₹300 is reached:
+            <li>Once $5.00 is reached:
                 <ul>
                     <li>❌ AI requests are blocked</li>
                     <li>❌ No fallback, no overuse</li>
@@ -7004,9 +7004,8 @@ OpenAI (deep reasoning) | Groq (fast help)
 
         <h3>AI Provider Split (Internal)</h3>
         <ul>
-            <li>Together AI → ₹150 (default, long docs)</li>
-            <li>Groq → ₹50 (fast, short help)</li>
-            <li>OpenAI → ₹100 (deep reasoning)</li>
+            <li>Gemini → $4.00 (default, deep reasoning)</li>
+            <li>Groq → $1.00 (fast, short help)</li>
         </ul>
         <p class="muted">
             Provider split is internal to Atlas and invisible to users.
@@ -7024,7 +7023,7 @@ OpenAI (deep reasoning) | Groq (fast help)
         <ul>
             <li>One coupon per user (lifetime)</li>
             <li>No stacking or extensions</li>
-            <li>Coupon users get the same ₹300/month limit</li>
+            <li>Coupon users get the same $5.00/month limit</li>
             <li>After coupon expiry, AI access is disabled automatically</li>
         </ul>
 
@@ -7032,7 +7031,7 @@ OpenAI (deep reasoning) | Groq (fast help)
         <pre>
 User → Dev-Journal (auth)
      → Atlas (aiEnabled + expiry check)
-     → Monthly budget check (₹300)
+     → Monthly budget check ($5.00)
      → AI provider (if allowed)
         </pre>
 
@@ -7059,13 +7058,13 @@ User → Dev-Journal (auth)
             This avoids vendor lock-in, reduces cost, and keeps the system future-proof.
         </p>
 
-        <h3>Together AI vs OpenAI (Dev-Journal Focus)</h3>
+        <h3>Gemini vs Groq (Provider Strategy)</h3>
         <table style="width:100%; border-collapse: collapse; font-size:14px;">
             <thead>
                 <tr style="border-bottom:1px solid #1f2937;">
                     <th align="left">Aspect</th>
-                    <th align="left">OpenAI</th>
-                    <th align="left">Together AI</th>
+                    <th align="left">Gemini</th>
+                    <th align="left">Gemini</th>
                 </tr>
             </thead>
             <tbody>
@@ -7082,7 +7081,7 @@ User → Dev-Journal (auth)
 
         <h3>How Atlas Uses These Providers</h3>
         <ul>
-            <li><strong>Together AI</strong> is the default provider for:
+            <li><strong>Gemini</strong> is the default provider for:
                 <ul>
                     <li>Daily dev logs</li>
                     <li>Summaries</li>
@@ -7090,7 +7089,7 @@ User → Dev-Journal (auth)
                     <li>Markdown cleanup</li>
                 </ul>
             </li>
-            <li><strong>OpenAI</strong> is used selectively for:
+            <li><strong>Gemini</strong> is used selectively for:
                 <ul>
                     <li>Deep architectural explanations</li>
                     <li>Complex reasoning tasks</li>
@@ -7101,20 +7100,20 @@ User → Dev-Journal (auth)
 
         <h3>Cost-Aware Routing (Atlas Rule)</h3>
         <pre>
-IF monthlyUsage &lt; ₹300
+IF monthlyUsage &lt; $5.00
   → Route to best-fit provider
 ELSE
   → Block AI request until next month
         </pre>
         <p class="muted">
             Atlas never exceeds the per-user monthly limit.
-            Once ₹300 is reached, AI usage is stopped completely.
+            Once $5.00 is reached, AI usage is stopped completely.
         </p>
 
         <h3>Final Decision</h3>
         <p>
-            Atlas uses <strong>Together AI as the default</strong> for cost efficiency
-            and <strong>OpenAI as a premium fallback</strong> for quality.
+            Atlas uses <strong>Gemini as the default</strong> for cost efficiency
+            and <strong>Gemini as a premium fallback</strong> for quality.
         </p>
         <p>This combination delivers:</p>
         <ul>
@@ -7135,8 +7134,8 @@ ELSE
         </p>
         <p>The idea is simple:</p>
         <ul>
-            <li><strong>Use Together AI by default</strong> for most requests</li>
-            <li><strong>Fallback to OpenAI only when higher quality is required</strong></li>
+            <li><strong>Use Gemini by default</strong> for most requests</li>
+            <li><strong>Fallback to Gemini only when higher quality is required</strong></li>
         </ul>
         <p class="muted">
             This avoids unnecessary cost while preserving output quality.
@@ -7144,7 +7143,7 @@ ELSE
 
         <h3>Default Mode (Primary Path)</h3>
         <ul>
-            <li>Provider: <strong>Together AI</strong></li>
+            <li>Provider: <strong>Gemini</strong></li>
             <li>Used for ~90% of requests</li>
             <li>Optimized for cost and speed</li>
         </ul>
@@ -7162,7 +7161,7 @@ ELSE
 
         <h3>Premium / Fallback Mode</h3>
         <ul>
-            <li>Provider: <strong>OpenAI</strong></li>
+            <li>Provider: <strong>Gemini</strong></li>
             <li>Used selectively</li>
             <li>Consumes budget faster</li>
         </ul>
@@ -7174,18 +7173,18 @@ ELSE
             <li>Default provider response is insufficient</li>
         </ul>
         <p class="muted">
-            This path is intentionally limited to protect the ₹300/month quota.
+            This path is intentionally limited to protect the $5.00/month quota.
         </p>
 
         <h3>Fallback Decision Flow</h3>
         <pre>
 User request
    ↓
-Route to Together AI (default)
+Route to Gemini (default)
    ↓
 Is response acceptable?
    ├─ YES → Save &amp; return
-   └─ NO  → Retry with OpenAI (if budget allows)
+   └─ NO  → Retry with Gemini (if budget allows)
         </pre>
         <p class="muted">
             The user does not need to manually choose providers.
@@ -7194,7 +7193,7 @@ Is response acceptable?
 
         <h3>Budget Interaction</h3>
         <ul>
-            <li>Fallback does <strong>not</strong> bypass the monthly ₹300 limit</li>
+            <li>Fallback does <strong>not</strong> bypass the monthly $5.00 limit</li>
             <li>If the user has exhausted their quota:
                 <ul>
                     <li>❌ No fallback occurs</li>
@@ -7206,7 +7205,7 @@ Is response acceptable?
 
         <h3>Why This Design</h3>
         <ul>
-            <li>Prevents unnecessary OpenAI usage</li>
+            <li>Prevents unnecessary Gemini usage</li>
             <li>Keeps costs predictable</li>
             <li>Maintains high-quality output when needed</li>
             <li>Avoids vendor lock-in</li>
@@ -7214,12 +7213,12 @@ Is response acceptable?
         </ul>
     </div>
 
-    <div class="card full" id="atlas-together-vs-groq">
-        <h2>⚡ Together AI vs Groq</h2>
+    <div class="card full" id="atlas-gemini-vs-groq">
+        <h2>⚡ Gemini vs Groq</h2>
 
         <h3>Purpose of Using Two Providers</h3>
         <p>
-            Atlas uses both <strong>Together AI</strong> and <strong>Groq</strong>
+            Atlas uses both <strong>Gemini</strong> and <strong>Groq</strong>
             because they solve different problems.
         </p>
         <p class="muted">
@@ -7231,7 +7230,7 @@ Is response acceptable?
             <thead>
                 <tr style="border-bottom:1px solid #1f2937;">
                     <th align="left">Aspect</th>
-                    <th align="left">Together AI</th>
+                    <th align="left">Gemini</th>
                     <th align="left">Groq</th>
                 </tr>
             </thead>
@@ -7250,7 +7249,7 @@ Is response acceptable?
             <thead>
                 <tr style="border-bottom:1px solid #1f2937;">
                     <th align="left">Task</th>
-                    <th align="left">Together AI</th>
+                    <th align="left">Gemini</th>
                     <th align="left">Groq</th>
                 </tr>
             </thead>
@@ -7265,7 +7264,7 @@ Is response acceptable?
 
         <h3>How Atlas Uses Each Provider</h3>
         <ul>
-            <li><strong>Together AI</strong> is used as the default provider for:
+            <li><strong>Gemini</strong> is used as the default provider for:
                 <ul>
                     <li>Daily development logs</li>
                     <li>Summaries and rewrites</li>
@@ -7284,7 +7283,7 @@ Is response acceptable?
 
         <h3>Design Decision</h3>
         <p>
-            Atlas treats Together AI as the <strong>thinking and writing layer</strong>,
+            Atlas treats Gemini as the <strong>thinking and writing layer</strong>,
             and Groq as the <strong>speed layer</strong>.
         </p>
         <p class="muted">
@@ -7306,68 +7305,45 @@ Is response acceptable?
             These numbers reflect real Dev-Journal usage, not theoretical benchmarks.
         </p>
 
-        <h3>Together AI – Main Brain (70–80%)</h3>
+        <h3>Gemini 2.5 Flash – Primary Provider (80–90%)</h3>
         <ul>
             <li>Daily development logs</li>
-            <li>Markdown cleanup</li>
-            <li>Summaries</li>
+            <li>Markdown cleanup and summaries</li>
             <li>Documentation generation</li>
+            <li>Complex reasoning and architecture explanations</li>
         </ul>
-        <p><strong>Estimated monthly cost:</strong></p>
-        <ul>
-            <li>$1 – $4</li>
-            <li>₹80 – ₹330</li>
-        </ul>
-        <p class="muted">This provider handles most requests due to its cost efficiency.</p>
+        <p><strong>Estimated monthly cost:</strong> $1.00 – $4.00</p>
+        <p class="muted">Handles most requests — both routine and deep reasoning tasks.</p>
 
-        <h3>Groq – Speed Booster (15–20%)</h3>
+        <h3>Groq – Speed Booster (10–20%)</h3>
         <ul>
             <li>Instant error explanations</li>
             <li>Quick "what is this?" queries</li>
             <li>Terminal-style fast responses</li>
         </ul>
-        <p><strong>Estimated monthly cost:</strong></p>
-        <ul>
-            <li>$0.20 – $1</li>
-            <li>₹15 – ₹80</li>
-        </ul>
+        <p><strong>Estimated monthly cost:</strong> $0.20 – $1.00</p>
         <p class="muted">Extremely low cost and near-instant responses.</p>
-
-        <h3>OpenAI – Premium Fallback (5–10%)</h3>
-        <ul>
-            <li>Complex reasoning</li>
-            <li>System architecture explanations</li>
-            <li>High-importance AI requests</li>
-        </ul>
-        <p><strong>Estimated monthly cost:</strong></p>
-        <ul>
-            <li>$2 – $5</li>
-            <li>₹170 – ₹420</li>
-        </ul>
-        <p class="muted">Used sparingly to preserve quality without overspending.</p>
 
         <h3>Total Monthly Cost (Per User)</h3>
         <p><strong>Conservative usage:</strong></p>
         <pre>
-Together AI → $1.5
-Groq        → $0.5
-OpenAI      → $2.0
+Gemini      → $3.00
+Groq        → $0.50
 --------------------
-Total       → ~$4 / month
+Total       → ~$3.50 / month
         </pre>
         <p><strong>Heavy usage:</strong></p>
         <pre>
-Together AI → $4
-Groq        → $1
-OpenAI      → $5
+Gemini      → $4.00
+Groq        → $1.00
 --------------------
-Total       → ~$10 / month
+Total       → ~$5.00 / month
         </pre>
 
         <h3>Atlas Budget Enforcement</h3>
         <ul>
-            <li>Per-user AI limit: <strong>₹300 per month</strong></li>
-            <li>Once ₹300 is reached:
+            <li>Per-user AI limit: <strong>$5.00 per month</strong></li>
+            <li>Once $5.00 is reached:
                 <ul>
                     <li>❌ No provider is called</li>
                     <li>❌ No fallback occurs</li>
@@ -7379,8 +7355,8 @@ Total       → ~$10 / month
 
         <h3>Key Takeaway</h3>
         <p>
-            Atlas delivers near-OpenAI quality, Groq-level speed, and Together AI pricing
-            while keeping per-user AI cost strictly capped.
+            Atlas delivers Gemini-quality reasoning with Groq-level speed
+            while keeping per-user AI cost strictly capped at $5.00/month.
         </p>
         <p class="muted">This makes Atlas safe for public usage and scalable across many users.</p>
     </div>
@@ -7400,27 +7376,27 @@ Total       → ~$10 / month
         <h3>1️⃣ Save Daily Dev Log</h3>
         <ul>
             <li>Purpose: Enhance / clean / rewrite notes</li>
-            <li>Provider: <strong>Together AI</strong></li>
+            <li>Provider: <strong>Gemini</strong></li>
             <li>Usage: ~30 times/month</li>
         </ul>
-        <p><strong>Estimated cost:</strong> $0.30 – $0.60 / month (₹25 – ₹50)</p>
+        <p><strong>Estimated cost:</strong> $0.30 – $0.60 / month</p>
         <p class="muted">Cheap enough to remain always enabled.</p>
 
         <h3>2️⃣ Summarize Today's Work</h3>
         <ul>
             <li>Purpose: End-of-day summary</li>
-            <li>Provider: <strong>Together AI</strong></li>
+            <li>Provider: <strong>Gemini</strong></li>
             <li>Usage: ~20 times/month</li>
         </ul>
-        <p><strong>Estimated cost:</strong> $0.40 – $0.80 / month (₹35 – ₹70)</p>
+        <p><strong>Estimated cost:</strong> $0.40 – $0.80 / month</p>
 
         <h3>3️⃣ Explain Git Commit</h3>
         <ul>
             <li>Purpose: Convert commit diffs into explanations</li>
-            <li>Provider: <strong>Together AI</strong></li>
+            <li>Provider: <strong>Gemini</strong></li>
             <li>Usage: ~10–15 times/month</li>
         </ul>
-        <p><strong>Estimated cost:</strong> $0.30 – $0.70 / month (₹25 – ₹60)</p>
+        <p><strong>Estimated cost:</strong> $0.30 – $0.70 / month</p>
 
         <h3>4️⃣ Quick Error Help ⚡</h3>
         <ul>
@@ -7428,33 +7404,33 @@ Total       → ~$10 / month
             <li>Provider: <strong>Groq</strong></li>
             <li>Usage: ~20–40 times/month</li>
         </ul>
-        <p><strong>Estimated cost:</strong> $0.10 – $0.30 / month (₹8 – ₹25)</p>
+        <p><strong>Estimated cost:</strong> $0.10 – $0.30 / month</p>
         <p class="muted">This is where Groq excels: ultra-fast and extremely cheap.</p>
 
         <h3>5️⃣ Explain This Concept (Premium)</h3>
         <ul>
             <li>Purpose: Deep reasoning (architecture, infra, learning)</li>
-            <li>Provider: <strong>OpenAI</strong></li>
+            <li>Provider: <strong>Gemini</strong></li>
             <li>Usage: ~5–10 times/month</li>
         </ul>
-        <p><strong>Estimated cost:</strong> $1.50 – $3.00 / month (₹120 – ₹250)</p>
+        <p><strong>Estimated cost:</strong> $1.50 – $3.00 / month</p>
         <p class="muted">This is the most expensive feature and is strictly limited.</p>
 
         <h3>6️⃣ Rewrite as Documentation</h3>
         <ul>
             <li>Purpose: Convert raw notes into clean markdown docs</li>
-            <li>Provider: <strong>Together AI</strong></li>
+            <li>Provider: <strong>Gemini</strong></li>
             <li>Usage: ~10 times/month</li>
         </ul>
-        <p><strong>Estimated cost:</strong> $0.40 – $0.90 / month (₹35 – ₹75)</p>
+        <p><strong>Estimated cost:</strong> $0.40 – $0.90 / month</p>
 
         <h3>7️⃣ Auto Fallback Retry</h3>
         <ul>
             <li>Purpose: Retry with higher-quality provider</li>
-            <li>Provider: <strong>OpenAI</strong></li>
+            <li>Provider: <strong>Gemini</strong></li>
             <li>Usage: ~3–5 times/month</li>
         </ul>
-        <p><strong>Estimated cost:</strong> $0.50 – $1.00 / month (₹40 – ₹80)</p>
+        <p><strong>Estimated cost:</strong> $0.50 – $1.00 / month</p>
 
         <h3>Total Monthly Cost (Per User)</h3>
         <table style="width:100%; border-collapse:collapse; font-size:14px;">
@@ -7472,13 +7448,13 @@ Total       → ~$10 / month
                 <tr><td>Deep explanations</td><td>$2.0</td></tr>
                 <tr><td>Doc rewrite</td><td>$0.6</td></tr>
                 <tr><td>Fallback retries</td><td>$0.7</td></tr>
-                <tr><td><strong>Total</strong></td><td><strong>~$5 – $6 (₹400 – ₹550)</strong></td></tr>
+                <tr><td><strong>Total</strong></td><td><strong>~$5 – $6</strong></td></tr>
             </tbody>
         </table>
 
         <h3>Atlas Cost Control Rules</h3>
         <ul>
-            <li>Monthly per-user hard limit: <strong>₹300</strong></li>
+            <li>Monthly per-user hard limit: <strong>$5.00</strong></li>
             <li>Expensive features are rate-limited</li>
             <li>No provider is called once the limit is reached</li>
             <li>Usage resets automatically next month</li>
@@ -7487,7 +7463,7 @@ Total       → ~$10 / month
 
         <h3>Key Takeaway</h3>
         <p>
-            Each AI feature costs <strong>paise, not rupees</strong>.
+            Each AI feature costs <strong>cents, not dollars</strong>.
             Only deep reasoning features consume meaningful budget.
         </p>
     </div>
@@ -7506,7 +7482,7 @@ Total       → ~$10 / month
         </p>
         <p class="muted">Atlas is designed as a smart AI router, not a simple API wrapper.</p>
 
-        <h3>Together AI — Daily Workhorse</h3>
+        <h3>Gemini — Daily Workhorse</h3>
         <ul>
             <li>Default provider for most AI requests</li>
             <li>Handles ~70–80% of usage</li>
@@ -7514,7 +7490,7 @@ Total       → ~$10 / month
             <li>Uses open-source models</li>
             <li>Low cost and no vendor lock-in</li>
         </ul>
-        <p class="muted">Together AI is the backbone of Atlas for everyday workloads.</p>
+        <p class="muted">Gemini is the backbone of Atlas for everyday workloads.</p>
 
         <h3>Groq — Instant Help Path</h3>
         <ul>
@@ -7525,19 +7501,19 @@ Total       → ~$10 / month
         </ul>
         <p class="muted">Groq provides a terminal-like experience for instant feedback.</p>
 
-        <h3>OpenAI — Premium Reasoning Layer</h3>
+        <h3>Gemini — Premium Reasoning Layer</h3>
         <ul>
             <li>Used only for complex or high-importance requests</li>
             <li>Best reasoning and explanation quality</li>
             <li>Consumes budget faster</li>
             <li>Strictly rate-limited</li>
         </ul>
-        <p class="muted">OpenAI is reserved for situations where quality matters more than cost.</p>
+        <p class="muted">Gemini is reserved for situations where quality matters more than cost.</p>
 
         <h3>Why a Single Provider Is Not Enough</h3>
         <ul>
-            <li><strong>Only OpenAI</strong> → Excellent quality but expensive and overkill</li>
-            <li><strong>Only Together AI</strong> → Cheap and private but weaker for deep reasoning</li>
+            <li><strong>Only Gemini</strong> → Excellent quality but expensive and overkill</li>
+            <li><strong>Only Gemini</strong> → Cheap and private but weaker for deep reasoning</li>
             <li><strong>Only Groq</strong> → Fast and cheap but unsuitable for long explanations</li>
         </ul>
         <p>A single-provider setup forces trade-offs. A multi-provider setup removes them.</p>
@@ -7553,28 +7529,28 @@ Total       → ~$10 / month
 
         <h3>Design Conclusion</h3>
         <p>
-            <strong>Together AI + Groq + OpenAI</strong> is not over-engineering.
+            <strong>Gemini + Groq</strong> is not over-engineering.
             It is a deliberate, cost-aware architecture choice.
         </p>
         <p class="muted">This design keeps Atlas fast, affordable, private, and future-proof.</p>
     </div>
 
     <div class="card full" id="atlas-budget-500">
-        <h2>💰 ₹500 Global Budget Planning</h2>
+        <h2>💰 $5.00 Global Budget Planning</h2>
 
         <h3>Budget Constraint</h3>
         <p>
             Atlas was initially designed and tested under a strict
-            <strong>₹500 per month global budget</strong>.
+            <strong>$5.00 per month global budget</strong>.
         </p>
         <p>
             This constraint ensured that the system was built with
             <strong>cost awareness, provider routing, and hard limits</strong>
             from day one.
         </p>
-        <p class="muted">₹500 ≈ $6 USD per month (approx).</p>
+        <p class="muted">$5.00 ≈ $6 USD per month (approx).</p>
 
-        <h3>Recommended Provider Split (₹500 Plan)</h3>
+        <h3>Recommended Provider Split ($5.00 Plan)</h3>
         <table style="width:100%; border-collapse:collapse; font-size:14px;">
             <thead>
                 <tr style="border-bottom:1px solid #1f2937;">
@@ -7584,17 +7560,16 @@ Total       → ~$10 / month
                 </tr>
             </thead>
             <tbody>
-                <tr><td>Together AI</td><td>Primary AI (docs, summaries, journaling)</td><td>₹250 – ₹300</td></tr>
-                <tr><td>Groq</td><td>Instant help / fast responses</td><td>₹50 – ₹100</td></tr>
-                <tr><td>OpenAI</td><td>Premium reasoning (strictly limited)</td><td>₹80 – ₹120</td></tr>
-                <tr><td><strong>Total</strong></td><td></td><td><strong>₹380 – ₹480</strong></td></tr>
+                <tr><td>Gemini</td><td>Primary AI (docs, summaries, deep reasoning)</td><td>$3.50 – $4.00</td></tr>
+                <tr><td>Groq</td><td>Instant help / fast responses</td><td>$0.50 – $1.00</td></tr>
+                <tr><td><strong>Total</strong></td><td></td><td><strong>$4.00 – $5.00</strong></td></tr>
             </tbody>
         </table>
         <p class="muted">The remaining buffer protects against minor usage spikes.</p>
 
         <h3>Provider Usage Intent</h3>
         <ul>
-            <li><strong>Together AI</strong> handles ~75–80% of all requests:
+            <li><strong>Gemini</strong> handles ~75–80% of all requests:
                 <ul>
                     <li>Daily dev logs</li>
                     <li>Summaries</li>
@@ -7610,41 +7585,33 @@ Total       → ~$10 / month
                     <li>Terminal-style fast feedback</li>
                 </ul>
             </li>
-            <li><strong>OpenAI</strong> is reserved strictly for:
-                <ul>
-                    <li>Deep architectural explanations</li>
-                    <li>Hard conceptual reasoning</li>
-                    <li>Fallback when other providers are insufficient</li>
-                </ul>
-            </li>
         </ul>
 
         <h3>Hard Limits (Non-Negotiable)</h3>
         <ul>
-            <li>OpenAI: Maximum ~₹120 per month, auto-fallback disabled after limit</li>
-            <li>Together AI: Default provider, used only within allocated budget</li>
-            <li>Groq: Safe to treat as near-unlimited, still monitored</li>
+            <li>Gemini: $4.00/month budget, primary provider for all reasoning tasks</li>
+            <li>Groq: $1.00/month budget, near-unlimited for quick queries</li>
         </ul>
         <p class="muted">These limits guarantee zero surprise billing.</p>
 
         <h3>Operational Rule of Thumb</h3>
         <blockquote>
-            If it's long and routine → Together AI<br />
+            If it's long and routine → Gemini<br />
             If it's fast and short → Groq<br />
-            If it's hard and important → OpenAI
+            If it's hard and important → Gemini
         </blockquote>
 
         <h3>Design Outcome</h3>
         <p>
-            Operating Atlas under a ₹500 global budget proved that
+            Operating Atlas under a $5.00 global budget proved that
             a <strong>multi-provider, cost-aware AI system</strong>
             can deliver high quality without overspending.
         </p>
-        <p class="muted">This experiment directly informed the later per-user ₹300 subscription model.</p>
+        <p class="muted">This experiment directly informed the later per-user $5.00 subscription model.</p>
     </div>
 
     <div class="card full" id="atlas-system-arch">
-        <h2>🧱 System Architecture (₹500 Budget Plan)</h2>
+        <h2>🧱 System Architecture ($5.00 Budget Plan)</h2>
 
         <h3>Architecture Goal</h3>
         <ul>
@@ -7665,7 +7632,7 @@ Backend API (Node.js / Express)
 Atlas AI Router (Decision Layer)
         ↓
 --------------------------------
-| Together AI | Groq | OpenAI |
+|   Gemini   |   Groq   |
 --------------------------------
         ↓
 Response → Stored → Returned to User
@@ -7710,14 +7677,14 @@ Response → Stored → Returned to User
                 </tr>
             </thead>
             <tbody>
-                <tr><td>Daily logs</td><td>Together AI</td></tr>
-                <tr><td>Summaries</td><td>Together AI</td></tr>
-                <tr><td>Docs rewrite</td><td>Together AI</td></tr>
-                <tr><td>Commit explanation</td><td>Together AI</td></tr>
+                <tr><td>Daily logs</td><td>Gemini</td></tr>
+                <tr><td>Summaries</td><td>Gemini</td></tr>
+                <tr><td>Docs rewrite</td><td>Gemini</td></tr>
+                <tr><td>Commit explanation</td><td>Gemini</td></tr>
                 <tr><td>Quick errors</td><td>Groq</td></tr>
                 <tr><td>Instant help</td><td>Groq</td></tr>
-                <tr><td>Deep concepts</td><td>OpenAI</td></tr>
-                <tr><td>Fallback retry</td><td>OpenAI (limited)</td></tr>
+                <tr><td>Deep concepts</td><td>Gemini</td></tr>
+                <tr><td>Fallback retry</td><td>Gemini (limited)</td></tr>
             </tbody>
         </table>
 
@@ -7729,20 +7696,18 @@ If limit reached → Block request
         ↓
 Log usage
         </pre>
-        <p>Initial ₹500 system-level allocation:</p>
+        <p>Initial $5.00 system-level allocation:</p>
         <ul>
-            <li>OpenAI: ₹120 / month</li>
-            <li>Together AI: ₹300 / month</li>
-            <li>Groq: ₹80 / month</li>
+            <li>Gemini: $4.00 / month</li>
+            <li>Groq: $1.00 / month</li>
         </ul>
         <p class="muted">If a provider limit is reached, Atlas stops routing requests to it. No automatic overspending is allowed.</p>
 
         <h3>5️⃣ AI Provider Layer</h3>
         <pre>
 /providers
-├── together.js
-├── groq.js
-└── openai.js
+├── gemini.js
+└── groq.js
         </pre>
         <ul>
             <li>Providers are fully isolated</li>
@@ -7816,7 +7781,7 @@ Express API (JWT + RBAC)
 Atlas AI Router (Node.js)
         ↓
 ----------------------------------
-| Together AI | Groq | OpenAI |
+|   Gemini   |   Groq   |
 ----------------------------------
         ↓
 MongoDB (Entries + AI Usage Logs)
@@ -7829,9 +7794,8 @@ MongoDB (Entries + AI Usage Logs)
 backend/src/
 ├── ai/
 │   ├── router.js     ← AI routing logic
-│   ├── together.js   ← Together AI client
+│   ├── gemini.js    ← Gemini client
 │   ├── groq.js       ← Groq client
-│   ├── openai.js     ← OpenAI client
 │   └── budget.js     ← Budget enforcement
         </pre>
         <p class="muted">Existing authentication, RBAC, and rate-limiting remain untouched.</p>
@@ -7845,28 +7809,27 @@ backend/src/
                 </tr>
             </thead>
             <tbody>
-                <tr><td>Save dev log</td><td>Together AI</td></tr>
-                <tr><td>Summarize day</td><td>Together AI</td></tr>
-                <tr><td>Rewrite documentation</td><td>Together AI</td></tr>
-                <tr><td>Explain commit</td><td>Together AI</td></tr>
+                <tr><td>Save dev log</td><td>Gemini</td></tr>
+                <tr><td>Summarize day</td><td>Gemini</td></tr>
+                <tr><td>Rewrite documentation</td><td>Gemini</td></tr>
+                <tr><td>Explain commit</td><td>Gemini</td></tr>
                 <tr><td>Quick error help</td><td>Groq</td></tr>
                 <tr><td>Instant "what is this?"</td><td>Groq</td></tr>
-                <tr><td>Explain deep concept</td><td>OpenAI</td></tr>
-                <tr><td>Retry if response is weak</td><td>OpenAI (limited)</td></tr>
+                <tr><td>Explain deep concept</td><td>Gemini</td></tr>
+                <tr><td>Retry if response is weak</td><td>Gemini (limited)</td></tr>
             </tbody>
         </table>
 
         <h3>Budget Guard (System-Level)</h3>
         <p>Atlas enforces strict monthly provider limits to prevent accidental overspending.</p>
         <pre>
-Together AI → ₹300 / month
-Groq        → ₹80  / month
-OpenAI      → ₹120 / month
+Gemini      → $4.00 / month
+Groq        → $1.00 / month
 --------------------------
-TOTAL       → ₹500 (hard cap)
+TOTAL       → $5.00 (hard cap)
         </pre>
         <ul>
-            <li>OpenAI is disabled automatically when its limit is reached</li>
+            <li>Gemini is disabled automatically when its limit is reached</li>
             <li>No provider is allowed to exceed its assigned budget</li>
             <li>No silent fallback after limits are hit</li>
         </ul>
@@ -7879,7 +7842,7 @@ User Action
     → Rate limit
     → Atlas AI Router
         → Budget check
-            → OpenAI (if allowed)
+            → Gemini (if allowed)
             → Otherwise block or downgrade
     → Response saved
     → Response returned
@@ -7891,7 +7854,7 @@ User Action
         <pre>
 AiUsage {
   userId,
-  provider,        // together | groq | openai
+  provider,        // gemini | groq
   feature,         // explain, summarize, quick-help
   estimatedCost,
   createdAt
@@ -7982,8 +7945,8 @@ ai-core/
 │   ├── server.js
 │   ├── app.js
 │   ├── router/        # AI decision logic
-│   ├── providers/     # Together, Groq, OpenAI
-│   ├── budget/        # ₹300 per-user enforcement
+│   ├── providers/     # Gemini, Groq
+│   ├── budget/        # $5.00 per-user enforcement
 │   ├── api/           # /summarize /explain /quick
 │   └── utils/
 ├── data/
@@ -8004,7 +7967,7 @@ CLI Script  → curl http://localhost:9000/ai/quick-help
         <h3>Budget Ownership</h3>
         <p>AI cost control is centralized inside Atlas. Individual projects cannot bypass budget rules.</p>
         <ul>
-            <li>Monthly hard cap: <strong>₹300 per user</strong></li>
+            <li>Monthly hard cap: <strong>$5.00 per user</strong></li>
             <li>Provider-level limits enforced internally</li>
             <li>No silent overspending</li>
         </ul>
@@ -8099,8 +8062,8 @@ CLI Script  → curl http://localhost:9000/ai/quick-help
 │   └── README.md
         </pre>
         <pre>
-Atlas: OpenAI budget exhausted, routing disabled
-Atlas: Request routed to Together AI
+Atlas: Gemini budget exhausted, routing disabled
+Atlas: Request routed to Gemini
         </pre>
 
         <h3>Design Outcome</h3>
@@ -8136,7 +8099,7 @@ Atlas: Request routed to Together AI
             <li><strong>Project name:</strong> Atlas</li>
             <li><strong>Role:</strong> Universal AI Core / Internal AI Platform</li>
             <li><strong>Scope:</strong> All projects under <code>~/dev/projects/</code></li>
-            <li><strong>Monthly AI budget:</strong> ₹300 per user (hard cap)</li>
+            <li><strong>Monthly AI budget:</strong> $5.00 per user (hard cap)</li>
         </ul>
         <p class="muted">Consistency is critical for long-term maintainability.</p>
 
@@ -8163,7 +8126,7 @@ Atlas: Request routed to Together AI
         <h3>Operational Tone Guide</h3>
         <p>Atlas communicates in a calm, factual, infrastructure-oriented manner.</p>
         <pre>
-Atlas: OpenAI budget exhausted, routing disabled
+Atlas: Gemini budget exhausted, routing disabled
 Atlas: Request routed to Groq (fast path)
 Atlas: Monthly AI usage at 82%
         </pre>
@@ -8181,7 +8144,7 @@ Atlas: Monthly AI usage at 82%
             <li>Create the <code>atlas/</code> project skeleton (Node.js)</li>
             <li>Write the Atlas <code>README.md</code> (vision + architecture)</li>
             <li>Define the Atlas API contract (<code>/summarize</code>, <code>/explain</code>, <code>/quick</code>)</li>
-            <li>Implement the ₹300 per-user budget guard</li>
+            <li>Implement the $5.00 per-user budget guard</li>
             <li>Add Atlas as a managed PM2 service</li>
         </ol>
         <p class="muted">Provider integration follows only after the foundation is complete.</p>
@@ -8212,7 +8175,7 @@ Atlas: Monthly AI usage at 82%
         <p class="muted">This aligns naturally with existing JWT authentication and RBAC.</p>
 
         <h3>Final Budget Strategy</h3>
-        <p>Atlas enforces a strict <strong>₹300 per user per month</strong> AI budget.</p>
+        <p>Atlas enforces a strict <strong>$5.00 per user per month</strong> AI budget.</p>
         <ul>
             <li>Fair and predictable for users</li>
             <li>Scales safely for public access</li>
@@ -8229,10 +8192,9 @@ Atlas: Monthly AI usage at 82%
                 </tr>
             </thead>
             <tbody>
-                <tr><td>Together AI</td><td>₹150</td></tr>
-                <tr><td>Groq</td><td>₹50</td></tr>
-                <tr><td>OpenAI</td><td>₹100</td></tr>
-                <tr><td><strong>Total</strong></td><td><strong>₹300 / user / month</strong></td></tr>
+                <tr><td>Gemini</td><td>$4.00</td></tr>
+                <tr><td>Groq</td><td>$1.00</td></tr>
+                <tr><td><strong>Total</strong></td><td><strong>$5.00 / user / month</strong></td></tr>
             </tbody>
         </table>
         <p class="muted">One user reaching their limit has no effect on others.</p>
@@ -8271,7 +8233,7 @@ AI Provider (if allowed)
         <pre>
 AiUsage {
   userId,
-  provider,     // together | groq | openai
+  provider,     // gemini | groq
   cost,
   month,        // YYYY-MM
   createdAt
@@ -8281,9 +8243,9 @@ AiUsage {
 
         <h3>Behavior When Limit Is Reached</h3>
         <ul>
-            <li>OpenAI requests are blocked</li>
+            <li>Gemini requests are blocked</li>
             <li>Groq requests are blocked</li>
-            <li>Together AI may optionally show a warning</li>
+            <li>Gemini may optionally show a warning</li>
             <li>AI access resumes automatically next month</li>
         </ul>
         <p class="muted">Clear feedback prevents user frustration.</p>
@@ -8297,8 +8259,8 @@ AiUsage {
                 </tr>
             </thead>
             <tbody>
-                <tr><td>Per user</td><td>₹300 / month</td></tr>
-                <tr><td>Global Atlas</td><td>₹3,000 / month</td></tr>
+                <tr><td>Per user</td><td>$5.00 / month</td></tr>
+                <tr><td>Global Atlas</td><td>$50 / month</td></tr>
             </tbody>
         </table>
         <p class="muted">If the global limit is reached, premium providers are temporarily disabled.</p>
@@ -8322,7 +8284,7 @@ AiUsage {
         </p>
         <blockquote>
             All Dev-Journal features are free.<br />
-            AI features are paid — ₹300 per user per month.
+            AI features are paid — $5.00 per user per month.
         </blockquote>
 
         <h3>What Is Free</h3>
@@ -8355,7 +8317,7 @@ Atlas AI    = Paid Add-on
 
         <h3>AI Subscription Plan</h3>
         <ul>
-            <li><strong>Price:</strong> ₹300 per month</li>
+            <li><strong>Price:</strong> $5.00 per month</li>
             <li><strong>Scope:</strong> Per user</li>
             <li><strong>Billing:</strong> Manual initially (Razorpay / Stripe later)</li>
             <li><strong>Reset:</strong> Monthly</li>
@@ -8372,7 +8334,7 @@ Atlas AI    = Paid Add-on
             </thead>
             <tbody>
                 <tr><td><code>aiEnabled = false</code></td><td>Free user (no AI access)</td></tr>
-                <tr><td><code>aiEnabled = true</code></td><td>Paid user (₹300 plan)</td></tr>
+                <tr><td><code>aiEnabled = true</code></td><td>Paid user ($5.00 plan)</td></tr>
             </tbody>
         </table>
         <p class="muted">This flag is stored in the Dev-Journal database, not in Atlas.</p>
@@ -8412,10 +8374,9 @@ AI Providers
                 </tr>
             </thead>
             <tbody>
-                <tr><td>Together AI</td><td>₹150</td></tr>
-                <tr><td>Groq</td><td>₹50</td></tr>
-                <tr><td>OpenAI</td><td>₹100</td></tr>
-                <tr><td><strong>Total</strong></td><td><strong>₹300 / month</strong></td></tr>
+                <tr><td>Gemini</td><td>$4.00</td></tr>
+                <tr><td>Groq</td><td>$1.00</td></tr>
+                <tr><td><strong>Total</strong></td><td><strong>$5.00 / month</strong></td></tr>
             </tbody>
         </table>
 
@@ -8423,7 +8384,7 @@ AI Providers
         <ul>
             <li>AI requests are blocked immediately</li>
             <li>No fallback or partial responses</li>
-            <li>No overuse beyond ₹300</li>
+            <li>No overuse beyond $5.00</li>
             <li>Access automatically resets next month</li>
         </ul>
         <p class="muted">This guarantees zero surprise billing.</p>
@@ -8432,12 +8393,12 @@ AI Providers
         <p><strong>Free user:</strong></p>
         <ul>
             <li>AI buttons visible but disabled</li>
-            <li>Clear message: "AI features cost ₹300/month"</li>
+            <li>Clear message: "AI features cost $5.00/month"</li>
         </ul>
         <p><strong>Paid user:</strong></p>
         <ul>
             <li>AI buttons enabled</li>
-            <li>Visible usage meter (e.g. ₹180 / ₹300)</li>
+            <li>Visible usage meter (e.g. $3.60 / $5.00)</li>
         </ul>
         <p><strong>User at limit:</strong></p>
         <ul>
@@ -8457,7 +8418,7 @@ AI Providers
         <h3>Design Summary</h3>
         <blockquote>
             Dev-Journal is free for everyone.<br />
-            Atlas AI is a paid add-on costing ₹300 per user per month.<br />
+            Atlas AI is a paid add-on costing $5.00 per user per month.<br />
             Dev-Journal controls access.<br />
             Atlas enforces budget and routing.
         </blockquote>
@@ -8471,7 +8432,7 @@ AI Providers
         <p>
             Atlas supports a coupon-based free trial system to enable user growth
             without uncontrolled AI spending. Coupons grant <strong>temporary AI access</strong>
-            while still enforcing the standard <strong>₹300 per-user monthly budget</strong>.
+            while still enforcing the standard <strong>$5.00 per-user monthly budget</strong>.
         </p>
 
         <h3>Design Principles</h3>
@@ -8568,12 +8529,12 @@ User {
         <pre>
 IF aiEnabled !== true → reject
 IF now > aiExpiresAt → reject
-ELSE → allow AI (₹300 budget applies)
+ELSE → allow AI ($5.00 budget applies)
         </pre>
 
         <h3>Budget Handling for Coupon Users</h3>
         <ul>
-            <li>Coupon users receive the same ₹300 monthly AI limit</li>
+            <li>Coupon users receive the same $5.00 monthly AI limit</li>
             <li>No special quota or bypass</li>
             <li>Usage resets monthly</li>
             <li>Coupon duration limits total exposure</li>
@@ -8612,7 +8573,7 @@ DEVJOURNAL-TRIAL
         <ul>
             <li>One coupon = one user</li>
             <li>Coupons grant temporary AI access only</li>
-            <li>₹300 monthly budget is always enforced</li>
+            <li>$5.00 monthly budget is always enforced</li>
             <li>Atlas remains clean and provider-agnostic</li>
             <li>Dev-Journal controls eligibility and lifecycle</li>
         </ul>
@@ -8624,7 +8585,7 @@ DEVJOURNAL-TRIAL
         <h3>Final Goals (Locked)</h3>
         <ul>
             <li><strong>Dynamic coupons</strong> — Admin can grant 1–6 months of free AI access. Duration is configurable per coupon. Usage is strictly controlled.</li>
-            <li><strong>Hard ₹300 monthly limit per user</strong> — Once the limit is reached, AI usage stops immediately. No overuse. No surprise costs.</li>
+            <li><strong>Hard $5.00 monthly limit per user</strong> — Once the limit is reached, AI usage stops immediately. No overuse. No surprise costs.</li>
             <li><strong>Atlas remains universal</strong> — Dev-Journal manages users, coupons, and plans. Atlas only enforces access rules and quotas.</li>
         </ul>
 
@@ -8639,7 +8600,7 @@ DEVJOURNAL-TRIAL
             <tbody>
                 <tr><td>Subscription (paid / coupon)</td><td>Dev-Journal</td></tr>
                 <tr><td>Coupon duration (1–6 months)</td><td>Dev-Journal</td></tr>
-                <tr><td>Monthly AI quota (₹300)</td><td>Atlas</td></tr>
+                <tr><td>Monthly AI quota ($5.00)</td><td>Atlas</td></tr>
             </tbody>
         </table>
         <p class="muted">These concerns are intentionally separated and must never be mixed.</p>
@@ -8688,7 +8649,7 @@ User {
 
         <h3>Per-User Monthly AI Quota (Atlas)</h3>
         <pre>
-AI_QUOTA_PER_MONTH = ₹300
+AI_QUOTA_PER_MONTH = $5.00
         </pre>
         <p>This quota applies equally to: Paid users, Coupon users, Admin-granted users.</p>
         <p class="muted">There are no exceptions.</p>
@@ -8698,7 +8659,7 @@ AI_QUOTA_PER_MONTH = ₹300
 AiUsage {
   userId,
   month: "YYYY-MM",
-  provider,   // together | groq | openai
+  provider,   // gemini | groq
   cost,
   createdAt
 }
@@ -8764,12 +8725,12 @@ ATLAS-FREE-6M
         <h3>User Experience Behavior</h3>
         <p><strong>Free user:</strong> AI buttons disabled, prompt to subscribe or apply coupon</p>
         <p><strong>Coupon user:</strong> AI enabled immediately, expiry date clearly shown, usage meter visible</p>
-        <p><strong>User hits ₹300 limit:</strong> AI disabled instantly, message: "Monthly AI limit reached. Resets next month."</p>
+        <p><strong>User hits $5.00 limit:</strong> AI disabled instantly, message: "Monthly AI limit reached. Resets next month."</p>
         <p><strong>Coupon expires:</strong> AI disabled, upgrade prompt shown</p>
 
         <h3>Global Safety Net</h3>
         <pre>
-GLOBAL_ATLAS_LIMIT = ₹5,000
+GLOBAL_ATLAS_LIMIT = $50
         </pre>
         <ul>
             <li>Protects system-wide spending</li>
@@ -8781,7 +8742,7 @@ GLOBAL_ATLAS_LIMIT = ₹5,000
         <h3>Final Architecture Summary</h3>
         <blockquote>
             Admins can generate adjustable coupons granting 1–6 months of free AI access.
-            Coupon users are treated exactly like paid users, with a strict ₹300 per-month
+            Coupon users are treated exactly like paid users, with a strict $5.00 per-month
             AI quota enforced by Atlas. Once the quota is reached, AI usage stops until the
             next reset. Dev-Journal manages subscriptions and coupons, while Atlas remains a
             universal, cost-safe AI core.
@@ -8965,7 +8926,7 @@ MongoDB Atlas Vector Search
 ↓
 Relevant Entries (context)
 ↓
-LLM (OpenAI / Groq / Together)
+LLM (Gemini / Groq)
 ↓
 AI Response to User
         </pre>
@@ -9061,6 +9022,82 @@ AI answers using your history
             Dev Journal = Your external brain
         </blockquote>
     </div>
+
+    <div class="card full" id="atlas-dashboard-v2">
+        <h2>📊 Atlas AI Admin Dashboard v0.2.0</h2>
+        <p class="muted">Complete dashboard overhaul — Feb 2026</p>
+
+        <h3>Changes</h3>
+        <ul>
+            <li>Replaced all OpenAI references with Gemini across entire dashboard</li>
+            <li>Loading spinners on all pages (overview, usage, clients, keys)</li>
+            <li>Budget warning alerts at 75% and 90% thresholds</li>
+            <li>Trend indicators comparing current vs previous month spend</li>
+            <li>Per-provider health display (Gemini/Groq status + model)</li>
+            <li>Responsive sidebar with hamburger menu (&lt; 768px)</li>
+            <li>ARIA roles, skip-to-content link, keyboard accessibility</li>
+            <li>Horizontal table scroll for mobile</li>
+            <li>Retry buttons on all error states</li>
+            <li>Provider filter dropdown on usage page</li>
+        </ul>
+
+        <h3>Backend Enhancements</h3>
+        <ul>
+            <li>Health endpoint returns per-provider status with model names</li>
+            <li>Stats endpoint returns budgetLimits and previousMonth data</li>
+            <li>Budget limits fetched from backend env vars (not hardcoded)</li>
+        </ul>
+    </div>
+
+    <div class="card full" id="atlas-agent">
+        <h2>🤖 Atlas Agent — Context-Aware AI Agent</h2>
+        <p class="muted">Memory-backed, multi-provider agent system</p>
+
+        <h3>Three-Layer Memory Model</h3>
+        <ul>
+            <li><strong>Session Memory</strong> — Short-lived conversation context (30-min TTL, MongoDB TTL index)</li>
+            <li><strong>User Profile Memory</strong> — Persistent preferences: skill level, tech stack, goals</li>
+            <li><strong>Knowledge Memory</strong> — Saved summaries, decisions, notes, insights</li>
+        </ul>
+
+        <h3>Agent Pipeline</h3>
+        <ol>
+            <li>Receive message + session context</li>
+            <li>Load/create session (AgentSession model)</li>
+            <li>Load user profile (UserProfile model)</li>
+            <li>Classify intent via fast Groq call</li>
+            <li>Select provider: Groq for quick answers, Gemini for deep reasoning</li>
+            <li>Retrieve relevant knowledge by tag matching</li>
+            <li>Build enriched prompt with full context</li>
+            <li>Call selected provider</li>
+            <li>Update session with new exchange</li>
+            <li>Optional profile update detection (every 5th turn)</li>
+        </ol>
+
+        <h3>API Endpoints</h3>
+        <table style="width:100%; border-collapse:collapse; font-size:14px;">
+            <thead>
+                <tr style="border-bottom:1px solid #1f2937;">
+                    <th align="left">Endpoint</th>
+                    <th align="left">Purpose</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td><code>POST /ai/agent</code></td><td>Main agent endpoint</td></tr>
+                <tr><td><code>GET/DELETE /ai/agent/session/:id</code></td><td>Session management</td></tr>
+                <tr><td><code>GET/PATCH/DELETE /ai/agent/memory/profile</code></td><td>User profile CRUD</td></tr>
+                <tr><td><code>GET/POST/DELETE /ai/agent/memory/knowledge</code></td><td>Knowledge CRUD</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Provider Routing</h3>
+        <ul>
+            <li><strong>Gemini:</strong> explain, plan, compare, summarize, research</li>
+            <li><strong>Groq:</strong> quick_answer, debug, clarify</li>
+        </ul>
+        <p class="muted">The user never chooses the provider — Atlas Agent decides automatically based on intent classification.</p>
+    </div>
+
     <!-- DEV-JOURNAL PROJECT -->
     <div class="card full" id="dev-journal">
         <h2>📓 Dev-Journal — VPS Progress Report</h2>
@@ -9102,6 +9139,11 @@ AI answers using your history
             <li><span class="status done"></span>Admin coupon management (create/list/disable)</li>
             <li><span class="status done"></span>Admin user AI toggle (enable/disable per user)</li>
             <li><span class="status done"></span>Default admin seed script</li>
+            <li><span class="status done"></span>Explain page with conversational AI chat (/entry/:id/explain)</li>
+            <li><span class="status done"></span>Explain page dark theme overhaul</li>
+            <li><span class="status done"></span>Prompt truncation fix (8,000 char limit)</li>
+            <li><span class="status done"></span>Mongoose pre-delete hooks (cascade deletion)</li>
+            <li><span class="status done"></span>Admin delete cascade (users → entries + coupons)</li>
         </ul>
     </div>
 
@@ -9399,7 +9441,7 @@ AI answers using your history
         </ul>
 
         <blockquote class="success">
-            ✅ 21 features completed! Dev-Journal now has Windows 11-style UI, JWT auth, admin panel with RBAC, dashboard, security enhancements, WCAG 2.2 accessibility, Atlas AI integration, settings page, and coupon system.
+            ✅ 26 features completed! Dev-Journal now has Windows 11-style UI, JWT auth, admin panel with RBAC, dashboard, security enhancements, WCAG 2.2 accessibility, Atlas AI integration, settings page, coupon system, explain page with dark theme, and cascade deletion hooks.
         </blockquote>
     </div>
 

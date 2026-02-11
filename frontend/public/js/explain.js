@@ -10,7 +10,7 @@ if (typeof Auth === 'undefined') {
 
 // Constants
 const API_BASE = '/api';
-const EXPLORER_API = `${API_BASE}/explorer`;
+const ENTRIES_API = `${API_BASE}/entries`;
 const AI_API = `${API_BASE}/ai`;
 
 // Utility: Escape HTML
@@ -27,14 +27,11 @@ const detectAndRenderCode = (content) => {
         const language = lang || 'code';
         const escapedCode = escapeHtml(code.trim());
         return `<div class="code-block-wrapper">
-            <div class="code-block-header">
-                <span class="code-language">${language}</span>
-                <button class="copy-code-btn" onclick="copyCodeBlock(this)">
-                    <span class="copy-icon">&#128203;</span>
-                    <span class="copy-text">Copy</span>
-                </button>
+            <div class="code-header">
+                <span class="code-lang">${language}</span>
+                <button class="copy-btn" onclick="copyCodeBlock(this)">Copy</button>
             </div>
-            <pre><code class="language-${language}">${escapedCode}</code></pre>
+            <pre class="code-block"><code class="language-${language}">${escapedCode}</code></pre>
         </div>`;
     });
 
@@ -50,13 +47,12 @@ window.copyCodeBlock = function(btn) {
     const text = codeBlock.textContent;
 
     navigator.clipboard.writeText(text).then(() => {
-        const originalText = btn.querySelector('.copy-text').textContent;
-        btn.querySelector('.copy-text').textContent = 'Copied!';
-        btn.querySelector('.copy-icon').textContent = '✓';
+        btn.textContent = 'Copied!';
+        btn.classList.add('copied');
 
         setTimeout(() => {
-            btn.querySelector('.copy-text').textContent = originalText;
-            btn.querySelector('.copy-icon').textContent = '📋';
+            btn.textContent = 'Copy';
+            btn.classList.remove('copied');
         }, 2000);
     });
 };
@@ -182,13 +178,13 @@ class ExplainPage {
         // Display user info
         const user = Auth.getUser();
         if (user) {
-            document.getElementById('userDisplay').textContent = `👤 ${user.username}`;
+            document.getElementById('userDisplay').textContent = user.name || user.email || 'User';
         }
     }
 
     async loadEntry() {
         try {
-            const res = await fetch(`${EXPLORER_API}/${this.entryId}`, {
+            const res = await fetch(`${ENTRIES_API}/${this.entryId}`, {
                 headers: Auth.getAuthHeader()
             });
 
@@ -198,17 +194,17 @@ class ExplainPage {
                 throw new Error(data.error || 'Failed to load entry');
             }
 
-            this.entry = data.entry;
+            this.entry = data.data;
 
             // Update page title
-            document.getElementById('entryTitle').textContent = this.entry.title || 'Untitled';
+            document.getElementById('entryTitle').textContent = this.entry.name || this.entry.title || 'Untitled';
             document.getElementById('entryMeta').textContent =
-                `${this.entry.isFolder ? 'Folder' : 'File'} - ${new Date(this.entry.createdAt).toLocaleDateString()}`;
+                `${this.entry.type === 'folder' ? 'Folder' : 'File'} - ${new Date(this.entry.createdAt).toLocaleDateString()}`;
 
             // Update reference content
             const referenceContent = document.getElementById('referenceContent');
-            if (this.entry.isFolder) {
-                referenceContent.innerHTML = '<p style="color: #999; font-style: italic;">This is a folder entry.</p>';
+            if (this.entry.type === 'folder') {
+                referenceContent.innerHTML = '<p style="color: var(--text-dim); font-style: italic;">This is a folder entry.</p>';
             } else {
                 referenceContent.innerHTML = formatAiResponse(this.entry.content || 'No content');
             }
@@ -362,11 +358,11 @@ class ExplainPage {
         const container = document.getElementById('conversationArea');
         container.innerHTML = `
             <div class="message ai">
-                <div class="message-avatar">⚠️</div>
-                <div class="message-content" style="border-color: #ff6b6b; background: #fff5f5;">
+                <div class="message-avatar">&#9888;&#65039;</div>
+                <div class="message-content" style="border-color: var(--danger); background: var(--card);">
                     <p><strong>Error:</strong> ${escapeHtml(message)}</p>
-                    <p style="margin-top: 12px; font-size: 14px; color: #666;">
-                        Please try again or <a href="javascript:history.back()" style="color: #0066cc;">go back</a>.
+                    <p style="margin-top: 12px; font-size: 14px; color: var(--text-muted);">
+                        Please try again or <a href="javascript:history.back()" style="color: var(--primary);">go back</a>.
                     </p>
                 </div>
             </div>

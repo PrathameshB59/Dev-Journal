@@ -42,6 +42,11 @@
             </button>
 
             <div class="nav-actions" id="navActions">
+                <div class="mobile-nav-links">
+                    <a href="/">&#127968; Home</a>
+                    <a href="/dashboard">&#128202; Dashboard</a>
+                    <a href="/settings">&#9881; Settings</a>
+                </div>
                 <span id="userDisplay" class="user-display"></span>
                 <button id="logoutBtn" class="btn-logout">Logout</button>
             </div>
@@ -62,22 +67,22 @@
                     <span class="btn-label">Folder</span>
                 </button>
                 <div class="toolbar-separator"></div>
-                <button class="toolbar-btn" id="refreshBtn" title="Refresh">
+                <button class="toolbar-btn" id="refreshBtn" title="Refresh" aria-label="Refresh">
                     <span class="btn-icon">&#128260;</span>
                 </button>
-                <button class="toolbar-btn" id="favoriteBtn" title="Add to Favorites" disabled>
+                <button class="toolbar-btn" id="favoriteBtn" title="Add to Favorites" aria-label="Add to Favorites" disabled>
                     <span class="btn-icon">&#9733;</span>
                 </button>
                 <div class="toolbar-separator"></div>
-                <button class="toolbar-btn danger" id="deleteBtn" title="Delete" disabled>
+                <button class="toolbar-btn danger" id="deleteBtn" title="Delete" aria-label="Delete selected" disabled>
                     <span class="btn-icon">&#128465;</span>
                 </button>
                 <div class="toolbar-separator"></div>
-                <button class="toolbar-btn ai-btn" id="aiSummarizeBtn" title="Summarize folder with AI">
+                <button class="toolbar-btn ai-btn" id="aiSummarizeBtn" title="Summarize folder with AI" aria-label="Summarize folder with AI">
                     <span class="btn-icon">&#129302;</span>
                     <span class="btn-label">Summarize</span>
                 </button>
-                <button class="toolbar-btn ai-btn" id="aiAskBtn" title="Ask AI">
+                <button class="toolbar-btn ai-btn" id="aiAskBtn" title="Ask AI" aria-label="Ask AI">
                     <span class="btn-icon">&#128172;</span>
                     <span class="btn-label">Ask AI</span>
                 </button>
@@ -133,21 +138,21 @@
         <!-- Address Bar -->
         <div class="win11-addressbar">
             <div class="nav-buttons">
-                <button class="nav-btn" id="backBtn" title="Back" disabled>&#9664;</button>
-                <button class="nav-btn" id="forwardBtn" title="Forward" disabled>&#9654;</button>
-                <button class="nav-btn" id="upBtn" title="Up">&#9650;</button>
-                <button class="nav-btn" id="sidebarToggle" title="Toggle Sidebar">&#9776;</button>
+                <button class="nav-btn" id="backBtn" title="Back" aria-label="Go back" disabled>&#9664;</button>
+                <button class="nav-btn" id="forwardBtn" title="Forward" aria-label="Go forward" disabled>&#9654;</button>
+                <button class="nav-btn" id="upBtn" title="Up" aria-label="Go up one level">&#9650;</button>
+                <button class="nav-btn" id="sidebarToggle" title="Toggle Sidebar" aria-label="Toggle sidebar">&#9776;</button>
             </div>
-            <div class="breadcrumb-container">
-                <div class="breadcrumb-path" id="breadcrumbPath">
-                    <a href="#" class="breadcrumb-item" data-path="home">&#127968; Home</a>
-                    <span class="breadcrumb-separator">&#8250;</span>
-                    <span class="breadcrumb-current" id="breadcrumbCurrent">All Entries</span>
-                </div>
-            </div>
+            <nav class="breadcrumb-container" aria-label="Breadcrumb">
+                <ol class="breadcrumb-path" id="breadcrumbPath">
+                    <li><a href="#" class="breadcrumb-item" data-path="home">&#127968; Home</a></li>
+                    <li class="breadcrumb-separator" aria-hidden="true">&#8250;</li>
+                    <li aria-current="location"><span class="breadcrumb-current" id="breadcrumbCurrent">All Entries</span></li>
+                </ol>
+            </nav>
             <div class="win11-search">
                 <input type="text" id="searchInput" placeholder="Search Dev-Journal" aria-label="Search entries">
-                <button class="search-btn" id="searchBtn">&#128269;</button>
+                <button class="search-btn" id="searchBtn" aria-label="Search">&#128269;</button>
             </div>
         </div>
 
@@ -311,18 +316,18 @@
                     </div>
 
                     <!-- File List -->
-                    <div class="file-list" id="fileList">
+                    <div class="file-list" id="fileList" aria-live="polite">
                         <!-- Entries loaded dynamically -->
                     </div>
 
                     <!-- Loading State -->
-                    <div class="win11-loading" id="loadingState" style="display: none;">
+                    <div class="win11-loading" id="loadingState" role="status" aria-live="polite" style="display: none;">
                         <div class="win11-spinner"></div>
                         <p style="margin-top: var(--space-md); color: var(--win11-text-secondary);">Loading entries...</p>
                     </div>
 
                     <!-- Empty State -->
-                    <div class="empty-state" id="emptyState" style="display: none;">
+                    <div class="empty-state" id="emptyState" role="status" aria-live="polite" style="display: none;">
                         <span class="empty-icon">&#128466;</span>
                         <h3 class="empty-title">No entries found</h3>
                         <p class="empty-text">Create your first journal entry to get started</p>
@@ -335,13 +340,13 @@
         <!-- Status Bar -->
         <div class="win11-statusbar">
             <div class="statusbar-left">
-                <span id="itemCount">0 items</span>
+                <span id="itemCount" aria-live="polite">0 items</span>
                 <span id="selectedCount"></span>
             </div>
             <div class="statusbar-right">
                 <div class="view-mode-toggle">
-                    <button class="view-mode-btn active" id="detailsViewBtn" title="Details">&#9776;</button>
-                    <button class="view-mode-btn" id="tilesViewBtn" title="Tiles">&#9638;</button>
+                    <button class="view-mode-btn active" id="detailsViewBtn" title="Details" aria-label="Details view">&#9776;</button>
+                    <button class="view-mode-btn" id="tilesViewBtn" title="Tiles" aria-label="Tiles view">&#9638;</button>
                 </div>
             </div>
         </div>

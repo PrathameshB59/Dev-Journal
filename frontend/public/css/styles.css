@@ -1622,13 +1622,9 @@ footer {
         gap: var(--space-md);
     }
 
-    /* Header */
+    /* Header - hide on mobile (nav-brand already shows branding) */
     header {
-        padding: var(--space-md);
-    }
-
-    header h1 {
-        font-size: var(--text-xl);
+        display: none;
     }
 
     /* Forms */
@@ -1927,5 +1923,38 @@ footer {
 
     .auth-form {
         padding: var(--space-lg);
+    }
+}
+
+/* Mobile nav links (visible only inside hamburger menu on mobile) */
+.mobile-nav-links {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .mobile-nav-links {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-xs);
+        width: 100%;
+    }
+
+    .mobile-nav-links a {
+        color: var(--text);
+        text-decoration: none;
+        padding: var(--space-sm) var(--space-md);
+        border-radius: var(--radius-sm);
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+        transition: background var(--transition-fast);
+    }
+
+    .mobile-nav-links a:hover {
+        background: var(--bg-secondary);
+    }
+
+    .nav-actions.open {
+        max-height: 400px;
     }
 }

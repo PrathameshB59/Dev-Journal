@@ -6,6 +6,41 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [1.6.0] - 2026-02-09
+
+### Changed
+- **Explain Page Dark Theme** - Complete overhaul matching Dev-Journal dark UI (CSS variables)
+- **Explain Page Username** - Fixed display from `user.username` to `user.name || user.email || 'User'`
+- **Explain Page Code Blocks** - Now use existing CSS classes (`code-header`, `code-lang`, `copy-btn`)
+- **Explain Page Errors** - Error states use dark theme colors (`var(--danger)`, `var(--card)`)
+
+### Fixed
+- **Explain 500 Error** - Truncated entry content to 8,000 chars (was exceeding Atlas AI 10k prompt limit)
+- **Summarize Overflow** - Truncated per-file content to 400 chars for folder summarization
+
+---
+
+## [1.5.0] - 2026-02-09
+
+### Added
+- **Explain Page** - Dedicated `/entry/:id/explain` page with conversational AI chat interface
+- **Cascade Deletion** - Mongoose pre-delete hooks on User model (deleting user removes all Entries + Coupons)
+
+---
+
+## [1.4.0] - 2026-02-08
+
+### Added
+- **Atlas AI Integration** - Summarize, Explain, Ask AI actions via Atlas AI microservice
+- **Settings Page** - Dedicated `/settings` page with Profile, AI Access, and Security sub-tabs
+- **Coupon System** - Users can redeem coupon codes to activate AI access
+- **Admin Coupon Management** - Create, list, and disable coupons from admin panel
+- **Admin AI Toggle** - Enable/disable AI access per user from admin panel
+- **Admin Delete Cascade** - Deleting users from admin panel cleans up entries + coupons
+- **Default Admin Seed** - `seedAdmin.js` script for initial admin user creation
+
+---
+
 ## [1.3.0] - 2026-02-04
 
 ### Added
@@ -86,6 +121,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Upcoming Features
 
+- [x] Statistics dashboard with activity charts
+- [x] AI-powered Summarize, Explain, Ask AI
+- [x] Settings page with coupon redemption
+- [x] Admin panel with RBAC
 - [ ] Markdown live preview while editing
 - [ ] Export entries to Markdown/PDF
 - [ ] Keyboard shortcuts for quick actions
@@ -93,6 +132,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - [ ] Version history for entries
 - [ ] GitHub Gist backup integration
 - [ ] Dark/Light mode toggle
-- [ ] Statistics dashboard with activity heatmap
 - [ ] Password reset functionality
 - [ ] Remember me option for login
+- [ ] Atlas Agent integration (context-aware AI conversations)
