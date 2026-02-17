@@ -683,6 +683,80 @@ nav {
     padding-left: 17px;
 }
 
+/* VPS Planning lane submenus */
+.nav-item-vps-planning .dropdown-menu {
+    min-width: 320px;
+    max-width: 380px;
+    overflow: visible;
+}
+
+.dropdown-subgroup {
+    position: relative;
+}
+
+.dropdown-subtoggle {
+    width: 100%;
+    border: 0;
+    background: transparent;
+    text-align: left;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    font-family: inherit;
+}
+
+.dropdown-subtoggle .lane-chevron {
+    color: #64748b;
+    transition: transform 0.2s ease, color 0.2s ease;
+    flex-shrink: 0;
+}
+
+.dropdown-subgroup:hover>.dropdown-subtoggle,
+.dropdown-subgroup:focus-within>.dropdown-subtoggle {
+    background: var(--card);
+    color: #60a5fa;
+    padding-left: 24px;
+}
+
+.dropdown-subgroup:hover>.dropdown-subtoggle .lane-chevron,
+.dropdown-subgroup:focus-within>.dropdown-subtoggle .lane-chevron,
+.dropdown-subgroup.active>.dropdown-subtoggle .lane-chevron {
+    transform: rotate(90deg);
+    color: #93c5fd;
+}
+
+.dropdown-submenu {
+    position: absolute;
+    top: 0;
+    left: calc(100% - 4px);
+    min-width: 300px;
+    max-width: 360px;
+    background: var(--dropdown-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+    display: none;
+    padding: 8px 0;
+    max-height: 70vh;
+    overflow-y: auto;
+    z-index: 1002;
+}
+
+.dropdown-subgroup:hover>.dropdown-submenu,
+.dropdown-subgroup:focus-within>.dropdown-submenu,
+.dropdown-subgroup.active>.dropdown-submenu {
+    display: block;
+}
+
+.dropdown-submenu .dropdown-link {
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
+    line-height: 1.35;
+}
+
 /* Custom Scrollbar for Dropdown */
 .dropdown-menu::-webkit-scrollbar {
     width: 6px;
@@ -762,6 +836,43 @@ nav {
 
     .dropdown-link {
         padding-left: 40px;
+    }
+
+    .nav-item-vps-planning .dropdown-menu {
+        min-width: 0;
+        max-width: none;
+        overflow: hidden;
+    }
+
+    .dropdown-subtoggle {
+        padding-left: 40px;
+        background: transparent;
+    }
+
+    .dropdown-submenu {
+        position: static;
+        left: auto;
+        top: auto;
+        min-width: 0;
+        max-width: none;
+        border: none;
+        border-radius: 0;
+        box-shadow: none;
+        background: var(--bg);
+        display: block;
+        max-height: 0;
+        padding: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease, padding 0.3s ease;
+    }
+
+    .dropdown-subgroup.active>.dropdown-submenu {
+        max-height: 1200px;
+        padding: 4px 0;
+    }
+
+    .dropdown-submenu .dropdown-link {
+        padding-left: 56px;
     }
 }
 

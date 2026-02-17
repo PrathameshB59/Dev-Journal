@@ -28,7 +28,7 @@
                         <a href="#project-folder" class="dropdown-link">📁 Project Folder Structure</a>
                     </div>
                 </li>
-                <li class="nav-item">
+                <li class="nav-item nav-item-vps-planning">
                     <a href="#vps-planning" class="nav-link">VPS Planning ▾</a>
                     <div class="dropdown-menu">
                         <a href="#vps-as-desktop" class="dropdown-link">🧠 Can VPS Be Used as Desktop?</a>
@@ -36,6 +36,57 @@
                         <a href="#vps-health-analysis" class="dropdown-link">🖥️ Current VPS Health Analysis</a>
                         <a href="#vps-as-desktop-decision" class="dropdown-link">🖥️ VPS as Personal Desktop
                             Decision</a>
+
+                        <a href="#vps-planning-nested-workspace" class="dropdown-link">📁 VPS Planning Workspace</a>
+
+                        <div class="dropdown-subgroup" data-lane="left">
+                            <button type="button" class="dropdown-subtoggle dropdown-link" aria-expanded="false"
+                                aria-controls="vps-lane-left-menu">
+                                <span>📂 Left Lane</span>
+                                <span class="lane-chevron" aria-hidden="true">▸</span>
+                            </button>
+                            <div class="dropdown-submenu" id="vps-lane-left-menu">
+                                <a href="#vps-ss-left-lane" class="dropdown-link">📂 Left Lane Overview</a>
+                                <a href="#vps-ss-ssh-access-from-windows-11" class="dropdown-link">📄 🔐 SSH Access from Windows 11</a>
+                                <a href="#vps-ss-completed-setup" class="dropdown-link">📄 ✅ Completed Setup</a>
+                                <a href="#vps-ss-vps-access-methods-comparison" class="dropdown-link">📄 🔥 VPS Access Methods Comparison</a>
+                                <a href="#vps-ss-recommended-workflow-your-setup" class="dropdown-link">📄 🧠 Recommended Workflow (Your Setup)</a>
+                                <a href="#vps-ss-local-folder-experience-option" class="dropdown-link">📄 🏆 “Local Folder Experience” Option</a>
+                                <a href="#vps-ss-ssh-security-architecture-key-password-backup" class="dropdown-link">📄 🔐 SSH Security Architecture (Key + Password Backup)</a>
+                                <a href="#vps-ss-professional-vps-security-health-audit" class="dropdown-link">📄 🛡 Professional VPS Security &amp; Health Audit</a>
+                                <a href="#vps-ss-stage-2-production-level-network-lockdown" class="dropdown-link">📄 🚀 Stage 2 — Production-Level Network Lockdown</a>
+                                <a href="#vps-ss-infrastructure-debugging-port-conflict-exposure-fix" class="dropdown-link">📄 🛠 Infrastructure Debugging — Port Conflict &amp; Exposure Fix</a>
+                                <a href="#vps-ss-stage-3-ssh-hardening-intrusion-monitoring" class="dropdown-link">📄 🔐 Stage 3 — SSH Hardening &amp; Intrusion Monitoring</a>
+                                <a href="#vps-ss-stage-3-logwatch-postfix-configuration" class="dropdown-link">📄 📧 Stage 3 — Logwatch &amp; Postfix Configuration</a>
+                                <a href="#vps-ss-postfix-system-mail-name-fqdn-configuration" class="dropdown-link">📄 📧 Postfix System Mail Name (FQDN Configuration)</a>
+                                <a href="#vps-ss-stage-5-10-10-hardened-production-upgrade" class="dropdown-link">📄 🚀 Stage 5 — 10/10 Hardened Production Upgrade</a>
+                                <a href="#vps-ss-aide-file-integrity-monitoring-enterprise-mode" class="dropdown-link">📄 🛡 AIDE File Integrity Monitoring (Enterprise Mode)</a>
+                            </div>
+                        </div>
+
+                        <div class="dropdown-subgroup" data-lane="right">
+                            <button type="button" class="dropdown-subtoggle dropdown-link" aria-expanded="false"
+                                aria-controls="vps-lane-right-menu">
+                                <span>📂 Right Lane</span>
+                                <span class="lane-chevron" aria-hidden="true">▸</span>
+                            </button>
+                            <div class="dropdown-submenu" id="vps-lane-right-menu">
+                                <a href="#vps-ss-right-lane" class="dropdown-link">📂 Right Lane Overview</a>
+                                <a href="#vps-ss-vps-access-via-nautilus-linux-wsl-gui" class="dropdown-link">📄 🐧 VPS Access via Nautilus (Linux / WSL GUI)</a>
+                                <a href="#vps-ss-windows-11-file-explorer-connections" class="dropdown-link">📄 🖥 Windows 11 File Explorer Connections</a>
+                                <a href="#vps-ss-setup-commands-summary" class="dropdown-link">📄 🛠 Setup Commands Summary</a>
+                                <a href="#vps-ss-dev-project-structure" class="dropdown-link">📄 📂 Dev Project Structure</a>
+                                <a href="#vps-ss-future-plan" class="dropdown-link">📄 📈 Future Plan</a>
+                                <a href="#vps-ss-winscp-security-threat-analysis" class="dropdown-link">📄 🥇 WinSCP Security &amp; Threat Analysis</a>
+                                <a href="#vps-ss-production-level-infrastructure-audit" class="dropdown-link">📄 🔎 Production-Level Infrastructure Audit</a>
+                                <a href="#vps-ss-post-reboot-verification-hardening-checklist" class="dropdown-link">📄 🔄 Post-Reboot Verification &amp; Hardening Checklist</a>
+                                <a href="#vps-ss-stage-2-backend-isolation-node-binding-fix" class="dropdown-link">📄 🔐 Stage 2 — Backend Isolation (Node Binding Fix)</a>
+                                <a href="#vps-ss-production-security-verification-stage-2-complete" class="dropdown-link">📄 🛡 Production Security Verification — Stage 2 Complete</a>
+                                <a href="#vps-ss-secure-ssh-tunnel-access-port-forwarding" class="dropdown-link">📄 🔐 Secure SSH Tunnel Access (Port Forwarding)</a>
+                                <a href="#vps-ss-stage-4-live-security-audit-hardening-upgrade" class="dropdown-link">📄 🛡 Stage 4 — Live Security Audit &amp; Hardening Upgrade</a>
+                                <a href="#vps-ss-balanced-ssh-security-key-password-backup" class="dropdown-link">📄 🔐 Balanced SSH Security (Key + Password Backup)</a>
+                            </div>
+                        </div>
                     </div>
                 </li>
                 <li class="nav-item">
@@ -6518,6 +6569,3125 @@
             ✔ Local machine remains the daily desktop<br />
             ✔ Architecture aligns with professional standards
         </blockquote>
+    </div>
+
+    <!-- VPS PLANNING NESTED WORKSPACE (FULL MERGE) -->
+    <div class="card full" id="vps-planning-nested-workspace">
+        <h2>📁 VPS Planning Workspace (Nested Merge)</h2>
+
+        <p class="muted">
+            Full additive merge from <code>vps_progress_side_by_side.html</code>.
+            Organized as folder → in-folder → files for anchor navigation.
+        </p>
+
+        <details open>
+            <summary><strong>📁 VPS Planning Workspace</strong></summary>
+
+            <div id="vps-ss-left-lane"></div>
+            <details>
+                <summary><strong>📂 Left Lane</strong></summary>
+                <ul class="list">
+                        <li><a href="#vps-ss-ssh-access-from-windows-11">📄 🔐 SSH Access from Windows 11</a></li>
+                        <li><a href="#vps-ss-completed-setup">📄 ✅ Completed Setup</a></li>
+                        <li><a href="#vps-ss-vps-access-methods-comparison">📄 🔥 VPS Access Methods Comparison</a></li>
+                        <li><a href="#vps-ss-recommended-workflow-your-setup">📄 🧠 Recommended Workflow (Your Setup)</a></li>
+                        <li><a href="#vps-ss-local-folder-experience-option">📄 🏆 “Local Folder Experience” Option</a></li>
+                        <li><a href="#vps-ss-ssh-security-architecture-key-password-backup">📄 🔐 SSH Security Architecture (Key + Password Backup)</a></li>
+                        <li><a href="#vps-ss-professional-vps-security-health-audit">📄 🛡 Professional VPS Security &amp; Health Audit</a></li>
+                        <li><a href="#vps-ss-stage-2-production-level-network-lockdown">📄 🚀 Stage 2 — Production-Level Network Lockdown</a></li>
+                        <li><a href="#vps-ss-infrastructure-debugging-port-conflict-exposure-fix">📄 🛠 Infrastructure Debugging — Port Conflict &amp; Exposure Fix</a></li>
+                        <li><a href="#vps-ss-stage-3-ssh-hardening-intrusion-monitoring">📄 🔐 Stage 3 — SSH Hardening &amp; Intrusion Monitoring</a></li>
+                        <li><a href="#vps-ss-stage-3-logwatch-postfix-configuration">📄 📧 Stage 3 — Logwatch &amp; Postfix Configuration</a></li>
+                        <li><a href="#vps-ss-postfix-system-mail-name-fqdn-configuration">📄 📧 Postfix System Mail Name (FQDN Configuration)</a></li>
+                        <li><a href="#vps-ss-stage-5-10-10-hardened-production-upgrade">📄 🚀 Stage 5 — 10/10 Hardened Production Upgrade</a></li>
+                        <li><a href="#vps-ss-aide-file-integrity-monitoring-enterprise-mode">📄 🛡 AIDE File Integrity Monitoring (Enterprise Mode)</a></li>
+                </ul>
+            </details>
+
+            <div id="vps-ss-right-lane"></div>
+            <details>
+                <summary><strong>📂 Right Lane</strong></summary>
+                <ul class="list">
+                        <li><a href="#vps-ss-vps-access-via-nautilus-linux-wsl-gui">📄 🐧 VPS Access via Nautilus (Linux / WSL GUI)</a></li>
+                        <li><a href="#vps-ss-windows-11-file-explorer-connections">📄 🖥 Windows 11 File Explorer Connections</a></li>
+                        <li><a href="#vps-ss-setup-commands-summary">📄 🛠 Setup Commands Summary</a></li>
+                        <li><a href="#vps-ss-dev-project-structure">📄 📂 Dev Project Structure</a></li>
+                        <li><a href="#vps-ss-future-plan">📄 📈 Future Plan</a></li>
+                        <li><a href="#vps-ss-winscp-security-threat-analysis">📄 🥇 WinSCP Security &amp; Threat Analysis</a></li>
+                        <li><a href="#vps-ss-production-level-infrastructure-audit">📄 🔎 Production-Level Infrastructure Audit</a></li>
+                        <li><a href="#vps-ss-post-reboot-verification-hardening-checklist">📄 🔄 Post-Reboot Verification &amp; Hardening Checklist</a></li>
+                        <li><a href="#vps-ss-stage-2-backend-isolation-node-binding-fix">📄 🔐 Stage 2 — Backend Isolation (Node Binding Fix)</a></li>
+                        <li><a href="#vps-ss-production-security-verification-stage-2-complete">📄 🛡 Production Security Verification — Stage 2 Complete</a></li>
+                        <li><a href="#vps-ss-secure-ssh-tunnel-access-port-forwarding">📄 🔐 Secure SSH Tunnel Access (Port Forwarding)</a></li>
+                        <li><a href="#vps-ss-stage-4-live-security-audit-hardening-upgrade">📄 🛡 Stage 4 — Live Security Audit &amp; Hardening Upgrade</a></li>
+                        <li><a href="#vps-ss-balanced-ssh-security-key-password-backup">📄 🔐 Balanced SSH Security (Key + Password Backup)</a></li>
+                </ul>
+            </details>
+        </details>
+    </div>
+    <!-- VPS SS IMPORT: 🔐 SSH Access from Windows 11 (left) -->
+    <div class="card full" id="vps-ss-ssh-access-from-windows-11" data-vps-ss-lane="left">
+        <h2>🔐 SSH Access from Windows 11</h2>
+<div class="card folder">
+                <h3>1️⃣ Connect Using Terminal (PowerShell / CMD)</h3>
+                <pre>
+            Step 1:
+            Press Win + X → Open Terminal (PowerShell)
+            
+            Step 2:
+            Run SSH Command:
+            
+            ssh devuser@72.61.251.2
+            
+            If first time:
+            Type: yes
+            Then enter your password.
+            
+            ✔ You are now connected to your VPS.
+            </pre>
+            </div>
+            
+            <div class="card folder">
+                <h3>2️⃣ File Explorer Access (GUI Method)</h3>
+                <pre>
+            SSH gives terminal access only.
+            
+            To browse files visually use:
+            
+            🥇 WinSCP
+            Host: 72.61.251.2
+            Username: devuser
+            Port: 22
+            Protocol: SFTP
+            
+            Left Panel → Your PC
+            Right Panel → VPS Files
+            </pre>
+            </div>
+            
+            <div class="card folder">
+                <h3>3️⃣ Mount VPS as Drive Letter (Pro Method)</h3>
+                <pre>
+            You can mount VPS as:
+            
+            Z:\
+            
+            Using:
+            • WinSCP → Add to Explorer
+            OR
+            • SSHFS-Win
+            
+            Your VPS will appear inside
+            Windows File Explorer like a local drive.
+            </pre>
+            </div>
+            
+            <div class="card folder">
+                <h3>4️⃣ Troubleshooting</h3>
+                <pre>
+            Check SSH service on VPS:
+            sudo systemctl status ssh
+            
+            Allow SSH in firewall:
+            sudo ufw allow 22
+            
+            Check active ports:
+            sudo ss -tulpn
+            </pre>
+            </div>
+    </div>
+
+    <!-- VPS SS IMPORT: ✅ Completed Setup (left) -->
+    <div class="card full" id="vps-ss-completed-setup" data-vps-ss-lane="left">
+        <h2>✅ Completed Setup</h2>
+<div class="card success">
+                <h3>🔐 Security Hardening</h3>
+                <ul>
+                    <li>UFW Firewall Enabled</li>
+                    <li>Fail2Ban Active (SSH Jail)</li>
+                    <li>Root Login Disabled</li>
+                    <li>SSH Key Authentication</li>
+                    <li>Password Login Backup</li>
+                    <li>AIDE Intrusion Detection</li>
+                    <li>Malware Scanner Active</li>
+                </ul>
+            </div>
+
+            <div class="card success">
+                <h3>🌐 Web & Reverse Proxy</h3>
+                <ul>
+                    <li>Nginx Installed</li>
+                    <li>HTTPS SSL Active</li>
+                    <li>Domain: stackpilot.in</li>
+                    <li>Port 80 & 443 Secured</li>
+                </ul>
+            </div>
+
+            <div class="card success">
+                <h3>🐳 Docker Setup</h3>
+                <ul>
+                    <li>Docker Installed</li>
+                    <li>MySQL Container Running</li>
+                    <li>phpMyAdmin via SSH Tunnel</li>
+                    <li>Port 3306 Bound to 127.0.0.1</li>
+                </ul>
+            </div>
+
+            <div class="card success">
+                <h3>🧠 Applications Running</h3>
+                <ul>
+                    <li>Dev-Journal (Port 3000)</li>
+                    <li>Atlas-AI (Port 9000)</li>
+                    <li>PM2 Process Manager</li>
+                    <li>Auto Restart Enabled</li>
+                </ul>
+            </div>
+    </div>
+
+    <!-- VPS SS IMPORT: 🔥 VPS Access Methods Comparison (left) -->
+    <div class="card full" id="vps-ss-vps-access-methods-comparison" data-vps-ss-lane="left">
+        <h2>🔥 VPS Access Methods Comparison</h2>
+<div class="card">
+            
+                <table style="width:100%; border-collapse: collapse; font-size:14px;">
+                    <thead>
+                        <tr style="background:#1e293b;">
+                            <th style="padding:8px; border:1px solid #334155;">Method</th>
+                            <th style="padding:8px; border:1px solid #334155;">Type</th>
+                            <th style="padding:8px; border:1px solid #334155;">File Explorer View</th>
+                            <th style="padding:8px; border:1px solid #334155;">Best For</th>
+                            <th style="padding:8px; border:1px solid #334155;">Notes</th>
+                        </tr>
+                    </thead>
+            
+                    <tbody>
+            
+                        <tr>
+                            <td style="padding:8px; border:1px solid #334155;">SSH</td>
+                            <td style="padding:8px; border:1px solid #334155;">Terminal</td>
+                            <td style="padding:8px; border:1px solid #334155;">❌ No</td>
+                            <td style="padding:8px; border:1px solid #334155;">Server control</td>
+                            <td style="padding:8px; border:1px solid #334155;">Built-in, fast, secure</td>
+                        </tr>
+            
+                        <tr>
+                            <td style="padding:8px; border:1px solid #334155;">WinSCP</td>
+                            <td style="padding:8px; border:1px solid #334155;">SFTP Client</td>
+                            <td style="padding:8px; border:1px solid #334155;">✅ Yes</td>
+                            <td style="padding:8px; border:1px solid #334155;">File management</td>
+                            <td style="padding:8px; border:1px solid #334155;">Drag & drop, Windows only</td>
+                        </tr>
+            
+                        <tr>
+                            <td style="padding:8px; border:1px solid #334155;">FileZilla</td>
+                            <td style="padding:8px; border:1px solid #334155;">FTP/SFTP Client</td>
+                            <td style="padding:8px; border:1px solid #334155;">✅ Yes</td>
+                            <td style="padding:8px; border:1px solid #334155;">Cross-platform</td>
+                            <td style="padding:8px; border:1px solid #334155;">Simple, widely used</td>
+                        </tr>
+            
+                        <tr>
+                            <td style="padding:8px; border:1px solid #334155;">VS Code + Remote SSH</td>
+                            <td style="padding:8px; border:1px solid #334155;">Code Editor</td>
+                            <td style="padding:8px; border:1px solid #334155;">✅ Inside VS Code</td>
+                            <td style="padding:8px; border:1px solid #334155;">Development</td>
+                            <td style="padding:8px; border:1px solid #334155;">Best for live coding</td>
+                        </tr>
+            
+                        <tr>
+                            <td style="padding:8px; border:1px solid #334155;">Nautilus (sftp://)</td>
+                            <td style="padding:8px; border:1px solid #334155;">Linux File Manager</td>
+                            <td style="padding:8px; border:1px solid #334155;">✅ Yes</td>
+                            <td style="padding:8px; border:1px solid #334155;">Linux users</td>
+                            <td style="padding:8px; border:1px solid #334155;">Native on Ubuntu</td>
+                        </tr>
+            
+                        <tr>
+                            <td style="padding:8px; border:1px solid #334155;">SSHFS (Mount Drive)</td>
+                            <td style="padding:8px; border:1px solid #334155;">Mounted Drive</td>
+                            <td style="padding:8px; border:1px solid #334155;">✅ Like Z:\</td>
+                            <td style="padding:8px; border:1px solid #334155;">Advanced users</td>
+                            <td style="padding:8px; border:1px solid #334155;">Feels local, slower setup</td>
+                        </tr>
+            
+                        <tr>
+                            <td style="padding:8px; border:1px solid #334155;">Remote Desktop</td>
+                            <td style="padding:8px; border:1px solid #334155;">Full Desktop</td>
+                            <td style="padding:8px; border:1px solid #334155;">✅ Full UI</td>
+                            <td style="padding:8px; border:1px solid #334155;">Remote Windows PC</td>
+                            <td style="padding:8px; border:1px solid #334155;">Not typical for Linux VPS</td>
+                        </tr>
+            
+                    </tbody>
+                </table>
+            
+            </div>
+    </div>
+
+    <!-- VPS SS IMPORT: 🧠 Recommended Workflow (Your Setup) (left) -->
+    <div class="card full" id="vps-ss-recommended-workflow-your-setup" data-vps-ss-lane="left">
+        <h2>🧠 Recommended Workflow (Your Setup)</h2>
+<div class="card plan">
+                <ul>
+                    <li>✔ SSH → Server configuration & commands</li>
+                    <li>✔ VS Code Remote SSH → Development</li>
+                    <li>✔ WinSCP → File uploads & quick edits</li>
+                    <li>✔ Nautilus (optional) → Linux GUI access</li>
+                </ul>
+            </div>
+    </div>
+
+    <!-- VPS SS IMPORT: 🏆 “Local Folder Experience” Option (left) -->
+    <div class="card full" id="vps-ss-local-folder-experience-option" data-vps-ss-lane="left">
+        <h2>🏆 “Local Folder Experience” Option</h2>
+<div class="card folder">
+                <pre>
+            Best Option:
+            SSHFS mounted as Z:\ drive
+            
+            Second Best:
+            WinSCP with Explorer Integration
+            
+            This makes your VPS behave like a local disk.
+            </pre>
+            </div>
+    </div>
+
+    <!-- VPS SS IMPORT: 🔐 SSH Security Architecture (Key + Password Backup) (left) -->
+    <div class="card full" id="vps-ss-ssh-security-architecture-key-password-backup" data-vps-ss-lane="left">
+        <h2>🔐 SSH Security Architecture (Key + Password Backup)</h2>
+<div class="card success">
+                <h3>🎯 Security Strategy</h3>
+                <pre>
+            Primary Login Method  → SSH Key Authentication
+            Secondary Backup      → Password Authentication
+            Root Login            → Disabled
+            Fail2Ban Protection   → Enabled
+            Max Login Attempts    → 3
+            Login Timeout         → 30 Seconds
+            </pre>
+            </div>
+            
+            <div class="card folder">
+                <h3>1️⃣ Generate SSH Key (Windows 11)</h3>
+                <pre>
+            Open PowerShell:
+            
+            ssh-keygen -t ed25519 -C "stackpilot-vps"
+            
+            Press Enter → Save default location
+            (Optional passphrase recommended)
+            
+            Public key:
+            C:\Users\YourName\.ssh\id_ed25519.pub
+            </pre>
+            </div>
+            
+            <div class="card folder">
+                <h3>2️⃣ Add Key to VPS</h3>
+                <pre>
+            On Windows:
+            
+            type $env:USERPROFILE\.ssh\id_ed25519.pub |
+            ssh devuser@72.61.251.2 "mkdir -p ~/.ssh && 
+            cat >> ~/.ssh/authorized_keys"
+            
+            Set permissions on VPS:
+            
+            chmod 700 ~/.ssh
+            chmod 600 ~/.ssh/authorized_keys
+            </pre>
+            </div>
+            
+            <div class="card folder">
+                <h3>3️⃣ SSH Configuration (VPS)</h3>
+                <pre>
+            File:
+            /etc/ssh/sshd_config
+            
+            Configured Settings:
+            
+            PermitRootLogin no
+            PubkeyAuthentication yes
+            PasswordAuthentication yes
+            MaxAuthTries 3
+            LoginGraceTime 30
+            AllowUsers devuser
+            </pre>
+            </div>
+            
+            <div class="card plan">
+                <h3>🛡 Protection Layers</h3>
+                <ul>
+                    <li>✔ Brute-force protection via Fail2Ban</li>
+                    <li>✔ Firewall (UFW) active</li>
+                    <li>✔ Root login disabled</li>
+                    <li>✔ Only "devuser" allowed</li>
+                    <li>✔ Intrusion detection (AIDE)</li>
+                </ul>
+            </div>
+            
+            <div class="card">
+                <h3>📊 Security Level</h3>
+                <pre>
+            Practical Security Model:
+            ✔ Safe from bots
+            ✔ Low lockout risk
+            ✔ Production ready
+            Security Rating: 9.5 / 10
+            </pre>
+            </div>
+    </div>
+
+    <!-- VPS SS IMPORT: 🛡 Professional VPS Security &amp; Health Audit (left) -->
+    <div class="card full" id="vps-ss-professional-vps-security-health-audit" data-vps-ss-lane="left">
+        <h2>🛡 Professional VPS Security & Health Audit</h2>
+<div class="card success">
+                <h3>🎯 Audit Mindset</h3>
+                <pre>
+            Correct approach:
+            ✔ Security first
+            ✔ Then file management
+            ✔ Then deployment
+            
+            Production thinking > Convenience thinking
+            </pre>
+            </div>
+            
+            <div class="card">
+            
+                <h3>🔎 Part 1 — System Health Check</h3>
+                <pre>
+            Commands Used:
+            
+            uptime
+            free -h
+            df -h
+            
+            Audit Checks:
+            ✔ Load average < CPU cores
+            ✔ RAM usage healthy
+            ✔ Disk usage below 80%
+            
+            Current Status:
+            System stable and healthy.
+            </pre>
+            
+            </div>
+            
+            <div class="card">
+            
+                <h3>🔐 Part 2 — SSH Security Verification</h3>
+                <pre>
+            sudo grep -E "PermitRootLogin|PasswordAuthentication" /etc/ssh/sshd_config
+            
+            Expected Configuration:
+            PermitRootLogin no
+            PasswordAuthentication yes  (Password as backup)
+            
+            Current Setup:
+            ✔ Root login disabled
+            ✔ Key-based login enabled
+            ✔ Password login kept as secondary
+            </pre>
+            
+            </div>
+            
+            <div class="card">
+            
+                <h3>🛡 Part 3 — Firewall Check (UFW)</h3>
+                <pre>
+            sudo ufw status verbose
+            
+            Expected:
+            Status: active
+            22/tcp ALLOW
+            
+            Current Status:
+            ✔ Firewall active
+            ✔ SSH protected
+            ✔ No unnecessary ports exposed
+            </pre>
+            
+            </div>
+            
+            <div class="card">
+            
+                <h3>🚨 Part 4 — Attack Surface (Open Ports)</h3>
+                <pre>
+            sudo ss -tulpn
+            
+            Allowed Public Ports:
+            22  → SSH
+            80  → HTTP
+            443 → HTTPS
+            
+            Security Rule:
+            MySQL must bind to 127.0.0.1
+            NOT 0.0.0.0:3306
+            
+            Current Status:
+            Attack surface minimized.
+            </pre>
+            
+            </div>
+            
+            <div class="card">
+            
+                <h3>🧱 Part 5 — Intrusion Protection</h3>
+                <pre>
+            Fail2Ban: Installed & Running
+            AIDE: Installed (File Integrity Monitoring)
+            Logwatch: Active
+            
+            Security Layers:
+            ✔ Brute-force protection
+            ✔ File tampering detection
+            ✔ Log monitoring
+            </pre>
+            
+            </div>
+            
+            <div class="card">
+            
+                <h3>🐳 Docker for File Explorer? (Security Decision)</h3>
+                <pre>
+            Decision: Not Recommended
+            
+            Reason:
+            ✖ Adds unnecessary attack surface
+            ✖ Overkill for file access
+            ✖ Web file managers expose filesystem
+            
+            Professional Approach:
+            ✔ Use WinSCP (SFTP only)
+            ✔ Use VS Code Remote SSH
+            ✔ No public file manager
+            </pre>
+            
+            </div>
+            
+            <div class="card plan">
+                <h3>🏆 Current Security Level</h3>
+                <ul>
+                    <li>✔ Root Login Disabled</li>
+                    <li>✔ SSH Key Authentication</li>
+                    <li>✔ Password Backup Enabled</li>
+                    <li>✔ UFW Firewall Active</li>
+                    <li>✔ Fail2Ban Protection</li>
+                    <li>✔ AIDE Integrity Monitoring</li>
+                    <li>✔ Limited Open Ports</li>
+                </ul>
+            
+                <pre>
+            Security Score: 9.7 / 10
+            Mode: Secure Dev Mode
+            </pre>
+            
+            </div>
+            
+            <div class="card success">
+                <h3>🚀 Next Mode Options</h3>
+                <pre>
+            Secure Dev Mode        → Balanced security + flexibility
+            Production Hardened    → Maximum lockdown
+            Zero-Trust Mode        → Advanced security model
+            
+            Current Mode: Secure Dev Mode
+            </pre>
+            </div>
+    </div>
+
+    <!-- VPS SS IMPORT: 🚀 Stage 2 — Production-Level Network Lockdown (left) -->
+    <div class="card full" id="vps-ss-stage-2-production-level-network-lockdown" data-vps-ss-lane="left">
+        <h2>🚀 Stage 2 — Production-Level Network Lockdown</h2>
+<div class="card warning">
+                <h3>⚠ Current Security Status</h3>
+                <table>
+                    <tr>
+                        <th>Component</th>
+                        <th>Status</th>
+                    </tr>
+                    <tr>
+                        <td>Kernel</td>
+                        <td>✅ Upgraded (6.8.0-100)</td>
+                    </tr>
+                    <tr>
+                        <td>Root SSH Login</td>
+                        <td>✅ Disabled</td>
+                    </tr>
+                    <tr>
+                        <td>Fail2Ban</td>
+                        <td>✅ Active</td>
+                    </tr>
+                    <tr>
+                        <td>MySQL Public Exposure</td>
+                        <td>❌ Exposed on 0.0.0.0:3306</td>
+                    </tr>
+                    <tr>
+                        <td>Docker Compose</td>
+                        <td>⚠ YAML indentation error</td>
+                    </tr>
+                </table>
+            </div>
+            
+            <div class="card danger">
+                <h3>🐳 Fix Docker Compose (MySQL Binding)</h3>
+                <pre>
+            Correct docker-compose.yml structure:
+            
+            version: "3.8"
+            
+            services:
+              mysql:
+                image: mysql:8.0
+                container_name: shopease_mysql
+                restart: unless-stopped
+                environment:
+                  MYSQL_ROOT_PASSWORD: your_root_password
+                  MYSQL_DATABASE: shopease_db
+                  MYSQL_USER: shopease_user
+                  MYSQL_PASSWORD: your_user_password
+                ports:
+                  - "127.0.0.1:3306:3306"
+                volumes:
+                  - mysql_data:/var/lib/mysql
+            
+            volumes:
+              mysql_data:
+            
+            Important:
+            • ports must be inside the mysql service
+            • Indentation must be exact
+            </pre>
+            </div>
+            
+            <div class="card success">
+                <h3>🔎 Verify MySQL Is NOT Public</h3>
+                <pre>
+            sudo ss -tulpn | grep 3306
+            
+            Expected:
+            127.0.0.1:3306
+            
+            If you see:
+            0.0.0.0:3306 → Still Public (Fix Required)
+            </pre>
+            </div>
+            
+            <div class="card warning">
+                <h3>🟢 Secure Node Applications (PM2 Apps)</h3>
+                <pre>
+            Change in server.js:
+            
+            Instead of:
+            app.listen(3000);
+            
+            Use:
+            app.listen(3000, "127.0.0.1");
+            
+            Then:
+            pm2 restart all
+            
+            Verify:
+            sudo ss -tulpn | grep 3000
+            
+            Expected:
+            127.0.0.1:3000
+            </pre>
+            </div>
+            
+            <div class="card danger">
+                <h3>🔐 Lock phpMyAdmin (Very Important)</h3>
+                <pre>
+            In docker-compose.yml:
+            
+            ports:
+              - "127.0.0.1:8080:80"
+            
+            Restart:
+            docker compose down
+            docker compose up -d
+            
+            Access securely using SSH tunnel:
+            
+            ssh -L 8080:localhost:8080 devuser@72.61.251.2
+            
+            Open:
+            http://localhost:8080
+            
+            Now phpMyAdmin is NOT public.
+            </pre>
+            </div>
+            
+            <div class="card highlight">
+                <h3>🎯 Final Network Exposure Goal</h3>
+                <pre>
+            Public Ports Allowed:
+            22   (SSH)
+            80   (HTTP)
+            443  (HTTPS)
+            
+            Everything else:
+            127.0.0.1 only
+            
+            Result:
+            • No direct DB exposure
+            • No direct Node exposure
+            • No public phpMyAdmin
+            • Nginx acts as reverse proxy
+            </pre>
+            </div>
+            
+            <div class="card plan">
+                <h3>🧠 Infrastructure Level Upgrade</h3>
+                <pre>
+            You Now Have:
+            
+            ✔ Kernel upgraded
+            ✔ Root SSH disabled
+            ✔ Fail2Ban protection
+            ✔ UFW firewall active
+            ✔ Docker isolation
+            ✔ Nginx reverse proxy
+            ✔ Atlas AI & Dev-Journal separated
+            
+            Status:
+            Approaching Enterprise-Grade VPS Security
+            </pre>
+            </div>
+            
+            <div class="card next">
+                <h3>🔥 Next Phase — Stage 3 (Advanced Isolation)</h3>
+                <pre>
+            • Docker internal bridge networks
+            • No host-level port exposure
+            • Service-to-service private networking
+            • Optional IP whitelisting
+            • Log-based anomaly detection
+            • Security score dashboard automation
+            
+            Goal:
+            Zero unnecessary attack surface.
+            </pre>
+            </div>
+    </div>
+
+    <!-- VPS SS IMPORT: 🛠 Infrastructure Debugging — Port Conflict &amp; Exposure Fix (left) -->
+    <div class="card full" id="vps-ss-infrastructure-debugging-port-conflict-exposure-fix" data-vps-ss-lane="left">
+        <h2>🛠 Infrastructure Debugging — Port Conflict & Exposure Fix</h2>
+<div class="card danger">
+                <h3>🔥 Problem 1 — MySQL Port 3306 Already Allocated</h3>
+                <pre>
+            Error:
+            Bind for 0.0.0.0:3306 failed: port is already allocated
+            
+            Cause:
+            Old MySQL container still running and holding port 3306.
+            </pre>
+            
+                <pre>
+            Step 1 — Check Containers:
+            docker ps -a
+            
+            Step 2 — Stop & Remove All Containers:
+            docker stop $(docker ps -q)
+            docker rm $(docker ps -aq)
+            
+            ⚠ Volumes are NOT deleted. Data is safe.
+            
+            Step 3 — Restart Clean:
+            cd ~/dev/docker
+            docker compose up -d
+            
+            Step 4 — Verify:
+            sudo ss -tulpn | grep 3306
+            
+            Expected:
+            127.0.0.1:3306
+            </pre>
+            </div>
+            
+            
+            <div class="card warning">
+                <h3>🔥 Problem 2 — Node Apps Public (0.0.0.0)</h3>
+                <pre>
+            Issue:
+            Node was binding to 0.0.0.0
+            Meaning: Backend directly exposed to internet.
+            
+            Fix:
+            Edit server.js
+            </pre>
+            
+                <pre>
+            Before:
+            app.listen(3000);
+            
+            After:
+            app.listen(3000, "127.0.0.1");
+            
+            Same for Atlas:
+            app.listen(9000, "127.0.0.1");
+            
+            Restart:
+            pm2 restart all
+            
+            Verify:
+            sudo ss -tulpn | grep 3000
+            
+            Expected:
+            127.0.0.1:3000
+            </pre>
+            </div>
+            
+            
+            <div class="card danger">
+                <h3>🔥 Problem 3 — phpMyAdmin Public on 8080</h3>
+                <pre>
+            Issue:
+            0.0.0.0:8080 exposed publicly
+            
+            Fix docker-compose.yml:
+            
+            Change:
+            ports:
+              - "8080:80"
+            
+            To:
+            ports:
+              - "127.0.0.1:8080:80"
+            
+            Restart:
+            docker compose down
+            docker compose up -d
+            
+            Verify:
+            sudo ss -tulpn | grep 8080
+            
+            Expected:
+            127.0.0.1:8080
+            </pre>
+            </div>
+            
+            
+            <div class="card highlight">
+                <h3>🎯 Final Network Exposure Target</h3>
+                <pre>
+            Public Ports Allowed:
+            22   (SSH)
+            80   (HTTP)
+            443  (HTTPS)
+            
+            Everything Else:
+            127.0.0.1 only
+            
+            Result:
+            ✔ No direct MySQL exposure
+            ✔ No direct Node exposure
+            ✔ No public phpMyAdmin
+            ✔ Nginx acts as reverse proxy
+            </pre>
+            </div>
+            
+            
+            <div class="card success">
+                <h3>📊 Security Architecture After Fix</h3>
+                <pre>
+            Internet
+               ↓
+            Nginx (80 / 443)
+               ↓
+            Node Apps (127.0.0.1)
+               ↓
+            MySQL (127.0.0.1)
+            
+            Layered Protection Achieved.
+            Production-Grade Network Design.
+            </pre>
+            </div>
+            
+            
+            <div class="card plan">
+                <h3>🚀 Next Stage — Advanced Docker Isolation</h3>
+                <pre>
+            • Docker internal bridge networks
+            • No host port mapping
+            • Private service-to-service communication
+            • Optional IP whitelisting
+            • Automated log anomaly detection
+            • Security score monitoring dashboard
+            
+            Goal:
+            Zero unnecessary attack surface.
+            </pre>
+            </div>
+    </div>
+
+    <!-- VPS SS IMPORT: 🔐 Stage 3 — SSH Hardening &amp; Intrusion Monitoring (left) -->
+    <div class="card full" id="vps-ss-stage-3-ssh-hardening-intrusion-monitoring" data-vps-ss-lane="left">
+        <h2>🔐 Stage 3 — SSH Hardening & Intrusion Monitoring</h2>
+<div class="card highlight">
+                <h3>🔑 Key-Based SSH Authentication</h3>
+            
+                <pre>
+            Authentication Method:
+            
+            1️⃣ Primary  → SSH Key (Cryptographic)
+            2️⃣ Secondary → Password (Fallback Enabled)
+            </pre>
+            
+                <pre>
+            Flow:
+            
+            Your PC (Private Key)
+                    ↓
+            Encrypted SSH
+                    ↓
+            VPS verifies using Public Key
+            </pre>
+            
+                <ul>
+                    <li>✔ No password transmitted over network</li>
+                    <li>✔ Immune to brute-force guessing</li>
+                    <li>✔ Cryptographic identity verification</li>
+                    <li>✔ Password login kept as backup (controlled)</li>
+                </ul>
+            </div>
+            
+            
+            
+            <div class="card warning">
+                <h3>⚔ Observed Live Attack Attempts</h3>
+            
+                <pre>
+            IP: 165.245.130.146
+            
+            • 418 illegal username attempts
+            • 8 root login attempts
+            • Multiple brute-force sequences
+            </pre>
+            
+                <p>
+                    Bots continuously scan public VPS servers.
+                    Fail2Ban automatically blocks repeated attackers.
+                </p>
+            </div>
+            
+            
+            
+            <div class="card success">
+                <h3>🛡 Active Protection Stack</h3>
+            
+                <ul>
+                    <li>✔ Root login disabled</li>
+                    <li>✔ Fail2Ban (sshd jail active)</li>
+                    <li>✔ Manual IP ban applied</li>
+                    <li>✔ UFW firewall enabled</li>
+                    <li>✔ SSH rate limiting enabled</li>
+                    <li>✔ Node apps bound to 127.0.0.1</li>
+                    <li>✔ MySQL bound to localhost</li>
+                    <li>✔ Nginx reverse proxy enforced</li>
+                </ul>
+            </div>
+            
+            
+            
+            <div class="card folder">
+                <h3>🔎 Log Monitoring Tools Installed</h3>
+            
+                <pre>
+            Real-time SSH monitoring:
+            sudo journalctl -u ssh -f
+            
+            Failed login scan:
+            sudo grep "Failed password" /var/log/auth.log
+            
+            Daily security report:
+            sudo logwatch --detail High --range today
+            </pre>
+            
+                <p>
+                    Logwatch provides:
+                </p>
+            
+                <ul>
+                    <li>✔ SSH attack summary</li>
+                    <li>✔ Service restarts</li>
+                    <li>✔ Suspicious activity</li>
+                    <li>✔ Authentication failures</li>
+                </ul>
+            </div>
+            
+            
+            
+            <div class="card danger">
+                <h3>🧬 Advanced Intrusion Detection</h3>
+            
+                <pre>
+            AIDE (File Integrity Monitoring)
+            
+            Baseline created for:
+            • /etc
+            • System binaries
+            • Critical configs
+            </pre>
+            
+                <pre>
+            Manual check:
+            
+            sudo aide --check
+            </pre>
+            
+                <p>
+                    Detects:
+                </p>
+            
+                <ul>
+                    <li>✔ File modifications</li>
+                    <li>✔ Permission changes</li>
+                    <li>✔ Unexpected binary updates</li>
+                </ul>
+            </div>
+            
+            
+            
+            <div class="card success">
+                <h3>📊 Security Architecture Summary</h3>
+            
+                <pre>
+            Public Ports:
+            22   → SSH (rate limited)
+            80   → HTTP (redirect to HTTPS)
+            443  → HTTPS (Nginx)
+            
+            Internal Only:
+            3000 → Dev-Journal
+            9000 → Atlas-AI
+            3306 → MySQL
+            8080 → Admin tools (SSH tunnel only)
+            </pre>
+            
+                <h4>Attack Surface: MINIMIZED</h4>
+            </div>
+            
+            
+            
+            <div class="card badge">
+                <h3>🏆 Current Security Rating</h3>
+            
+                <pre>
+            Firewall:          ✔
+            Fail2Ban:          ✔
+            SSH Hardening:     ✔
+            Key Authentication:✔
+            Reverse Proxy:     ✔
+            Local Binding:     ✔
+            Log Monitoring:    ✔
+            File Integrity:    ✔
+            
+            Status: Production Hardened VPS
+            </pre>
+            </div>
+    </div>
+
+    <!-- VPS SS IMPORT: 📧 Stage 3 — Logwatch &amp; Postfix Configuration (left) -->
+    <div class="card full" id="vps-ss-stage-3-logwatch-postfix-configuration" data-vps-ss-lane="left">
+        <h2>📧 Stage 3 — Logwatch & Postfix Configuration</h2>
+<div class="card highlight">
+                <h3>🧠 Why Postfix Installation Appeared</h3>
+            
+                <pre>
+            Command executed:
+            
+            sudo apt install logwatch
+            </pre>
+            
+                <p>
+                    Ubuntu automatically installs a mail transport agent (Postfix)
+                    because Logwatch sends reports via email.
+                </p>
+            
+                <p>
+                    This is NORMAL behavior — not an error.
+                </p>
+            </div>
+            
+            
+            
+            <div class="card success">
+                <h3>✅ Selected Configuration: Local Only</h3>
+            
+                <pre>
+            Postfix Setup Option Chosen:
+            
+            Local only
+            </pre>
+            
+                <ul>
+                    <li>✔ VPS is NOT configured as a public mail server</li>
+                    <li>✔ No internet email delivery enabled</li>
+                    <li>✔ Logs remain internal to server</li>
+                    <li>✔ No additional attack surface opened</li>
+                </ul>
+            
+                <p>
+                    This is the correct configuration for a backend application server.
+                </p>
+            </div>
+            
+            
+            
+            <div class="card warning">
+                <h3>⚠ Why Not "Internet Site"?</h3>
+            
+                <ul>
+                    <li>❌ Would configure VPS as public mail server</li>
+                    <li>❌ Would expose SMTP configuration</li>
+                    <li>❌ Adds unnecessary attack surface</li>
+                    <li>❌ Not required for backend infrastructure</li>
+                </ul>
+            </div>
+            
+            
+            
+            <div class="card folder">
+                <h3>🔎 Log Monitoring Command</h3>
+            
+                <pre>
+            sudo logwatch --detail High --range today
+            </pre>
+            
+                <p>
+                    This generates a full security activity report including:
+                </p>
+            
+                <ul>
+                    <li>✔ SSH login attempts</li>
+                    <li>✔ Failed login summaries</li>
+                    <li>✔ Illegal username scans</li>
+                    <li>✔ Service restarts</li>
+                    <li>✔ Cron activity</li>
+                    <li>✔ Firewall events</li>
+                    <li>✔ Package updates</li>
+                </ul>
+            </div>
+            
+            
+            
+            <div class="card success">
+                <h3>🛡 Security Status After Setup</h3>
+            
+                <pre>
+            Mail Transport: Local Only
+            Public SMTP:    Disabled
+            Log Monitoring: Active
+            Intrusion Logs: Monitored
+            Attack Reports: Verified
+            </pre>
+            
+                <p>
+                    Logwatch now acts as a lightweight Security Operations monitor.
+                </p>
+            </div>
+            
+            
+            
+            <div class="card badge">
+                <h3>🚀 Future Upgrade (Optional)</h3>
+            
+                <p>
+                    We can later configure Logwatch to send encrypted daily reports
+                    to Gmail using SMTP relay.
+                </p>
+            
+                <p>
+                    For now, logs are reviewed manually for maximum control.
+                </p>
+            </div>
+    </div>
+
+    <!-- VPS SS IMPORT: 📧 Postfix System Mail Name (FQDN Configuration) (left) -->
+    <div class="card full" id="vps-ss-postfix-system-mail-name-fqdn-configuration" data-vps-ss-lane="left">
+        <h2>📧 Postfix System Mail Name (FQDN Configuration)</h2>
+<div class="card highlight">
+                <h3>🖥 Configuration Prompt</h3>
+            
+                <pre>
+            Postfix Setup Screen:
+            
+            System mail name (FQDN)
+            </pre>
+            
+                <pre>
+            Value Entered:
+            
+            stackpilot.in
+            </pre>
+            
+                <p>
+                    This matches the VPS domain and ensures consistent internal system identity.
+                </p>
+            </div>
+            
+            
+            
+            <div class="card success">
+                <h3>🧠 What This Setting Means</h3>
+            
+                <pre>
+            Used for internal system emails such as:
+            
+            root@stackpilot.in
+            </pre>
+            
+                <ul>
+                    <li>✔ Identifies server in logs</li>
+                    <li>✔ Labels system-generated emails</li>
+                    <li>✔ Used by Logwatch reports</li>
+                    <li>✔ Does NOT expose SMTP publicly</li>
+                </ul>
+            </div>
+            
+            
+            
+            <div class="card warning">
+                <h3>🔐 Why This Is Safe</h3>
+            
+                <pre>
+            Earlier Selection:
+            
+            Postfix Type → Local only
+            </pre>
+            
+                <ul>
+                    <li>✔ No public mail server created</li>
+                    <li>✔ No SMTP port exposed</li>
+                    <li>✔ No internet mail relay enabled</li>
+                    <li>✔ No additional attack surface added</li>
+                </ul>
+            </div>
+            
+            
+            
+            <div class="card folder">
+                <h3>🔎 Verify Mail Service Status</h3>
+            
+                <pre>
+            sudo ss -tulpn | grep 25
+            </pre>
+            
+                <p>
+                    Expected:
+                </p>
+            
+                <pre>
+            127.0.0.1:25
+            </pre>
+            
+                <p>
+                    This confirms Postfix is bound locally only.
+                </p>
+            </div>
+            
+            
+            
+            <div class="card success">
+                <h3>📊 Final Mail Configuration Summary</h3>
+            
+                <pre>
+            Domain:          stackpilot.in
+            Postfix Mode:    Local Only
+            Public SMTP:     Disabled
+            Logwatch Ready:  ✔
+            Security Risk:   None Added
+            </pre>
+            </div>
+            
+            
+            
+            <div class="card badge">
+                <h3>🏗 Infrastructure Note</h3>
+            
+                <p>
+                    This configuration allows internal log reporting
+                    without converting the VPS into a public mail server.
+                </p>
+            
+                <p><strong>Correct decision for backend infrastructure.</strong></p>
+            </div>
+    </div>
+
+    <!-- VPS SS IMPORT: 🚀 Stage 5 — 10/10 Hardened Production Upgrade (left) -->
+    <div class="card full" id="vps-ss-stage-5-10-10-hardened-production-upgrade" data-vps-ss-lane="left">
+        <h2>🚀 Stage 5 — 10/10 Hardened Production Upgrade</h2>
+<div class="card highlight">
+                <h3>🎯 Objective</h3>
+                <p>
+                    Upgrade VPS from <strong>Secure (9.5/10)</strong> → to
+                    <strong>Hardened Production Grade (10/10)</strong>.
+                </p>
+            </div>
+            
+            
+            
+            <div class="card success">
+                <h3>🧬 AIDE File Integrity Monitoring (Fixed & Activated)</h3>
+            
+                <pre>
+            Installed: AIDE
+            Purpose:
+            • Detect file modifications
+            • Detect permission changes
+            • Detect unexpected binary changes
+            • Detect rootkits
+            </pre>
+            
+                <pre>
+            Initialize:
+            sudo aide --init
+            
+            Activate DB:
+            sudo mv /var/lib/aide/aide.db.new /var/lib/aide/aide.db
+            
+            Manual Check:
+            sudo aide --check
+            </pre>
+            
+                <p>Status: ACTIVE (Daily Cron Enabled)</p>
+            </div>
+            
+            
+            
+            <div class="card success">
+                <h3>🔐 SSH Key-Based Authentication Enabled</h3>
+            
+                <pre>
+            Key Type: ed25519
+            Key Location:
+            C:\Users\Prathmesh D Birajdar\.ssh\id_ed25519
+            </pre>
+            
+                <pre>
+            Server Config:
+            PasswordAuthentication yes (fallback)
+            PermitRootLogin no
+            </pre>
+            
+                <p>
+                    ✔ Key login primary
+                    ✔ Password login kept as secondary backup
+                    ✔ Root login permanently disabled
+                </p>
+            </div>
+            
+            
+            
+            <div class="card warning">
+                <h3>🧠 auditd Enabled (Advanced Intrusion Logging)</h3>
+            
+                <pre>
+            Installed:
+            sudo apt install auditd audispd-plugins -y
+            
+            Enabled:
+            sudo systemctl enable auditd
+            sudo systemctl start auditd
+            </pre>
+            
+                <ul>
+                    <li>✔ Logs privilege escalation</li>
+                    <li>✔ Monitors file access</li>
+                    <li>✔ Tracks suspicious system changes</li>
+                </ul>
+            </div>
+            
+            
+            
+            <div class="card success">
+                <h3>🔥 Fail2Ban Upgraded (Aggressive Mode)</h3>
+            
+                <pre>
+            Max Retry: 3
+            Find Time: 600 sec
+            Ban Time: 86400 sec (24h)
+            </pre>
+            
+                <p>
+                    Brute-force bots automatically banned.
+                </p>
+            </div>
+            
+            
+            
+            <div class="card highlight">
+                <h3>🌐 Firewall Hardening (UFW)</h3>
+            
+                <pre>
+            Allowed:
+            • 22 (SSH)
+            • 80 (HTTP)
+            • 443 (HTTPS)
+            
+            Blocked:
+            • All other inbound ports
+            </pre>
+            
+                <p>
+                    Optional Elite Mode:
+                    Restrict SSH to personal IP range only.
+                </p>
+            </div>
+            
+            
+            
+            <div class="card folder">
+                <h3>📂 Production Project Architecture</h3>
+            
+                <pre>
+            /home/devuser/dev/
+            │
+            ├── docker/
+            │   └── mysql (Local-only container)
+            │
+            ├── projects/
+            │   ├── Dev-Journal
+            │   │   └── backend (Port 3000 - Local only)
+            │   │
+            │   ├── atlas-ai
+            │   │   └── backend (Port 9000 - Local only)
+            │   │
+            │   └── ShopEase
+            │
+            └── nginx (Reverse Proxy → 80 / 443)
+            </pre>
+            
+                <p>
+                    ✔ Node apps bound to 127.0.0.1
+                    ✔ MySQL bound to 127.0.0.1
+                    ✔ Only Nginx exposed publicly
+                </p>
+            </div>
+            
+            
+            
+            <div class="card badge">
+                <h3>⭐ Final Security Score</h3>
+            
+                <pre>
+            Before Hardening: 7 / 10
+            After Stage 4:    9.5 / 10
+            After Stage 5:    10 / 10
+            
+            Status: Hardened Production VPS
+            Attack Surface: Minimal
+            Brute Force: Blocked
+            Intrusion Detection: Active
+            </pre>
+            </div>
+            
+            
+            
+            <div class="card highlight">
+                <h3>📈 Security Layers Overview</h3>
+            
+                <table>
+                    <tr>
+                        <th>Layer</th>
+                        <th>Status</th>
+                    </tr>
+                    <tr>
+                        <td>SSH Key Auth</td>
+                        <td>Primary</td>
+                    </tr>
+                    <tr>
+                        <td>Password Login</td>
+                        <td>Backup Only</td>
+                    </tr>
+                    <tr>
+                        <td>Root Login</td>
+                        <td>Disabled</td>
+                    </tr>
+                    <tr>
+                        <td>Fail2Ban</td>
+                        <td>Active + Aggressive</td>
+                    </tr>
+                    <tr>
+                        <td>Firewall</td>
+                        <td>Active</td>
+                    </tr>
+                    <tr>
+                        <td>Nginx Reverse Proxy</td>
+                        <td>Enforced</td>
+                    </tr>
+                    <tr>
+                        <td>Node Apps</td>
+                        <td>Local Only</td>
+                    </tr>
+                    <tr>
+                        <td>MySQL</td>
+                        <td>Local Only</td>
+                    </tr>
+                    <tr>
+                        <td>Log Monitoring</td>
+                        <td>Enabled</td>
+                    </tr>
+                    <tr>
+                        <td>AIDE</td>
+                        <td>Active</td>
+                    </tr>
+                    <tr>
+                        <td>auditd</td>
+                        <td>Active</td>
+                    </tr>
+                </table>
+            </div>
+            
+            
+            
+            <div class="card success">
+                <h3>🏁 Deployment Status</h3>
+            
+                <p>
+                    This VPS is now production-hardened for:
+                </p>
+            
+                <ul>
+                    <li>Dev-Journal (Node + MongoDB)</li>
+                    <li>Atlas AI Backend</li>
+                    <li>Dockerized MySQL Services</li>
+                    <li>Nginx Reverse Proxy with SSL</li>
+                </ul>
+            
+                <p>
+                    Suitable for solo production deployment with enterprise-level practices.
+                </p>
+            </div>
+    </div>
+
+    <!-- VPS SS IMPORT: 🛡 AIDE File Integrity Monitoring (Enterprise Mode) (left) -->
+    <div class="card full" id="vps-ss-aide-file-integrity-monitoring-enterprise-mode" data-vps-ss-lane="left">
+        <h2>🛡 AIDE File Integrity Monitoring (Enterprise Mode)</h2>
+<div class="card highlight">
+                <h3>🧠 Why AIDE Initialization Takes Time</h3>
+            
+                <pre>
+            AIDE scans:
+            • Entire filesystem
+            • System binaries
+            • Docker layers
+            • Node apps
+            • Nginx files
+            • Configuration directories
+            
+            Then generates SHA256 checksums.
+            </pre>
+            
+                <p>
+                    First run can take 5–20 minutes on 2 vCPU VPS.
+                    This is normal behavior.
+                </p>
+            </div>
+            
+            
+            
+            <div class="card success">
+                <h3>✅ Proper AIDE Setup Procedure</h3>
+            
+                <pre>
+            Step 1:
+            sudo aideinit
+            
+            (Do NOT interrupt. Let it finish.)
+            
+            Step 2:
+            sudo mv /var/lib/aide/aide.db.new /var/lib/aide/aide.db
+            
+            Step 3:
+            sudo aide --check
+            </pre>
+            
+                <p>
+                    Expected result:
+                </p>
+            
+                <pre>
+            AIDE found NO differences between database and filesystem
+            </pre>
+            </div>
+            
+            
+            
+            <div class="card warning">
+                <h3>⚠ Why Previous Error Happened</h3>
+            
+                <pre>
+            ERROR: missing configuration
+            </pre>
+            
+                <p>
+                    This occurred because the database creation was interrupted.
+                    Configuration is correct — database was incomplete.
+                </p>
+            </div>
+            
+            
+            
+            <div class="card folder">
+                <h3>⏱ Daily Integrity Check (Auto Enabled)</h3>
+            
+                <pre>
+            Check Timer:
+            systemctl list-timers | grep aide
+            
+            Timer:
+            dailyaidecheck.timer
+            </pre>
+            
+                <p>
+                    AIDE now runs automatically once per day.
+                </p>
+            </div>
+            
+            
+            
+            <div class="card highlight">
+                <h3>🔐 Enterprise Security Stack Overview</h3>
+            
+                <table>
+                    <tr>
+                        <th>Layer</th>
+                        <th>Status</th>
+                    </tr>
+                    <tr>
+                        <td>Firewall (UFW)</td>
+                        <td>Active</td>
+                    </tr>
+                    <tr>
+                        <td>Fail2Ban</td>
+                        <td>Active</td>
+                    </tr>
+                    <tr>
+                        <td>SSH Key Auth</td>
+                        <td>Primary</td>
+                    </tr>
+                    <tr>
+                        <td>Password Login</td>
+                        <td>Backup Only</td>
+                    </tr>
+                    <tr>
+                        <td>Root Login</td>
+                        <td>Disabled</td>
+                    </tr>
+                    <tr>
+                        <td>Nginx + HTTPS</td>
+                        <td>Secured</td>
+                    </tr>
+                    <tr>
+                        <td>Docker Isolation</td>
+                        <td>Local-only services</td>
+                    </tr>
+                    <tr>
+                        <td>Logwatch</td>
+                        <td>Installed</td>
+                    </tr>
+                    <tr>
+                        <td>AIDE</td>
+                        <td>Active</td>
+                    </tr>
+                    <tr>
+                        <td>auditd</td>
+                        <td>Enabled</td>
+                    </tr>
+                </table>
+            </div>
+            
+            
+            
+            <div class="card success">
+                <h3>📊 Security Score Progress</h3>
+            
+                <pre>
+            Initial VPS:          7 / 10
+            After Hardening:      9.3 / 10
+            After AIDE Complete:  9.8 / 10
+            With Ultra Mode:      10 / 10
+            </pre>
+            
+                <p>
+                    VPS Status: Production-Grade Infrastructure
+                </p>
+            </div>
+            
+            
+            
+            <div class="card highlight">
+                <h3>🚀 Optional Ultra Mode (Level 10+)</h3>
+            
+                <pre>
+            1. Change SSH Port
+            2. Install rkhunter
+            3. Restrict SSH to specific IP
+            4. Docker network segmentation
+            5. Zero-trust SSH model
+            </pre>
+            
+                <p>
+                    These features reduce attack surface and log noise further.
+                </p>
+            </div>
+            
+            
+            
+            <div class="card badge">
+                <h3>🏁 Current VPS Status</h3>
+            
+                <p>
+                    ✔ Public attacks detected and blocked
+                    ✔ Brute-force bots banned
+                    ✔ File integrity monitoring active
+                    ✔ Reverse proxy secured
+                    ✔ Production architecture stable
+                </p>
+            
+                <p><strong>Infrastructure Level Achieved.</strong></p>
+            </div>
+
+            left side
+    </div>
+
+    <!-- VPS SS IMPORT: 🐧 VPS Access via Nautilus (Linux / WSL GUI) (right) -->
+    <div class="card full" id="vps-ss-vps-access-via-nautilus-linux-wsl-gui" data-vps-ss-lane="right">
+        <h2>🐧 VPS Access via Nautilus (Linux / WSL GUI)</h2>
+<div class="card folder">
+                <h3>1️⃣ What is Nautilus?</h3>
+                <pre>
+            Nautilus is the default file manager in GNOME (Ubuntu Desktop).
+            
+            It supports:
+            • SFTP (SSH file browsing)
+            • FTP
+            • SMB (Windows shares)
+            • WebDAV
+            
+            It allows GUI-based browsing of your VPS over SSH.
+            </pre>
+            </div>
+            
+            <div class="card folder">
+                <h3>2️⃣ Connect to VPS Using SFTP</h3>
+                <pre>
+            Step 1:
+            Open Nautilus (Files)
+            
+            Step 2:
+            Click "Other Locations"
+            
+            Step 3:
+            In "Connect to Server" enter:
+            
+            sftp://devuser@72.61.251.2
+            
+            Step 4:
+            Enter your password when prompted.
+            
+            ✔ Your VPS will appear like a normal folder.
+            ✔ You can drag & drop files.
+            ✔ Edit files directly.
+            ✔ Upload / Delete files.
+            </pre>
+            </div>
+            
+            <div class="card folder">
+                <h3>3️⃣ When Nautilus Works</h3>
+                <pre>
+            Nautilus works only if you are using:
+            
+            • Ubuntu Desktop
+            • Linux VM
+            • WSL with GUI (WSLg enabled)
+            
+            It does NOT run natively in standard Windows without Linux.
+            </pre>
+            </div>
+            
+            <div class="card folder">
+                <h3>4️⃣ Install Nautilus (WSL Users)</h3>
+                <pre>
+            If you are inside WSL:
+            
+            sudo apt update
+            sudo apt install nautilus
+            
+            Then run:
+            nautilus
+            
+            Use SFTP:
+            sftp://devuser@72.61.251.2
+            </pre>
+            </div>
+            
+            <div class="card folder">
+                <h3>5️⃣ Best Tool Comparison</h3>
+                <pre>
+            Terminal Access → SSH
+            File Explorer (Windows) → WinSCP
+            Coding → VS Code Remote SSH
+            Linux GUI File Manager → Nautilus
+            
+            For Windows users:
+            WinSCP is simpler.
+            VS Code Remote SSH is best for development.
+            </pre>
+            </div>
+    </div>
+
+    <!-- VPS SS IMPORT: 🖥 Windows 11 File Explorer Connections (right) -->
+    <div class="card full" id="vps-ss-windows-11-file-explorer-connections" data-vps-ss-lane="right">
+        <h2>🖥 Windows 11 File Explorer Connections</h2>
+<div class="card folder">
+                <h3>1️⃣ Connect to PC (Same Wi-Fi / LAN)</h3>
+                <pre>
+            Enable Network Discovery:
+            Control Panel → Network & Sharing →
+            Advanced Sharing Settings →
+            ✔ Network Discovery
+            ✔ File & Printer Sharing
+            
+            Share Folder:
+            Right Click Folder → Properties →
+            Sharing → Advanced Sharing →
+            ✔ Share This Folder
+            
+            Access From Other PC:
+            File Explorer → Network
+            OR
+            \\192.168.1.5
+            </pre>
+            </div>
+            
+            <div class="card folder">
+                <h3>2️⃣ Connect to VPS (Over Internet)</h3>
+                <pre>
+            Method 1 (Recommended):
+            Use WinSCP (SFTP GUI)
+            
+            Host: 72.61.251.2
+            User: devuser
+            Port: 22
+            
+            Method 2:
+            Mount as Drive using SSHFS-Win + WinFsp
+            Example:
+            Z:\ → VPS Root Directory
+            </pre>
+            </div>
+            
+            <div class="card folder">
+                <h3>3️⃣ Remote Desktop (Full PC Control)</h3>
+                <pre>
+            Press: Win + R
+            Type: mstsc
+            Enter IP Address
+            
+            For Windows PC Remote Control
+            (Not for Ubuntu VPS unless GUI installed)
+            </pre>
+            </div>
+    </div>
+
+    <!-- VPS SS IMPORT: 🛠 Setup Commands Summary (right) -->
+    <div class="card full" id="vps-ss-setup-commands-summary" data-vps-ss-lane="right">
+        <h2>🛠 Setup Commands Summary</h2>
+<div class="card">
+                <pre>
+sudo apt update && sudo apt upgrade -y
+sudo ufw enable
+sudo apt install fail2ban
+sudo apt install aide
+sudo aideinit
+sudo docker compose up -d
+pm2 start ecosystem.config.js
+sudo systemctl restart ssh
+</pre>
+            </div>
+    </div>
+
+    <!-- VPS SS IMPORT: 📂 Dev Project Structure (right) -->
+    <div class="card full" id="vps-ss-dev-project-structure" data-vps-ss-lane="right">
+        <h2>📂 Dev Project Structure</h2>
+<div class="card folder">
+                <pre>
+/home/devuser/dev/
+│
+├── docker/
+│   └── docker-compose.yml
+│
+├── projects/
+│   ├── Dev-Journal/
+│   ├── ShopEase/
+│   ├── atlas-ai/
+│   └── vps-report/
+</pre>
+            </div>
+    </div>
+
+    <!-- VPS SS IMPORT: 📈 Future Plan (right) -->
+    <div class="card full" id="vps-ss-future-plan" data-vps-ss-lane="right">
+        <h2>📈 Future Plan</h2>
+<div class="card plan">
+                <ul>
+                    <li>Zero-Trust SSH (Optional)</li>
+                    <li>Cloudflare WAF Integration</li>
+                    <li>Automated Daily Backups</li>
+                    <li>Centralized Log Monitoring</li>
+                    <li>Docker Network Isolation</li>
+                    <li>CI/CD Deployment Pipeline</li>
+                </ul>
+            </div>
+    </div>
+
+    <!-- VPS SS IMPORT: 🥇 WinSCP Security &amp; Threat Analysis (right) -->
+    <div class="card full" id="vps-ss-winscp-security-threat-analysis" data-vps-ss-lane="right">
+        <h2>🥇 WinSCP Security & Threat Analysis</h2>
+<div class="card success">
+                <h3>🔐 Is WinSCP Secure?</h3>
+                <pre>
+            ✔ Uses SFTP (SSH protocol)
+            ✔ Strong encryption (same as SSH terminal)
+            ✔ Supports public key authentication
+            ✔ Host key verification
+            
+            Conclusion:
+            WinSCP is secure when configured correctly.
+            </pre>
+            </div>
+            
+            <div class="card">
+            
+                <h3>🛡 Security Comparison</h3>
+            
+                <table style="width:100%; border-collapse: collapse; font-size:14px;">
+                    <thead>
+                        <tr style="background:#1e293b;">
+                            <th style="padding:8px; border:1px solid #334155;">Method</th>
+                            <th style="padding:8px; border:1px solid #334155;">Encryption</th>
+                            <th style="padding:8px; border:1px solid #334155;">Safe Over Internet?</th>
+                            <th style="padding:8px; border:1px solid #334155;">Risk Level</th>
+                        </tr>
+                    </thead>
+            
+                    <tbody>
+                        <tr>
+                            <td style="padding:8px; border:1px solid #334155;">SSH</td>
+                            <td style="padding:8px; border:1px solid #334155;">🔒 Strong</td>
+                            <td style="padding:8px; border:1px solid #334155;">✅ Yes</td>
+                            <td style="padding:8px; border:1px solid #334155;">Very Low</td>
+                        </tr>
+            
+                        <tr>
+                            <td style="padding:8px; border:1px solid #334155;">WinSCP (SFTP)</td>
+                            <td style="padding:8px; border:1px solid #334155;">🔒 Strong</td>
+                            <td style="padding:8px; border:1px solid #334155;">✅ Yes</td>
+                            <td style="padding:8px; border:1px solid #334155;">Very Low</td>
+                        </tr>
+            
+                        <tr>
+                            <td style="padding:8px; border:1px solid #334155;">FTP (Plain)</td>
+                            <td style="padding:8px; border:1px solid #334155;">❌ None</td>
+                            <td style="padding:8px; border:1px solid #334155;">❌ No</td>
+                            <td style="padding:8px; border:1px solid #334155;">Very High</td>
+                        </tr>
+            
+                        <tr>
+                            <td style="padding:8px; border:1px solid #334155;">FileZilla (SFTP)</td>
+                            <td style="padding:8px; border:1px solid #334155;">🔒 Strong</td>
+                            <td style="padding:8px; border:1px solid #334155;">✅ Yes</td>
+                            <td style="padding:8px; border:1px solid #334155;">Low</td>
+                        </tr>
+            
+                        <tr>
+                            <td style="padding:8px; border:1px solid #334155;">SSHFS</td>
+                            <td style="padding:8px; border:1px solid #334155;">🔒 Strong</td>
+                            <td style="padding:8px; border:1px solid #334155;">✅ Yes</td>
+                            <td style="padding:8px; border:1px solid #334155;">Low</td>
+                        </tr>
+                    </tbody>
+                </table>
+            
+            </div>
+            
+            <div class="card folder">
+                <h3>🚨 Real Security Threats (Not WinSCP Itself)</h3>
+                <pre>
+            1️⃣ Weak Passwords → Brute-force attacks
+            2️⃣ Port 22 exposed globally
+            3️⃣ No Firewall (UFW disabled)
+            4️⃣ No Fail2Ban protection
+            5️⃣ Root login enabled
+            
+            WinSCP is not the risk.
+            Poor VPS configuration is the risk.
+            </pre>
+            </div>
+            
+            <div class="card plan">
+                <h3>🔥 Professional Secure Setup</h3>
+                <ul>
+                    <li>✔ SSH Key Authentication</li>
+                    <li>✔ Password login as backup (restricted)</li>
+                    <li>✔ UFW firewall enabled</li>
+                    <li>✔ Fail2Ban active</li>
+                    <li>✔ Root login disabled</li>
+                    <li>✔ MaxAuthTries = 3</li>
+                </ul>
+            </div>
+            
+            <div class="card">
+                <h3>🏆 Final Verdict</h3>
+                <pre>
+            WinSCP = Safe.
+            Security depends on VPS hardening.
+            
+            Your Current Setup:
+            ✔ Key-based SSH
+            ✔ Password backup
+            ✔ Fail2Ban
+            ✔ UFW
+            ✔ AIDE Intrusion Detection
+            
+            Security Level: 9.5 / 10
+            </pre>
+            </div>
+    </div>
+
+    <!-- VPS SS IMPORT: 🔎 Production-Level Infrastructure Audit (right) -->
+    <div class="card full" id="vps-ss-production-level-infrastructure-audit" data-vps-ss-lane="right">
+        <h2>🔎 Production-Level Infrastructure Audit</h2>
+<div class="card success">
+                <h3>1️⃣ System Health — Stable</h3>
+                <pre>
+            Load Average:
+            0.03, 0.08, 0.12
+            ✔ Extremely healthy
+            ✔ No CPU pressure
+            
+            Memory:
+            7.8GB total
+            3.6GB used
+            4.2GB available
+            Swap: 0
+            ✔ No swap usage
+            ✔ Comfortable headroom
+            
+            Disk:
+            15% used of 96GB
+            ✔ Plenty of storage available
+            
+            Verdict:
+            VPS resources are NOT under stress.
+            </pre>
+            </div>
+            
+            <div class="card danger">
+                <h3>2️⃣ Critical SSH Issue — Root Login</h3>
+                <pre>
+            Issue Found:
+            PermitRootLogin yes
+            
+            Risk:
+            Bots brute-force root 24/7
+            
+            Required Fix:
+            sudo nano /etc/ssh/sshd_config
+            
+            Change to:
+            PermitRootLogin no
+            
+            Then:
+            sudo systemctl restart ssh
+            
+            Status:
+            ✔ Root login disabled
+            </pre>
+            </div>
+            
+            <div class="card danger">
+                <h3>3️⃣ Critical MySQL Exposure</h3>
+                <pre>
+            Issue Found:
+            0.0.0.0:3306 (docker-proxy)
+            
+            Meaning:
+            MySQL exposed to entire internet.
+            
+            Fix Applied:
+            docker-compose.yml updated:
+            
+            ports:
+            - "127.0.0.1:3306:3306"
+            
+            Re-deployed:
+            docker compose down
+            docker compose up -d
+            
+            Verified:
+            ✔ MySQL now bound to 127.0.0.1 only
+            ✔ Not publicly exposed
+            </pre>
+            </div>
+            
+            <div class="card warning">
+                <h3>4️⃣ Docker & Node Public Bindings</h3>
+                <pre>
+            Found:
+            0.0.0.0:3000
+            0.0.0.0:9000
+            0.0.0.0:8080
+            
+            Risk:
+            Unnecessary public exposure
+            
+            Best Practice:
+            Bind services to:
+            127.0.0.1:<port>
+            
+            Use Nginx reverse proxy externally.
+            
+            Status:
+            Attack surface minimized.
+            </pre>
+            </div>
+            
+            <div class="card success">
+                <h3>5️⃣ Fail2Ban Protection</h3>
+                <pre>
+            Fail2Ban:
+            ✔ Installed
+            ✔ SSH jail enabled
+            ✔ maxretry = 5
+            ✔ bantime = 3600 seconds
+            
+            Protection:
+            Automatic brute-force blocking active.
+            </pre>
+            </div>
+            
+            <div class="card warning">
+                <h3>6️⃣ System Updates & Kernel</h3>
+                <pre>
+            Packages:
+            Upgradable packages detected earlier.
+            
+            Action Plan:
+            sudo apt upgrade -y
+            sudo reboot
+            
+            Status:
+            System updated and reboot scheduled during low traffic.
+            </pre>
+            </div>
+            
+            <div class="card">
+                <h3>7️⃣ File Explorer Decision</h3>
+                <pre>
+            Decision:
+            No Docker file manager.
+            
+            Reason:
+            ✖ Adds attack surface
+            ✖ Common hack target
+            
+            Professional Approach:
+            ✔ SSH
+            ✔ WinSCP (SFTP)
+            ✔ VS Code Remote SSH
+            
+            Philosophy:
+            VPS = Engine
+            Not a desktop.
+            </pre>
+            </div>
+            
+            <div class="card plan">
+                <h3>🏆 Final Security Rating</h3>
+                <table>
+                    <tr>
+                        <th>Area</th>
+                        <th>Status</th>
+                    </tr>
+                    <tr>
+                        <td>Resources</td>
+                        <td>✅ Excellent</td>
+                    </tr>
+                    <tr>
+                        <td>Firewall</td>
+                        <td>✅ Active</td>
+                    </tr>
+                    <tr>
+                        <td>Fail2Ban</td>
+                        <td>✅ Running</td>
+                    </tr>
+                    <tr>
+                        <td>Root SSH</td>
+                        <td>✅ Disabled</td>
+                    </tr>
+                    <tr>
+                        <td>MySQL Binding</td>
+                        <td>✅ Localhost Only</td>
+                    </tr>
+                    <tr>
+                        <td>Kernel Updates</td>
+                        <td>✅ Updated</td>
+                    </tr>
+                </table>
+            
+                <pre>
+            Security Level: Production-Ready
+            Mode: Hardened Dev Infrastructure
+            </pre>
+            </div>
+            
+            <div class="card highlight">
+                <h3>🎯 Hardening Priority Roadmap</h3>
+                <pre>
+            1. Disable root login ✔
+            2. Fix MySQL exposure ✔
+            3. Bind Node services to localhost ✔
+            4. Upgrade packages + reboot ✔
+            5. Maintain SSH key-based login ✔
+            
+            Next Level Options:
+            • External vulnerability scan
+            • Docker network isolation
+            • Log-based intrusion analytics
+            • Reverse proxy security headers
+            </pre>
+            </div>
+    </div>
+
+    <!-- VPS SS IMPORT: 🔄 Post-Reboot Verification &amp; Hardening Checklist (right) -->
+    <div class="card full" id="vps-ss-post-reboot-verification-hardening-checklist" data-vps-ss-lane="right">
+        <h2>🔄 Post-Reboot Verification & Hardening Checklist</h2>
+<div class="card success">
+                <h3>1️⃣ Kernel Upgrade Verification</h3>
+                <pre>
+            Command:
+            ssh devuser@72.61.251.2
+            uname -r
+            
+            Expected Output:
+            6.8.0-100-generic
+            
+            ✔ Confirms system rebooted into updated kernel
+            ✔ Security patches active
+            </pre>
+            </div>
+            
+            <div class="card warning">
+                <h3>2️⃣ Docker Compose Location Fix</h3>
+                <pre>
+            Issue:
+            docker compose down
+            → no configuration file provided
+            
+            Reason:
+            Command was run outside project directory.
+            
+            Correct Steps:
+            cd ~/dev/projects
+            cd ShopEase   (or project folder)
+            ls
+            
+            Then:
+            docker compose down
+            docker compose up -d
+            
+            ✔ Must be executed where docker-compose.yml exists
+            </pre>
+            </div>
+            
+            <div class="card danger">
+                <h3>3️⃣ MySQL Public Exposure Check</h3>
+                <pre>
+            Check:
+            sudo ss -tulpn | grep 3306
+            
+            If shows:
+            0.0.0.0:3306 → ❌ Public (Danger)
+            
+            Fix in docker-compose.yml:
+            ports:
+            - "127.0.0.1:3306:3306"
+            
+            Then:
+            docker compose down
+            docker compose up -d
+            
+            Verify again:
+            sudo ss -tulpn | grep 3306
+            
+            ✔ Must show:
+            127.0.0.1:3306
+            </pre>
+            </div>
+            
+            <div class="card success">
+                <h3>4️⃣ Root SSH Login Confirmation</h3>
+                <pre>
+            Command:
+            sudo grep PermitRootLogin /etc/ssh/sshd_config
+            
+            Expected:
+            PermitRootLogin no
+            
+            ✔ Root login disabled
+            ✔ Brute-force risk reduced
+            </pre>
+            </div>
+            
+            <div class="card success">
+                <h3>5️⃣ Fail2Ban SSH Jail Status</h3>
+                <pre>
+            Check overall status:
+            sudo fail2ban-client status
+            
+            Check SSH jail:
+            sudo fail2ban-client status sshd
+            
+            Look for:
+            Currently banned:
+            Jail: active
+            
+            ✔ Brute-force auto-block enabled
+            </pre>
+            </div>
+            
+            <div class="card warning">
+                <h3>6️⃣ Node & Docker Port Exposure Review</h3>
+                <pre>
+            Check:
+            sudo ss -tulpn
+            
+            If showing:
+            0.0.0.0:3000
+            0.0.0.0:9000
+            0.0.0.0:8080
+            
+            Risk:
+            Apps publicly accessible.
+            
+            Best Practice:
+            Bind services to:
+            127.0.0.1:<port>
+            
+            Use Nginx reverse proxy for external access.
+            
+            ✔ Reduce attack surface
+            </pre>
+            </div>
+            
+            <div class="card plan">
+                <h3>🎯 Current Security State (After Reboot)</h3>
+                <table>
+                    <tr>
+                        <th>Component</th>
+                        <th>Status</th>
+                    </tr>
+                    <tr>
+                        <td>Kernel</td>
+                        <td>⏳ Verify</td>
+                    </tr>
+                    <tr>
+                        <td>Root SSH</td>
+                        <td>⏳ Verify</td>
+                    </tr>
+                    <tr>
+                        <td>MySQL Exposure</td>
+                        <td>❌ Fix Required</td>
+                    </tr>
+                    <tr>
+                        <td>Firewall (UFW)</td>
+                        <td>✅ Active</td>
+                    </tr>
+                    <tr>
+                        <td>Fail2Ban</td>
+                        <td>⏳ Verify</td>
+                    </tr>
+                </table>
+            
+                <pre>
+            Goal:
+            Stage 1 Hardening Completion
+            → Remove public DB access
+            → Limit service bindings
+            → Confirm SSH policies
+            </pre>
+            </div>
+            
+            <div class="card highlight">
+                <h3>🔥 Next Phase — Stage 2 Network Lockdown</h3>
+                <pre>
+            Upcoming Improvements:
+            
+            • Docker internal network isolation
+            • Reverse proxy only (Nginx)
+            • Remove all direct port exposure
+            • Optional IP whitelisting
+            • Advanced intrusion log analytics
+            
+            Infrastructure Level:
+            Moving toward Production-Grade Security
+            </pre>
+            </div>
+    </div>
+
+    <!-- VPS SS IMPORT: 🔐 Stage 2 — Backend Isolation (Node Binding Fix) (right) -->
+    <div class="card full" id="vps-ss-stage-2-backend-isolation-node-binding-fix" data-vps-ss-lane="right">
+        <h2>🔐 Stage 2 — Backend Isolation (Node Binding Fix)</h2>
+<div class="card danger">
+                <h3>🔥 Problem Identified</h3>
+                <pre>
+            Both applications were binding to:
+            
+            0.0.0.0
+            
+            Meaning:
+            Server was listening on ALL network interfaces.
+            
+            Result:
+            • Direct public exposure
+            • Reverse proxy bypass possible
+            • Increased attack surface
+            </pre>
+            </div>
+            
+            
+            <div class="card warning">
+                <h3>🛠 Dev-Journal Fix (Port 3000)</h3>
+            
+                <pre>
+            Before:
+            app.listen(PORT, '0.0.0.0', () => {
+            
+            After:
+            app.listen(PORT, '127.0.0.1', () => {
+            </pre>
+            
+                <pre>
+            Final Configuration:
+            
+            app.listen(PORT, '127.0.0.1', () => {
+              console.log('========================================');
+              console.log('   Dev-Journal Server Started');
+              console.log('========================================');
+              console.log(`   Port: ${PORT}`);
+              console.log(`   Mode: ${process.env.NODE_ENV || 'development'}`);
+              console.log(`   URL: http://localhost:${PORT}`);
+              console.log('========================================');
+            });
+            </pre>
+            </div>
+            
+            
+            <div class="card warning">
+                <h3>🛠 Atlas-AI Fix (Port 9000)</h3>
+            
+                <pre>
+            Before:
+            app.listen(PORT, "0.0.0.0", () => {
+            
+            After:
+            app.listen(PORT, "127.0.0.1", () => {
+            </pre>
+            
+                <pre>
+            Final Configuration:
+            
+            app.listen(PORT, "127.0.0.1", () => {
+              console.log(`Atlas: running on port ${PORT}`);
+            });
+            </pre>
+            </div>
+            
+            
+            <div class="card folder">
+                <h3>🔄 Apply Changes</h3>
+                <pre>
+            pm2 restart all
+            
+            Verify:
+            
+            sudo ss -tulpn | grep 3000
+            sudo ss -tulpn | grep 9000
+            </pre>
+            
+                <pre>
+            Expected Output:
+            
+            127.0.0.1:3000
+            127.0.0.1:9000
+            
+            NOT:
+            0.0.0.0
+            </pre>
+            </div>
+            
+            
+            <div class="card highlight">
+                <h3>🏗 Network Architecture Before vs After</h3>
+            
+                <pre>
+            ❌ Before:
+            Internet → Node directly (public exposure)
+            
+            ✅ After:
+            Internet → Nginx (80/443)
+                    → Node (127.0.0.1 internal only)
+            </pre>
+            
+            </div>
+            
+            
+            <div class="card success">
+                <h3>🎯 Security Impact</h3>
+                <pre>
+            ✔ Direct API access removed
+            ✔ Reverse proxy enforced
+            ✔ Port scanning reduced
+            ✔ Backend isolated
+            ✔ Production-grade architecture
+            
+            Public Ports Now:
+            22 (SSH)
+            80 (HTTP)
+            443 (HTTPS)
+            
+            Everything else → Internal only
+            </pre>
+            </div>
+    </div>
+
+    <!-- VPS SS IMPORT: 🛡 Production Security Verification — Stage 2 Complete (right) -->
+    <div class="card full" id="vps-ss-production-security-verification-stage-2-complete" data-vps-ss-lane="right">
+        <h2>🛡 Production Security Verification — Stage 2 Complete</h2>
+<div class="card success">
+                <h3>✅ Node Applications (Isolated)</h3>
+                <pre>
+            127.0.0.1:3000
+            127.0.0.1:9000
+            </pre>
+                <ul>
+                    <li>✔ Not publicly exposed</li>
+                    <li>✔ Accessible only via Nginx</li>
+                    <li>✔ Reverse proxy architecture enforced</li>
+                </ul>
+            </div>
+            
+            
+            <div class="card success">
+                <h3>🗄 MySQL (Docker)</h3>
+                <pre>
+            127.0.0.1:3306
+            </pre>
+                <ul>
+                    <li>✔ Bound to localhost only</li>
+                    <li>✔ No external DB exposure</li>
+                    <li>✔ Secure container isolation</li>
+                </ul>
+            </div>
+            
+            
+            <div class="card highlight">
+                <h3>🌐 Public Ports (Internet Facing)</h3>
+                <pre>
+            22   → SSH
+            80   → HTTP
+            443  → HTTPS
+            </pre>
+                <p>This is exactly what a hardened production VPS should expose.</p>
+            </div>
+            
+            
+            <div class="card danger">
+                <h3>🔥 Architecture Transformation</h3>
+            
+                <pre>
+            ❌ BEFORE:
+            
+            Internet → Node
+            Internet → MySQL
+            Internet → phpMyAdmin
+            
+            
+            ✅ AFTER:
+            
+            Internet → Nginx → Node (127.0.0.1)
+            Internet → Nginx → HTTPS
+            MySQL → Localhost only
+            </pre>
+            
+                <p>Massive reduction in attack surface achieved.</p>
+            </div>
+            
+            
+            <div class="card warning">
+                <h3>⚠ phpMyAdmin Policy</h3>
+            
+                <p>phpMyAdmin removed from public access.</p>
+            
+                <pre>
+            If required (secure access):
+            
+            ssh -L 8080:127.0.0.1:8080 devuser@72.61.251.2
+            
+            Then open:
+            http://localhost:8080
+            </pre>
+            
+                <p>✔ Accessible only via SSH tunnel
+                    ✔ Never exposed publicly</p>
+            </div>
+            
+            
+            <div class="card folder">
+                <h3>📊 VPS Health Summary</h3>
+            
+                <p>Verified using:</p>
+            
+                <pre>
+            sudo ss -tulpn
+            </pre>
+            
+                <ul>
+                    <li>Nginx → 80 / 443</li>
+                    <li>SSH → 22</li>
+                    <li>All services → 127.0.0.1 internal</li>
+                </ul>
+            
+                <p>This matches production server standards.</p>
+            </div>
+            
+            
+            <div class="card success">
+                <h3>🎯 Security Baseline Status</h3>
+            
+                <ul>
+                    <li>✔ Reverse proxy secured</li>
+                    <li>✔ Database isolated</li>
+                    <li>✔ AI services isolated</li>
+                    <li>✔ Firewall active (UFW)</li>
+                    <li>✔ Fail2Ban active</li>
+                    <li>✔ Intrusion monitoring enabled</li>
+                    <li>✔ Logwatch reporting enabled</li>
+                    <li>✔ AIDE integrity monitoring installed</li>
+                </ul>
+            
+                <h4>Current Status: PRODUCTION READY</h4>
+            </div>
+            
+            
+            <div class="card highlight">
+                <h3>🚀 Stage 3 — Pro-Level Hardening (Next Phase)</h3>
+            
+                <ul>
+                    <li>🔐 Key-based SSH (password as fallback)</li>
+                    <li>🚪 Optional SSH port change</li>
+                    <li>🛑 UFW SSH rate limiting</li>
+                    <li>🐳 Docker auto-restart policies</li>
+                    <li>💾 Automated daily backups</li>
+                    <li>📡 Log monitoring alerts</li>
+                </ul>
+            </div>
+            
+            
+            <div class="card badge">
+                <h3>🏆 Infrastructure Verdict</h3>
+            
+                <p>
+                    This is no longer a beginner VPS.<br>
+                    This is real infrastructure engineering.
+                </p>
+            
+                <p><strong>Security Phase 2: COMPLETED</strong></p>
+            </div>
+    </div>
+
+    <!-- VPS SS IMPORT: 🔐 Secure SSH Tunnel Access (Port Forwarding) (right) -->
+    <div class="card full" id="vps-ss-secure-ssh-tunnel-access-port-forwarding" data-vps-ss-lane="right">
+        <h2>🔐 Secure SSH Tunnel Access (Port Forwarding)</h2>
+<div class="card highlight">
+                <h3>🚀 SSH Tunnel Command</h3>
+            
+                <pre>
+            ssh -L 8080:127.0.0.1:8080 devuser@72.61.251.2
+            </pre>
+            
+                <p>This creates a secure encrypted tunnel from your PC to the VPS.</p>
+            
+                <pre>
+            Your PC (localhost:8080)
+                    ↓
+            Encrypted SSH Connection
+                    ↓
+            VPS (127.0.0.1:8080)
+            </pre>
+            
+                <p>
+                    After running the command, open in your browser:
+                </p>
+            
+                <pre>
+            http://localhost:8080
+            </pre>
+            </div>
+            
+            
+            
+            <div class="card success">
+                <h3>🛡 Why This Is Secure</h3>
+            
+                <pre>
+            ❌ Without Tunnel:
+            
+            Internet → VPS:8080 (Public Exposure)
+            
+            
+            ✅ With SSH Tunnel:
+            
+            Your PC → SSH Encrypted → VPS localhost:8080
+            </pre>
+            
+                <ul>
+                    <li>✔ Port 8080 is NOT exposed publicly</li>
+                    <li>✔ Access is encrypted</li>
+                    <li>✔ Only you can access it</li>
+                    <li>✔ No attack surface increase</li>
+                </ul>
+            </div>
+            
+            
+            
+            <div class="card warning">
+                <h3>⚠ Important Rule</h3>
+            
+                <p><strong>Keep the SSH terminal window open.</strong></p>
+            
+                <ul>
+                    <li>If you close the SSH session → tunnel closes</li>
+                    <li>No background exposure</li>
+                </ul>
+            </div>
+            
+            
+            
+            <div class="card folder">
+                <h3>🔎 If It Doesn’t Open</h3>
+            
+                <p>Run on VPS:</p>
+            
+                <pre>
+            sudo ss -tulpn | grep 8080
+            </pre>
+            
+                <ul>
+                    <li>If nothing appears → service on port 8080 is not running</li>
+                    <li>If running → tunnel will forward correctly</li>
+                </ul>
+            </div>
+            
+            
+            
+            <div class="card success">
+                <h3>🏆 Infrastructure Security Status</h3>
+            
+                <ul>
+                    <li>✔ SSH secured</li>
+                    <li>✔ Root login disabled</li>
+                    <li>✔ Fail2Ban active</li>
+                    <li>✔ MySQL bound to localhost</li>
+                    <li>✔ Node apps bound to localhost</li>
+                    <li>✔ Nginx reverse proxy active</li>
+                    <li>✔ Secure SSH tunneling used for internal tools</li>
+                </ul>
+            
+                <h4>Attack Surface: MINIMIZED</h4>
+            </div>
+            
+            
+            
+            <div class="card badge">
+                <h3>🎯 Best Practice Achieved</h3>
+            
+                <p>
+                    Internal tools (phpMyAdmin / dev dashboards / admin panels)
+                    are accessible only through encrypted SSH tunnels.
+                </p>
+            
+                <p><strong>This is professional-grade VPS practice.</strong></p>
+            </div>
+    </div>
+
+    <!-- VPS SS IMPORT: 🛡 Stage 4 — Live Security Audit &amp; Hardening Upgrade (right) -->
+    <div class="card full" id="vps-ss-stage-4-live-security-audit-hardening-upgrade" data-vps-ss-lane="right">
+        <h2>🛡 Stage 4 — Live Security Audit & Hardening Upgrade</h2>
+<div class="card danger">
+                <h3>🚨 SSH Attack Analysis</h3>
+            
+                <pre>
+            Attacker IP:
+            165.245.130.146
+            
+            Attempts Observed:
+            • 418 illegal username attempts
+            • 209 invalid user attempts
+            • 8 root login attempts
+            • Multiple brute-force sequences
+            </pre>
+            
+                <p>
+                    This was an automated bot scanning the internet for weak VPS servers.
+                    Every public VPS experiences this.
+                </p>
+            </div>
+            
+            
+            
+            <div class="card success">
+                <h3>🟢 Was the Server Compromised?</h3>
+            
+                <pre>
+            Successful Logins:
+            152.58.x.x  → (Your IP)
+            
+            All other attempts:
+            FAILED
+            </pre>
+            
+                <ul>
+                    <li>✔ No unauthorized access</li>
+                    <li>✔ Root login blocked</li>
+                    <li>✔ Fail2Ban active</li>
+                    <li>✔ Firewall working</li>
+                </ul>
+            
+                <h4>Status: SECURE</h4>
+            </div>
+            
+            
+            
+            <div class="card highlight">
+                <h3>🌐 HTTP Scan Attempts (Nginx)</h3>
+            
+                <pre>
+            Examples:
+            • /cgi-bin/.../bin/sh
+            • /admin
+            • /api
+            • /index.php
+            </pre>
+            
+                <p>
+                    These were automated exploit scanners looking for:
+                    WordPress, PHP, or CGI vulnerabilities.
+                </p>
+            
+                <ul>
+                    <li>✔ No PHP exposed</li>
+                    <li>✔ No CGI enabled</li>
+                    <li>✔ Reverse proxy enforced</li>
+                    <li>✔ No vulnerability detected</li>
+                </ul>
+            </div>
+            
+            
+            
+            <div class="card warning">
+                <h3>⚔ Fail2Ban Hardening Upgrade</h3>
+            
+                <pre>
+            Updated Configuration:
+            
+            [sshd]
+            enabled = true
+            port = ssh
+            filter = sshd
+            logpath = %(sshd_log)s
+            maxretry = 3
+            findtime = 600
+            bantime = 86400
+            </pre>
+            
+                <p>
+                    Meaning:
+                </p>
+            
+                <ul>
+                    <li>3 failed attempts</li>
+                    <li>Within 10 minutes</li>
+                    <li>Banned for 24 hours</li>
+                </ul>
+            </div>
+            
+            
+            
+            <div class="card folder">
+                <h3>🚫 Permanent IP Ban Applied</h3>
+            
+                <pre>
+            sudo fail2ban-client set sshd banip 165.245.130.146
+            </pre>
+            
+                <p>
+                    Attacker permanently blocked.
+                </p>
+            </div>
+            
+            
+            
+            <div class="card danger">
+                <h3>🧬 File Integrity Monitoring (AIDE)</h3>
+            
+                <pre>
+            Installed:
+            AIDE (Advanced Intrusion Detection Environment)
+            
+            Purpose:
+            • Detect file modifications
+            • Detect permission changes
+            • Detect unexpected binary changes
+            • Detect rootkits
+            </pre>
+            
+                <pre>
+            Manual Scan:
+            sudo aide --check
+            </pre>
+            </div>
+            
+            
+            
+            <div class="card success">
+                <h3>📊 Security Layer Assessment</h3>
+            
+                <table>
+                    <tr>
+                        <th>Layer</th>
+                        <th>Status</th>
+                    </tr>
+                    <tr>
+                        <td>SSH</td>
+                        <td>Secured</td>
+                    </tr>
+                    <tr>
+                        <td>Root Login</td>
+                        <td>Disabled</td>
+                    </tr>
+                    <tr>
+                        <td>Fail2Ban</td>
+                        <td>Hardened</td>
+                    </tr>
+                    <tr>
+                        <td>Firewall (UFW)</td>
+                        <td>Active</td>
+                    </tr>
+                    <tr>
+                        <td>Nginx Reverse Proxy</td>
+                        <td>Enforced</td>
+                    </tr>
+                    <tr>
+                        <td>Node Apps</td>
+                        <td>Local-only</td>
+                    </tr>
+                    <tr>
+                        <td>MySQL</td>
+                        <td>Local-only</td>
+                    </tr>
+                    <tr>
+                        <td>Log Monitoring</td>
+                        <td>Active</td>
+                    </tr>
+                    <tr>
+                        <td>File Integrity (AIDE)</td>
+                        <td>Installed</td>
+                    </tr>
+                </table>
+            </div>
+            
+            
+            
+            <div class="card badge">
+                <h3>⭐ Security Rating</h3>
+            
+                <pre>
+            Before Hardening: 7 / 10
+            After Upgrade:    9.5 / 10
+            
+            Attack Surface: MINIMIZED
+            Intrusion Attempts: BLOCKED
+            Server Status: PRODUCTION HARDENED
+            </pre>
+            </div>
+            
+            
+            
+            <div class="card highlight">
+                <h3>🚀 Next-Level Security Roadmap</h3>
+            
+                <ul>
+                    <li>🔐 SSH Key-only login (optional upgrade)</li>
+                    <li>🧠 auditd advanced monitoring</li>
+                    <li>📊 Automated daily security email reports</li>
+                    <li>🐳 Docker network segmentation</li>
+                    <li>🧱 Zero-trust architecture phase</li>
+                </ul>
+            </div>
+    </div>
+
+    <!-- VPS SS IMPORT: 🔐 Balanced SSH Security (Key + Password Backup) (right) -->
+    <div class="card full" id="vps-ss-balanced-ssh-security-key-password-backup" data-vps-ss-lane="right">
+        <h2>🔐 Balanced SSH Security (Key + Password Backup)</h2>
+<div class="card highlight">
+                <h3>🎯 Security Strategy</h3>
+            
+                <p>
+                    Implement secure SSH authentication with:
+                </p>
+            
+                <ul>
+                    <li>✔ SSH Key Login (Primary)</li>
+                    <li>✔ Password Login (Backup Only)</li>
+                    <li>❌ Root Login Disabled</li>
+                    <li>✔ Brute-force Protection Enabled</li>
+                </ul>
+            
+                <p>
+                    This prevents lockout risk while maintaining high security.
+                </p>
+            </div>
+            
+            
+            
+            <div class="card success">
+                <h3>⚙ SSH Configuration</h3>
+            
+                <pre>
+            File: /etc/ssh/sshd_config
+            
+            PermitRootLogin no
+            PubkeyAuthentication yes
+            PasswordAuthentication yes
+            ChallengeResponseAuthentication no
+            UsePAM yes
+            MaxAuthTries 3
+            LoginGraceTime 30
+            AllowUsers devuser
+            </pre>
+            
+                <p>
+                    ✔ Only devuser allowed
+                    ✔ 3 login attempts max
+                    ✔ 30-second login timeout
+                    ✔ Root completely blocked
+                </p>
+            </div>
+            
+            
+            
+            <div class="card warning">
+                <h3>🔥 Fail2Ban Brute-Force Protection</h3>
+            
+                <pre>
+            File: /etc/fail2ban/jail.local
+            
+            [sshd]
+            enabled = true
+            port = ssh
+            logpath = %(sshd_log)s
+            maxretry = 3
+            findtime = 600
+            bantime = 3600
+            </pre>
+            
+                <p>
+                    3 failed attempts within 10 minutes → 1 hour ban.
+                </p>
+            </div>
+            
+            
+            
+            <div class="card folder">
+                <h3>🧪 SSH Login Test</h3>
+            
+                <pre>
+            ssh devuser@YOUR_SERVER_IP
+            </pre>
+            
+                <p>
+                    If login succeeds without password prompt → key authentication is active.
+                </p>
+            
+                <p>
+                    Password remains as emergency fallback.
+                </p>
+            </div>
+            
+            
+            
+            <div class="card highlight">
+                <h3>🧠 Optional (Advanced Mode)</h3>
+            
+                <pre>
+            AuthenticationMethods publickey,password
+            </pre>
+            
+                <p>
+                    Forces both key AND password together.
+                </p>
+            
+                <p>
+                    Not enabled currently to avoid unnecessary complexity.
+                </p>
+            </div>
+            
+            
+            
+            <div class="card badge">
+                <h3>📊 SSH Security Status</h3>
+            
+                <table>
+                    <tr>
+                        <th>Feature</th>
+                        <th>Status</th>
+                    </tr>
+                    <tr>
+                        <td>Root Login</td>
+                        <td>Disabled</td>
+                    </tr>
+                    <tr>
+                        <td>SSH Key</td>
+                        <td>Primary</td>
+                    </tr>
+                    <tr>
+                        <td>Password Login</td>
+                        <td>Backup Only</td>
+                    </tr>
+                    <tr>
+                        <td>Max Attempts</td>
+                        <td>3</td>
+                    </tr>
+                    <tr>
+                        <td>Login Timeout</td>
+                        <td>30 sec</td>
+                    </tr>
+                    <tr>
+                        <td>Fail2Ban</td>
+                        <td>Active</td>
+                    </tr>
+                </table>
+            
+                <p><strong>Security Rating: 9.8 / 10 (Balanced & Safe)</strong></p>
+            </div>
     </div>
 
     <!-- MALWARE SCANNER & AUTO REMOVAL -->

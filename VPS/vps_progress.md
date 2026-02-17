@@ -18,6 +18,36 @@
 - [VPS Upgrade Decision (KVM1 → KVM2)](#vps-upgrade-decision-kvm1--kvm2)
 - [Current VPS Health Analysis](#current-vps-health-analysis)
 - [VPS as Personal Desktop Decision](#vps-as-personal-desktop-decision)
+- [VPS Planning Workspace (Nested Merge)](#vps-planning-workspace-nested-merge)
+- [Left Lane Overview](#left-lane-overview)
+- [SSH Access from Windows 11](#ssh-access-from-windows-11)
+- [Completed Setup](#completed-setup)
+- [VPS Access Methods Comparison](#vps-access-methods-comparison)
+- [Recommended Workflow (Your Setup)](#recommended-workflow-your-setup)
+- [Local Folder Experience Option](#local-folder-experience-option)
+- [SSH Security Architecture (Key + Password Backup)](#ssh-security-architecture-key--password-backup)
+- [Professional VPS Security & Health Audit](#professional-vps-security--health-audit)
+- [Stage 2 Production-Level Network Lockdown](#stage-2-production-level-network-lockdown)
+- [Infrastructure Debugging - Port Conflict & Exposure Fix](#infrastructure-debugging---port-conflict--exposure-fix)
+- [Stage 3 SSH Hardening & Intrusion Monitoring](#stage-3-ssh-hardening--intrusion-monitoring)
+- [Stage 3 Logwatch & Postfix Configuration](#stage-3-logwatch--postfix-configuration)
+- [Postfix System Mail Name (FQDN Configuration)](#postfix-system-mail-name-fqdn-configuration)
+- [Stage 5 10/10 Hardened Production Upgrade](#stage-5-1010-hardened-production-upgrade)
+- [AIDE File Integrity Monitoring (Enterprise Mode)](#aide-file-integrity-monitoring-enterprise-mode)
+- [Right Lane Overview](#right-lane-overview)
+- [VPS Access via Nautilus (Linux / WSL GUI)](#vps-access-via-nautilus-linux--wsl-gui)
+- [Windows 11 File Explorer Connections](#windows-11-file-explorer-connections)
+- [Setup Commands Summary](#setup-commands-summary)
+- [Dev Project Structure](#dev-project-structure)
+- [Future Plan](#future-plan)
+- [WinSCP Security & Threat Analysis](#winscp-security--threat-analysis)
+- [Production-Level Infrastructure Audit](#production-level-infrastructure-audit)
+- [Post-Reboot Verification & Hardening Checklist](#post-reboot-verification--hardening-checklist)
+- [Stage 2 Backend Isolation (Node Binding Fix)](#stage-2-backend-isolation-node-binding-fix)
+- [Production Security Verification Stage 2 Complete](#production-security-verification-stage-2-complete)
+- [Secure SSH Tunnel Access (Port Forwarding)](#secure-ssh-tunnel-access-port-forwarding)
+- [Stage 4 Live Security Audit & Hardening Upgrade](#stage-4-live-security-audit--hardening-upgrade)
+- [Balanced SSH Security (Key + Password Backup)](#balanced-ssh-security-key--password-backup)
 
 ### Environment Setup
 
@@ -232,13 +262,461 @@ uptime
 
 ## Current VPS Health Analysis
 
-_Content from HTML - VPS health metrics and analysis_
+Health metrics collected directly from the live VPS (KVM1) showed low utilization and no active pressure.
+
+| Component | Observation |
+| --------- | ----------- |
+| RAM       | ~3.8 GB total, ~628 MB used, ~3.2 GB available |
+| Swap      | 0% used |
+| CPU       | Load average near 0.00 on 1 vCPU |
+| Disk      | ~6.6 GB used of ~48 GB (~14%) |
+| Stability | Clean process state, no runaway services |
+
+### Verdict
+
+- [x] VPS is healthy and under-utilized
+- [x] No immediate need to upgrade to KVM2
+- [ ] Re-evaluate only when RAM drops, swap starts, or sustained load rises
 
 ---
 
 ## VPS as Personal Desktop Decision
 
-_Content from HTML - Decision on using VPS as desktop_
+### Final Decision
+
+Use the VPS as a **developer workstation backend**, not as a daily GUI desktop replacement.
+
+### Recommended split
+
+| Task | Best Location |
+| ---- | ------------- |
+| Browsing / GUI work | Local machine |
+| Coding editor UX | Local VS Code |
+| App runtime (Django/Node) | VPS |
+| Databases / services | VPS |
+| Logs / diagnostics | VPS |
+
+### Why
+
+- [x] Better performance and stability
+- [x] Lower attack surface than desktop-over-VPS workflows
+- [x] Follows standard production engineering practice
+
+---
+
+## VPS Planning Workspace (Nested Merge)
+
+This workspace combines VPS planning into two execution tracks:
+
+- **Left Lane**: SSH hardening, intrusion monitoring, and staged security upgrades
+- **Right Lane**: access workflows, infrastructure audits, and production verification
+
+Use this section as the canonical index for security and operations planning decisions.
+
+---
+
+## Left Lane Overview
+
+Focus: progressive hardening from baseline security to enterprise-style integrity monitoring.
+
+- [x] SSH and access model defined
+- [x] Network exposure tightened
+- [x] Monitoring stack enabled (Fail2Ban, Logwatch, AIDE)
+- [x] Final hardening stages documented
+
+---
+
+## SSH Access from Windows 11
+
+Primary access path:
+
+```bash
+ssh devuser@72.61.251.2
+```
+
+File operations:
+
+- WinSCP (SFTP) for GUI file transfer
+- Optional SSHFS-style mounted drive workflow
+- Troubleshooting with `systemctl status ssh`, `ufw`, and `ss -tulpn`
+
+---
+
+## Completed Setup
+
+Current completed baseline:
+
+- [x] Firewall + Fail2Ban active
+- [x] Root login disabled
+- [x] SSH key authentication configured
+- [x] Nginx + HTTPS operational
+- [x] Dockerized MySQL running with localhost binding
+- [x] Dev-Journal and Atlas-AI services active under PM2
+
+---
+
+## VPS Access Methods Comparison
+
+Validated access matrix:
+
+- SSH: terminal control, fastest and safest baseline
+- VS Code Remote SSH: best for development workflow
+- WinSCP/FileZilla: file transfer and quick edits
+- Nautilus/SSHFS: optional filesystem-style remote browsing
+- RDP-style desktop control: generally not recommended for VPS operations
+
+---
+
+## Recommended Workflow (Your Setup)
+
+Use a mixed tooling model:
+
+- SSH for server commands and operational checks
+- VS Code Remote SSH for code changes
+- WinSCP for visual file moves and ad hoc uploads
+- Nautilus only when Linux GUI SFTP browsing is needed
+
+---
+
+## Local Folder Experience Option
+
+Two practical options:
+
+- SSHFS-style mounted drive (closest to local disk experience)
+- WinSCP Explorer integration (simpler on Windows)
+
+Both preserve secure SFTP transport while improving daily file navigation.
+
+---
+
+## SSH Security Architecture (Key + Password Backup)
+
+Target posture:
+
+- Primary: SSH key auth (`ed25519`)
+- Secondary: password fallback (controlled)
+- Root login: disabled
+- Login attempts + timeout: tightened
+- UFW + Fail2Ban: active protection
+
+Representative `sshd_config` controls:
+
+```text
+PermitRootLogin no
+PubkeyAuthentication yes
+PasswordAuthentication yes
+MaxAuthTries 3
+LoginGraceTime 30
+AllowUsers devuser
+```
+
+---
+
+## Professional VPS Security & Health Audit
+
+Audit method centered on verifiable checks:
+
+```bash
+uptime
+free -h
+df -h
+sudo ss -tulpn
+sudo ufw status verbose
+sudo fail2ban-client status
+```
+
+Key outcomes:
+
+- [x] Healthy resource profile
+- [x] Minimal public port exposure
+- [x] Layered controls in place (firewall, brute-force defense, integrity monitoring)
+
+---
+
+## Stage 2 Production-Level Network Lockdown
+
+Stage 2 objective: remove unnecessary public service exposure.
+
+Required state:
+
+- MySQL bound to `127.0.0.1:3306`
+- Node services bound to localhost only
+- phpMyAdmin not public; use SSH tunnel when needed
+- Only `22`, `80`, and `443` internet-facing
+
+---
+
+## Infrastructure Debugging - Port Conflict & Exposure Fix
+
+Issues resolved in this stage:
+
+- Port 3306 conflict from stale containers
+- Node services listening on `0.0.0.0`
+- phpMyAdmin exposed on public 8080
+
+Fix pattern:
+
+- Stop conflicting containers
+- Rebind services to localhost
+- Restart and verify with `ss -tulpn`
+
+---
+
+## Stage 3 SSH Hardening & Intrusion Monitoring
+
+Stage 3 tightened access and detection:
+
+- Key-first SSH model enforced
+- Fail2Ban tuning for faster bans
+- Active SSH log review (`journalctl`, auth log checks)
+- AIDE baseline and integrity checks added
+
+Result: hardened SSH perimeter with active detection workflow.
+
+---
+
+## Stage 3 Logwatch & Postfix Configuration
+
+Logwatch deployment included Postfix as local mail transport for reporting.
+
+Policy selected: **Local only**.
+
+- [x] No public SMTP role enabled
+- [x] Security reporting enabled
+- [x] No unnecessary internet mail attack surface added
+
+---
+
+## Postfix System Mail Name (FQDN Configuration)
+
+Configured system mail identity:
+
+```text
+stackpilot.in
+```
+
+Purpose:
+
+- Consistent server identity in internal reports (Logwatch/Postfix)
+- Local-only delivery model retained
+- Confirmed no public mail service exposure
+
+---
+
+## Stage 5 10/10 Hardened Production Upgrade
+
+Final hardening phase included:
+
+- AIDE integrity monitoring fully initialized
+- SSH hardening validated with fallback-safe model
+- `auditd` enabled for advanced event logging
+- Fail2Ban tightened to aggressive thresholds
+- Firewall posture finalized (public exposure minimized)
+
+Security progression reached production-hardened baseline.
+
+---
+
+## AIDE File Integrity Monitoring (Enterprise Mode)
+
+AIDE operating model:
+
+- Build baseline database (`aideinit`/`aide --init`)
+- Activate DB and run validation checks
+- Enable scheduled daily verification timer
+
+Typical validation command:
+
+```bash
+sudo aide --check
+```
+
+Expected healthy result: no unexpected differences from baseline.
+
+---
+
+## Right Lane Overview
+
+Focus: operational access patterns, post-change verification, and production audit validation.
+
+- [x] GUI and terminal access methods documented
+- [x] Infrastructure verification checklist standardized
+- [x] Backend isolation and tunnel-first admin access confirmed
+
+---
+
+## VPS Access via Nautilus (Linux / WSL GUI)
+
+Nautilus can browse VPS over SFTP:
+
+```text
+sftp://devuser@72.61.251.2
+```
+
+Useful for Linux/WSL GUI workflows; Windows users typically prefer WinSCP.
+
+---
+
+## Windows 11 File Explorer Connections
+
+Two contexts:
+
+- LAN sharing between local Windows machines
+- VPS file access over internet via SFTP tools (WinSCP/SSHFS)
+
+For VPS operations, SFTP-based access remains the secure baseline.
+
+---
+
+## Setup Commands Summary
+
+Core operations snapshot:
+
+```bash
+sudo apt update && sudo apt upgrade -y
+sudo ufw enable
+sudo apt install fail2ban aide
+sudo aideinit
+docker compose up -d
+pm2 start ecosystem.config.js
+sudo systemctl restart ssh
+```
+
+---
+
+## Dev Project Structure
+
+```text
+/home/devuser/dev/
+├── docker/
+├── projects/
+│   ├── Dev-Journal/
+│   ├── ShopEase/
+│   └── atlas-ai/
+```
+
+This keeps infrastructure, apps, and runtime tooling clearly separated.
+
+---
+
+## Future Plan
+
+Planned upgrades:
+
+- Zero-trust SSH policy refinements
+- Automated backups
+- Cloud-edge protection/WAF integration
+- Centralized security log workflow
+- Stronger Docker network segmentation
+- CI/CD hardening and deployment automation
+
+---
+
+## WinSCP Security & Threat Analysis
+
+Key conclusion: WinSCP over SFTP is secure when server hardening is correct.
+
+Primary risks are not the client tool itself, but weak server posture:
+
+- weak credentials
+- exposed sensitive ports
+- missing firewall/Fail2Ban/root restrictions
+
+With hardened SSH + UFW + Fail2Ban, WinSCP remains low-risk.
+
+---
+
+## Production-Level Infrastructure Audit
+
+Audit findings centered on:
+
+- healthy CPU/memory/disk profile
+- root SSH restrictions
+- removal of public MySQL exposure
+- minimizing direct Node service exposure
+
+Result: attack surface reduced to proxy-led access model.
+
+---
+
+## Post-Reboot Verification & Hardening Checklist
+
+Post-reboot validation flow:
+
+- verify kernel and service restart state
+- ensure compose commands run in correct directory
+- confirm critical ports are localhost-bound where required
+- validate root SSH policy and Fail2Ban jail activity
+- re-check public exposure with `ss -tulpn`
+
+---
+
+## Stage 2 Backend Isolation (Node Binding Fix)
+
+Node services were moved from `0.0.0.0` to localhost bindings:
+
+```text
+127.0.0.1:3000
+127.0.0.1:9000
+```
+
+This forces all external access through Nginx and blocks direct public backend entry points.
+
+---
+
+## Production Security Verification Stage 2 Complete
+
+Verified production network shape:
+
+- Public: `22`, `80`, `443`
+- Internal only: Node apps, MySQL, admin utilities
+- Reverse proxy path enforced for application traffic
+
+Stage 2 concluded with production-ready exposure boundaries.
+
+---
+
+## Secure SSH Tunnel Access (Port Forwarding)
+
+Example secure tunnel pattern:
+
+```bash
+ssh -L 8080:127.0.0.1:8080 devuser@72.61.251.2
+```
+
+Then use local browser access:
+
+```text
+http://localhost:8080
+```
+
+This keeps admin tools private while allowing encrypted on-demand access.
+
+---
+
+## Stage 4 Live Security Audit & Hardening Upgrade
+
+Live attack activity was observed and handled with:
+
+- aggressive Fail2Ban policy
+- targeted attacker IP bans
+- continued root-login denial
+- file integrity and log monitoring verification
+
+Outcome: no unauthorized access, controls remained effective under active probing.
+
+---
+
+## Balanced SSH Security (Key + Password Backup)
+
+Final SSH posture:
+
+- Key auth as primary control
+- Password auth retained as lockout-safe backup
+- Root login disabled
+- Strict retry/time controls and restricted allowed users
+
+This provides high security without operational self-lockout risk.
 
 ---
 
@@ -1481,7 +1959,6 @@ Contains all keyframe animations, utility classes, and accessibility support.
 
 ## MongoDB Atlas (StackPilot)
 
-<<<<<<< HEAD
 **Recommended database for StackPilot:**
 
 - No VPS load
