@@ -13,6 +13,7 @@
     <header>
         <h1><span class="rocket">🚀</span> <span class="title-text">ShopEase VPS Progress Report</span></h1>
         <p>Personal infrastructure & backend setup overview</p>
+        <p><strong>Last Updated:</strong> February 17, 2026 | Email-VPS runtime + dashboard docs aligned</p>
     </header>
 
     <nav>
@@ -36,6 +37,12 @@
                         <a href="#vps-health-analysis" class="dropdown-link">🖥️ Current VPS Health Analysis</a>
                         <a href="#vps-as-desktop-decision" class="dropdown-link">🖥️ VPS as Personal Desktop
                             Decision</a>
+                        <a href="#email-vps-2026-status" class="dropdown-link">📧 Email-VPS 2026 Status Snapshot</a>
+                        <a href="#email-vps-public-access-recovery" class="dropdown-link">🌐 Email-VPS Public Access Recovery</a>
+                        <a href="#email-vps-forbidden-ip-fix" class="dropdown-link">🛡️ Email-VPS FORBIDDEN_IP Fix</a>
+                        <a href="#email-vps-single-dashboard-security-model" class="dropdown-link">🔐 Email-VPS Single Dashboard Security Model</a>
+                        <a href="#email-vps-responsive-dashboard-upgrade" class="dropdown-link">📱 Email-VPS Responsive Dashboard Upgrade</a>
+                        <a href="#email-vps-operational-commands-verified" class="dropdown-link">🧪 Email-VPS Operational Commands</a>
 
                         <a href="#vps-planning-nested-workspace" class="dropdown-link">📁 VPS Planning Workspace</a>
 
@@ -559,6 +566,153 @@
             Upgrade only when your projects demand it — not before.
         </p>
     </div>
+
+    <!-- EMAIL-VPS 2026 STATUS SNAPSHOT -->
+    <div class="card full" id="email-vps-2026-status">
+        <h2>📧 Email-VPS 2026 Status Snapshot</h2>
+        <p class="muted">Verified state on <strong>February 17, 2026</strong>.</p>
+
+        <ul class="list">
+            <li><span class="status done"></span>Single Email-VPS service active (split admin runtime removed)</li>
+            <li><span class="status done"></span><code>mail.stackpilot.in</code> DNS + HTTPS active</li>
+            <li><span class="status done"></span>Nginx reverse proxy mapped to <code>127.0.0.1:8081</code></li>
+            <li><span class="status done"></span>SQLite + Postfix relay pipeline stable</li>
+            <li><span class="status done"></span>Dashboard and mail APIs running under one Node service</li>
+        </ul>
+
+        <div class="folder">
+Internet
+  -> Nginx 80/443
+  -> email-vps (127.0.0.1:8081)
+  -> SQLite + Postfix (local relay)
+        </div>
+    </div>
+
+    <!-- EMAIL-VPS PUBLIC ACCESS RECOVERY -->
+    <div class="card full" id="email-vps-public-access-recovery">
+        <h2>🌐 Email-VPS Public Access Recovery (DNS + TLS + Nginx)</h2>
+        <p class="muted">Recovery completed: NXDOMAIN -> TLS live -> routed dashboard access.</p>
+
+        <ul class="list">
+            <li><span class="status done"></span><code>mail.stackpilot.in</code> A record resolves to <code>72.61.251.2</code></li>
+            <li><span class="status done"></span>Certbot certificate issued and deployed for <code>mail.stackpilot.in</code></li>
+            <li><span class="status done"></span>HTTP now redirects to HTTPS</li>
+            <li><span class="status done"></span>Post-certbot default-vhost collision fixed with dedicated mail vhost</li>
+            <li><span class="status done"></span>Renewal dry-run validated successfully</li>
+        </ul>
+
+        <div class="folder">
+curl -I http://mail.stackpilot.in/login
+# HTTP/1.1 301
+
+curl -I https://mail.stackpilot.in/login
+# HTTP/2 200
+
+curl -i http://127.0.0.1:8081/health
+# HTTP/1.1 200
+        </div>
+    </div>
+
+    <!-- EMAIL-VPS FORBIDDEN_IP FIX -->
+    <div class="card full" id="email-vps-forbidden-ip-fix">
+        <h2>🛡️ Email-VPS FORBIDDEN_IP Root Cause and Fix</h2>
+
+        <h3>Root Cause</h3>
+        <p>
+            Dashboard allowlist checks the <strong>operator client IP</strong> via trusted proxy headers, not the VPS public IP itself.
+            Initial allowlist mismatch triggered <code>FORBIDDEN_IP</code>.
+        </p>
+
+        <h3>Fix Applied</h3>
+        <ul class="list">
+            <li><span class="status done"></span>Set <code>DASHBOARD_ALLOWED_IPS</code> using operator public IP(s) + loopback</li>
+            <li><span class="status done"></span>Applied runtime update with PM2 environment refresh</li>
+            <li><span class="status done"></span>Documented rotation procedure for dynamic ISP IP changes</li>
+        </ul>
+
+        <div class="folder">
+pm2 restart email-vps --update-env
+pm2 save
+        </div>
+    </div>
+
+    <!-- EMAIL-VPS SECURITY MODEL -->
+    <div class="card full" id="email-vps-single-dashboard-security-model">
+        <h2>🔐 Email-VPS Single Dashboard Security Model (Current)</h2>
+
+        <ul class="list">
+            <li><span class="status done"></span>Single dashboard access path: <code>/login</code> -> <code>/dashboard</code></li>
+            <li><span class="status done"></span>Signed HttpOnly session cookie auth</li>
+            <li><span class="status done"></span>IP allowlist enforced for dashboard access</li>
+            <li><span class="status done"></span>Mail API remains local-only + bearer token</li>
+            <li><span class="status done"></span>Compatibility kept: <code>/admin/*</code> redirect + <code>/api/v1/admin/*</code> deprecation</li>
+        </ul>
+
+        <h3>Active Dashboard APIs</h3>
+        <div class="folder">
+GET /api/v1/dashboard/overview
+GET /api/v1/dashboard/trends?window=24h|7d|30d
+GET /api/v1/dashboard/timeseries?window=24h|7d|30d
+GET /api/v1/dashboard/insights?window=24h|7d|30d
+GET /api/v1/dashboard/logs?status=&category=&severity=&q=
+GET /api/v1/dashboard/alerts
+GET /api/v1/dashboard/security
+        </div>
+    </div>
+
+    <!-- EMAIL-VPS RESPONSIVE DASHBOARD UPGRADE -->
+    <div class="card full" id="email-vps-responsive-dashboard-upgrade">
+        <h2>📱 Email-VPS Responsive Dashboard Upgrade (All Devices)</h2>
+        <p class="muted">UI/UX improvements shipped for phone, tablet, and desktop operators.</p>
+
+        <ul class="list">
+            <li><span class="status done"></span>Stacked mobile flow implemented for high-priority sections</li>
+            <li><span class="status done"></span>Horizontal clipping and layout overflow resolved</li>
+            <li><span class="status done"></span>Chart rendering tuned by viewport buckets</li>
+            <li><span class="status done"></span>Mobile logs redesigned with labeled rows for readability</li>
+            <li><span class="status done"></span>Touch target + focus visibility improvements added</li>
+            <li><span class="status done"></span>Local favicon added (favicon 404 removed)</li>
+        </ul>
+
+        <h3>Breakpoint Matrix</h3>
+        <div class="folder">
+<=1280 compact desktop
+<=1024 tablet landscape
+<=820  tablet portrait / foldables
+<=640  phone
+<=420  narrow phone
+        </div>
+    </div>
+
+    <!-- EMAIL-VPS VERIFIED COMMANDS -->
+    <div class="card full" id="email-vps-operational-commands-verified">
+        <h2>🧪 Email-VPS Operational Commands (Verified)</h2>
+
+        <h3>DNS + Ingress</h3>
+        <div class="folder">
+dig @1.1.1.1 mail.stackpilot.in A +short
+dig @8.8.8.8 mail.stackpilot.in A +short
+curl -I http://mail.stackpilot.in/login
+curl -I https://mail.stackpilot.in/login
+        </div>
+
+        <h3>Service + TLS</h3>
+        <div class="folder">
+curl -i http://127.0.0.1:8081/health
+sudo nginx -t && sudo systemctl reload nginx
+sudo certbot certificates
+sudo certbot renew --dry-run
+        </div>
+
+        <h3>Allowlist Rotation Maintenance</h3>
+        <div class="folder">
+curl -4 https://api.ipify.org
+# update DASHBOARD_ALLOWED_IPS in .env
+pm2 restart email-vps --update-env
+pm2 save
+        </div>
+    </div>
+
     <!-- VPS WSL-LIKE DEVELOPMENT SETUP -->
     <div class="card full" id="wsl-like-setup">
         <h2>🐧 VPS Setup → WSL-Like Development Environment</h2>

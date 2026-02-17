@@ -1,6 +1,7 @@
 # ShopEase VPS Progress Report
 
 > Personal infrastructure & backend setup overview
+> **Last Updated:** February 17, 2026 | Email-VPS runtime + dashboard docs aligned
 
 ---
 
@@ -48,6 +49,12 @@
 - [Secure SSH Tunnel Access (Port Forwarding)](#secure-ssh-tunnel-access-port-forwarding)
 - [Stage 4 Live Security Audit & Hardening Upgrade](#stage-4-live-security-audit--hardening-upgrade)
 - [Balanced SSH Security (Key + Password Backup)](#balanced-ssh-security-key--password-backup)
+- [Email-VPS 2026 Status Snapshot](#email-vps-2026-status-snapshot)
+- [Email-VPS Public Access Recovery (DNS + TLS + Nginx)](#email-vps-public-access-recovery-dns--tls--nginx)
+- [Email-VPS FORBIDDEN_IP Root Cause and Fix](#email-vps-forbidden_ip-root-cause-and-fix)
+- [Email-VPS Single Dashboard Security Model (Current)](#email-vps-single-dashboard-security-model-current)
+- [Email-VPS Responsive Dashboard Upgrade (All Devices)](#email-vps-responsive-dashboard-upgrade-all-devices)
+- [Email-VPS Operational Commands (Verified)](#email-vps-operational-commands-verified)
 
 ### Environment Setup
 
@@ -717,6 +724,148 @@ Final SSH posture:
 - Strict retry/time controls and restricted allowed users
 
 This provides high security without operational self-lockout risk.
+
+---
+
+## Email-VPS 2026 Status Snapshot
+
+Status confirmed on **February 17, 2026**.
+
+- [x] Single Email-VPS service active (no split admin runtime)
+- [x] Public domain live: `mail.stackpilot.in`
+- [x] Nginx reverse proxy enforced to `127.0.0.1:8081`
+- [x] Dashboard and mail telemetry operating from unified app
+- [x] Local-only mail API security contract retained
+
+Current architecture:
+
+```text
+Internet
+  -> Nginx 80/443
+  -> email-vps (127.0.0.1:8081)
+  -> SQLite + Postfix(local relay)
+```
+
+---
+
+## Email-VPS Public Access Recovery (DNS + TLS + Nginx)
+
+Public recovery sequence was completed and verified:
+
+- DNS A record for `mail.stackpilot.in` resolved to `72.61.251.2`
+- HTTPS certificate issued successfully by Certbot
+- HTTP now redirects to HTTPS
+- Nginx host collision after cert issuance was fixed with dedicated mail vhost routing
+
+Validation results:
+
+- `http://mail.stackpilot.in/login` -> `301`
+- `https://mail.stackpilot.in/login` -> `200`
+- `http://127.0.0.1:8081/health` -> `200`
+- `certbot renew --dry-run` -> success
+
+---
+
+## Email-VPS FORBIDDEN_IP Root Cause and Fix
+
+Issue observed:
+
+- Dashboard returned `FORBIDDEN_IP` even after HTTPS became healthy.
+
+Root cause:
+
+- `DASHBOARD_ALLOWED_IPS` was initially set with VPS IP, while allowlist enforcement checks **operator client IP** (via trusted proxy chain).
+
+Fix applied:
+
+- Set allowlist to operator public IP(s) + loopback.
+- Restarted runtime with environment refresh:
+
+```bash
+pm2 restart email-vps --update-env
+pm2 save
+```
+
+Operational rule:
+
+- If ISP/network IP changes, update `.env` allowlist and restart with `--update-env`.
+
+---
+
+## Email-VPS Single Dashboard Security Model (Current)
+
+Active security boundaries:
+
+- [x] One private dashboard (`/login` -> `/dashboard`)
+- [x] Session cookie auth (signed, HttpOnly)
+- [x] Dashboard IP allowlist enforced
+- [x] Mail API remains loopback + bearer token only
+- [x] Backend bind remains localhost (`127.0.0.1:8081`)
+
+Current active dashboard APIs:
+
+- `GET /api/v1/dashboard/overview`
+- `GET /api/v1/dashboard/trends?window=24h|7d|30d`
+- `GET /api/v1/dashboard/timeseries?window=24h|7d|30d`
+- `GET /api/v1/dashboard/insights?window=24h|7d|30d`
+- `GET /api/v1/dashboard/logs?status=&category=&severity=&q=`
+- `GET /api/v1/dashboard/alerts`
+- `GET /api/v1/dashboard/security`
+
+Compatibility paths intentionally retained:
+
+- `/admin/*` -> redirect
+- `/api/v1/admin/*` -> deprecation response
+
+---
+
+## Email-VPS Responsive Dashboard Upgrade (All Devices)
+
+Responsive UI/UX upgrade completed for mobile, tablet, and desktop:
+
+- [x] Stacked mobile flow selected and implemented
+- [x] Horizontal overflow/cropping issues removed
+- [x] Charts tuned by viewport bucket (legend/ticks/point density/animation)
+- [x] Logs improved for small screens using labeled row rendering
+- [x] Touch target and focus visibility improvements added
+- [x] Local favicon added; dashboard favicon 404 resolved
+
+Tested target widths:
+
+- `360`, `412`, `600`, `740`, `800`, `1024`, `1280`
+
+---
+
+## Email-VPS Operational Commands (Verified)
+
+DNS and ingress:
+
+```bash
+dig @1.1.1.1 mail.stackpilot.in A +short
+dig @8.8.8.8 mail.stackpilot.in A +short
+curl -I http://mail.stackpilot.in/login
+curl -I https://mail.stackpilot.in/login
+```
+
+Service and TLS:
+
+```bash
+curl -i http://127.0.0.1:8081/health
+sudo nginx -t && sudo systemctl reload nginx
+sudo certbot certificates
+sudo certbot renew --dry-run
+```
+
+Allowlist rotation maintenance:
+
+```bash
+# from operator device
+curl -4 https://api.ipify.org
+
+# then update DASHBOARD_ALLOWED_IPS and apply
+pm2 restart email-vps --update-env
+pm2 save
+```
 
 ---
 
