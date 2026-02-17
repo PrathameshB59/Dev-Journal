@@ -11,204 +11,204 @@ Current state:
 - UI looks like Windows 11
   BUT core file-management logic is incomplete.
 
-Your task is to UPGRADE the system architecture
-to behave like a real file explorer.
+  Your task is to UPGRADE the system architecture
+  to behave like a real file explorer.
 
-This is NOT cosmetic.
-This is structural.
+  This is NOT cosmetic.
+  This is structural.
 
-━━━━━━━━━━━━━━━━━━━━━━
-1️⃣ DRAG & DROP / MOVE FILES BETWEEN FOLDERS
-━━━━━━━━━━━━━━━━━━━━━━
+  ━━━━━━━━━━━━━━━━━━━━━━
+  1️⃣ DRAG & DROP / MOVE FILES BETWEEN FOLDERS
+  ━━━━━━━━━━━━━━━━━━━━━━
 
-Current issue:
+  Current issue:
 
-- Files cannot be moved into folders
-- No drag-and-drop support
-- No right-click → Move option
+  - Files cannot be moved into folders
+  - No drag-and-drop support
+  - No right-click → Move option
 
-You must implement:
+  You must implement:
 
-A) Folder–Entry relationship in backend
+  A) Folder–Entry relationship in backend
 
-- Entry must store:
-  - categoryId (folder reference)
-  - parentFolderId (optional for nesting later)
+  - Entry must store:
+    - categoryId (folder reference)
+      - parentFolderId (optional for nesting later)
 
-B) API:
+      B) API:
 
-- PATCH /api/entries/:id/move
-  body: { categoryId }
+      - PATCH /api/entries/:id/move
+        body: { categoryId }
 
-C) Frontend:
+        C) Frontend:
 
-- Enable drag-and-drop:
-  - Draggable entry items
-  - Droppable folder targets
-  - Highlight drop target
-  - On drop → call move API
-- Add right-click context menu:
-  - Move to…
-  - Rename
-  - Delete
+        - Enable drag-and-drop:
+          - Draggable entry items
+            - Droppable folder targets
+              - Highlight drop target
+                - On drop → call move API
+                - Add right-click context menu:
+                  - Move to…
+                    - Rename
+                      - Delete
 
-Must behave like Windows Explorer:
+                      Must behave like Windows Explorer:
 
-- Visual feedback while dragging
-- No page refresh
-- Safe state update
+                      - Visual feedback while dragging
+                      - No page refresh
+                      - Safe state update
 
-━━━━━━━━━━━━━━━━━━━━━━
-2️⃣ CATEGORY CREATION FORM
-━━━━━━━━━━━━━━━━━━━━━━
+                      ━━━━━━━━━━━━━━━━━━━━━━
+                      2️⃣ CATEGORY CREATION FORM
+                      ━━━━━━━━━━━━━━━━━━━━━━
 
-Currently:
+                      Currently:
 
-- No dedicated category creation UI
+                      - No dedicated category creation UI
 
-You must design:
+                      You must design:
 
-category-form.html
+                      category-form.html
 
-Fields:
+                      Fields:
 
-- Category Name (required)
-- Optional Description
-- Optional Icon Image upload
-- Color (optional accent color)
-- "Pin to Desktop" checkbox
+                      - Category Name (required)
+                      - Optional Description
+                      - Optional Icon Image upload
+                      - Color (optional accent color)
+                      - "Pin to Desktop" checkbox
 
-Backend:
-POST /api/categories
-Fields:
+                      Backend:
+                      POST /api/categories
+                      Fields:
 
-- name
-- description
-- iconPath
-- isPinned
-- ownerId
+                      - name
+                      - description
+                      - iconPath
+                      - isPinned
+                      - ownerId
 
-Validation:
+                      Validation:
 
-- No duplicate names per user
-- Trim input
-- Sanitize text
+                      - No duplicate names per user
+                      - Trim input
+                      - Sanitize text
 
-━━━━━━━━━━━━━━━━━━━━━━
-3️⃣ ENTRY FORM → SELECT FOLDER
-━━━━━━━━━━━━━━━━━━━━━━
+                      ━━━━━━━━━━━━━━━━━━━━━━
+                      3️⃣ ENTRY FORM → SELECT FOLDER
+                      ━━━━━━━━━━━━━━━━━━━━━━
 
-In new-entry.html:
+                      In new-entry.html:
 
-Add:
+                      Add:
 
-- Dropdown of categories
-- Default selection = "Uncategorized"
-- Allow user to move entry later
-- Auto-update folder view after save
+                      - Dropdown of categories
+                      - Default selection = "Uncategorized"
+                      - Allow user to move entry later
+                      - Auto-update folder view after save
 
-Backend:
-Ensure entry saves with categoryId.
+                      Backend:
+                      Ensure entry saves with categoryId.
 
-━━━━━━━━━━━━━━━━━━━━━━
-4️⃣ CUSTOM ICON FOR FOLDER
-━━━━━━━━━━━━━━━━━━━━━━
+                      ━━━━━━━━━━━━━━━━━━━━━━
+                      4️⃣ CUSTOM ICON FOR FOLDER
+                      ━━━━━━━━━━━━━━━━━━━━━━
 
-Upgrade folder creation form to include:
+                      Upgrade folder creation form to include:
 
-- Icon image upload
-- Store file path in DB
-- Fallback to default folder icon if none
+                      - Icon image upload
+                      - Store file path in DB
+                      - Fallback to default folder icon if none
 
-Folder schema:
-{
-name: String,
-icon: String,
-description: String,
-isPinned: Boolean,
-ownerId: ObjectId
-}
+                      Folder schema:
+                      {
+                      name: String,
+                      icon: String,
+                      description: String,
+                      isPinned: Boolean,
+                      ownerId: ObjectId
+                      }
 
-Frontend:
+                      Frontend:
 
-- Render custom icon if exists
-- Otherwise use default folder SVG
+                      - Render custom icon if exists
+                      - Otherwise use default folder SVG
 
-Must not break layout if image missing.
+                      Must not break layout if image missing.
 
-━━━━━━━━━━━━━━━━━━━━━━
-5️⃣ ADDITIONAL FEATURES (FROM SCREENSHOT)
-━━━━━━━━━━━━━━━━━━━━━━
+                      ━━━━━━━━━━━━━━━━━━━━━━
+                      5️⃣ ADDITIONAL FEATURES (FROM SCREENSHOT)
+                      ━━━━━━━━━━━━━━━━━━━━━━
 
-Implement:
+                      Implement:
 
-A) Markdown live preview while editing
+                      A) Markdown live preview while editing
 
-- Split view
-- Toggle preview
-- Lightweight renderer
+                      - Split view
+                      - Toggle preview
+                      - Lightweight renderer
 
-B) Export entries
+                      B) Export entries
 
-- Export as Markdown (.md)
-- Export as PDF
-- Backend route:
-  GET /api/entries/:id/export?type=md|pdf
+                      - Export as Markdown (.md)
+                      - Export as PDF
+                      - Backend route:
+                        GET /api/entries/:id/export?type=md|pdf
 
-C) Entry templates
+                        C) Entry templates
 
-- Predefined templates per category
-- Optional starter content
+                        - Predefined templates per category
+                        - Optional starter content
 
-D) Version history
+                        D) Version history
 
-- Save previous versions
-- Store in EntryVersions collection
-- Show "View History" button
-- Restore previous version
+                        - Save previous versions
+                        - Store in EntryVersions collection
+                        - Show "View History" button
+                        - Restore previous version
 
-━━━━━━━━━━━━━━━━━━━━━━
-6️⃣ SECURITY & STRUCTURE
-━━━━━━━━━━━━━━━━━━━━━━
+                        ━━━━━━━━━━━━━━━━━━━━━━
+                        6️⃣ SECURITY & STRUCTURE
+                        ━━━━━━━━━━━━━━━━━━━━━━
 
-- All actions must check ownerId
-- No cross-user data access
-- All move operations must validate:
-  - Folder belongs to user
-- Prevent orphaned entries
+                        - All actions must check ownerId
+                        - No cross-user data access
+                        - All move operations must validate:
+                          - Folder belongs to user
+                          - Prevent orphaned entries
 
-━━━━━━━━━━━━━━━━━━━━━━
-7️⃣ UI REQUIREMENTS
-━━━━━━━━━━━━━━━━━━━━━━
+                          ━━━━━━━━━━━━━━━━━━━━━━
+                          7️⃣ UI REQUIREMENTS
+                          ━━━━━━━━━━━━━━━━━━━━━━
 
-Maintain:
+                          Maintain:
 
-- Windows 11 dark aesthetic
-- Responsive layout
-- Accessible drag-and-drop
-- Keyboard support (Move via keyboard)
+                          - Windows 11 dark aesthetic
+                          - Responsive layout
+                          - Accessible drag-and-drop
+                          - Keyboard support (Move via keyboard)
 
-━━━━━━━━━━━━━━━━━━━━━━
-8️⃣ OUTPUT FORMAT
-━━━━━━━━━━━━━━━━━━━━━━
+                          ━━━━━━━━━━━━━━━━━━━━━━
+                          8️⃣ OUTPUT FORMAT
+                          ━━━━━━━━━━━━━━━━━━━━━━
 
-Provide:
+                          Provide:
 
-1. Updated database schemas
-2. Required backend routes
-3. Frontend drag-and-drop logic explanation
-4. category-form.html structure
-5. new-entry.html updated structure
-6. Folder icon upload flow
-7. Version history architecture
-8. Implementation order (step-by-step)
+                          1. Updated database schemas
+                          2. Required backend routes
+                          3. Frontend drag-and-drop logic explanation
+                          4. category-form.html structure
+                          5. new-entry.html updated structure
+                          6. Folder icon upload flow
+                          7. Version history architecture
+                          8. Implementation order (step-by-step)
 
-Do NOT:
+                          Do NOT:
 
-- Suggest frameworks
-- Redesign whole app
-- Overcomplicate nesting (keep 1 level for now)
+                          - Suggest frameworks
+                          - Redesign whole app
+                          - Overcomplicate nesting (keep 1 level for now)
 
-Goal:
-Dev Journal should behave like a REAL file explorer,
-not just a styled UI.
+                          Goal:
+                          Dev Journal should behave like a REAL file explorer,
+                          not just a styled

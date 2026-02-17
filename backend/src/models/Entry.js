@@ -72,6 +72,52 @@ const entrySchema = new mongoose.Schema({
         index: true
     },
 
+    // Folder metadata
+    description: {
+        type: String,
+        default: '',
+        maxlength: [500, 'Description cannot exceed 500 characters']
+    },
+    color: {
+        type: String,
+        default: '',
+        match: [/^$|^#[0-9A-Fa-f]{6}$/, 'Color must be a valid hex color']
+    },
+    icon: {
+        type: String,
+        default: ''
+    },
+
+    // Media asset metadata (image/audio/video files stored via explorer upload)
+    asset: {
+        url: {
+            type: String,
+            default: ''
+        },
+        path: {
+            type: String,
+            default: ''
+        },
+        kind: {
+            type: String,
+            enum: ['image', 'audio', 'video', ''],
+            default: ''
+        },
+        originalName: {
+            type: String,
+            default: ''
+        },
+        sizeBytes: {
+            type: Number,
+            default: 0
+        },
+        storage: {
+            type: String,
+            enum: ['local', ''],
+            default: ''
+        }
+    },
+
     // AI - Vector embedding (populated by embedding generation)
     embedding: {
         type: [Number],

@@ -60,12 +60,41 @@ const Admin = {
 
     setupMobileMenu() {
         const menuBtn = document.querySelector('.mobile-menu-btn');
-        const navContent = document.querySelector('.nav-content');
+        const navContent = document.getElementById('navPanel') || document.querySelector('.nav-content');
 
         if (menuBtn && navContent) {
+            if (menuBtn.dataset.mobileBound === 'true') return;
+            menuBtn.dataset.mobileBound = 'true';
+
+            menuBtn.setAttribute('aria-expanded', 'false');
+
+            const closeMenu = () => {
+                navContent.classList.remove('open');
+                menuBtn.classList.remove('active');
+                menuBtn.setAttribute('aria-expanded', 'false');
+            };
+
             menuBtn.addEventListener('click', () => {
                 const isOpen = navContent.classList.toggle('open');
+                menuBtn.classList.toggle('active', isOpen);
                 menuBtn.setAttribute('aria-expanded', isOpen);
+            });
+
+            document.addEventListener('click', (e) => {
+                if (!menuBtn.contains(e.target) && !navContent.contains(e.target)) {
+                    closeMenu();
+                }
+            });
+
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && navContent.classList.contains('open')) {
+                    closeMenu();
+                    menuBtn.focus();
+                }
+            });
+
+            window.addEventListener('resize', () => {
+                if (window.innerWidth > 768) closeMenu();
             });
         }
     },

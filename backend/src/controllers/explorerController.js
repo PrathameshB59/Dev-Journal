@@ -1,5 +1,8 @@
 const Entry = require('../models/Entry');
-const mongoose = require('mongoose');
+const EntryVersion = require('../models/EntryVersion');
+const fs = require('fs');
+const path = require('path');
+const { createEntrySnapshot } = require('../services/entryVersionService');
 
 // Default root folders created on first access
 const DEFAULT_FOLDERS = [
@@ -9,6 +12,49 @@ const DEFAULT_FOLDERS = [
     { name: 'Code Snippets', pinned: true },
     { name: 'Concepts', pinned: true }
 ];
+
+const MEDIA_LIMITS = {
+    image: 10 * 1024 * 1024,
+    audio: 25 * 1024 * 1024,
+    video: 50 * 1024 * 1024
+};
+const UPLOAD_ROOT = path.join(__dirname, '../../uploads');
+
+const resolveMediaKind = (mime = '') => {
+    if (mime.startsWith('image/')) return 'image';
+    if (mime.startsWith('audio/')) return 'audio';
+    if (mime.startsWith('video/')) return 'video';
+    return '';
+};
+
+const safeUnlink = async (filePath) => {
+    if (!filePath) return;
+    try {
+        await fs.promises.unlink(filePath);
+    } catch (error) {
+        // Ignore cleanup failures.
+    }
+};
+
+const resolveLocalAssetPath = (relativePath) => {
+    if (!relativePath || typeof relativePath !== 'string') return '';
+    const normalized = path.normalize(relativePath).replace(/^(\.\.(\/|\\|$))+/, '');
+    return path.join(UPLOAD_ROOT, normalized);
+};
+
+const buildMediaSnippet = ({ kind, url, alt }) => {
+    const safeAlt = (alt || 'media').replace(/\s+/g, ' ').trim() || 'media';
+    if (kind === 'image') {
+        return `![${safeAlt}](${url})`;
+    }
+    if (kind === 'audio') {
+        return `<audio controls preload="metadata" src="${url}"></audio>`;
+    }
+    if (kind === 'video') {
+        return `<video controls preload="metadata" src="${url}"></video>`;
+    }
+    return `[${safeAlt}](${url})`;
+};
 
 // GET /api/explorer/root — Root-level entries (auto-creates default folders)
 exports.getRoot = async (req, res) => {
@@ -113,6 +159,7 @@ exports.createFile = async (req, res) => {
             userId: req.user._id
         });
 
+        await createEntrySnapshot(entry, 'create');
         res.status(201).json({ success: true, data: entry });
     } catch (error) {
         if (error.name === 'ValidationError') {
@@ -124,10 +171,89 @@ exports.createFile = async (req, res) => {
     }
 };
 
+// POST /api/explorer/media — Upload media file and create linked explorer entry
+exports.createMediaEntry = async (req, res) => {
+    try {
+        if (!req.file) {
+            return res.status(400).json({ success: false, error: 'Media file is required' });
+        }
+
+        const mediaKind = resolveMediaKind(req.file.mimetype || '');
+        if (!mediaKind) {
+            await safeUnlink(req.file.path);
+            return res.status(400).json({ success: false, error: 'Unsupported media type' });
+        }
+
+        const maxAllowed = MEDIA_LIMITS[mediaKind];
+        if (req.file.size > maxAllowed) {
+            await safeUnlink(req.file.path);
+            const maxMb = Math.round(maxAllowed / (1024 * 1024));
+            return res.status(400).json({ success: false, error: `${mediaKind} files are limited to ${maxMb}MB` });
+        }
+
+        const { parentId } = req.body;
+        if (parentId) {
+            const parent = await Entry.findOne({ _id: parentId, userId: req.user._id, type: 'folder' }).lean();
+            if (!parent) {
+                await safeUnlink(req.file.path);
+                return res.status(400).json({ success: false, error: 'Parent folder not found' });
+            }
+        }
+
+        const mediaUrl = `/uploads/media/${req.file.filename}`;
+        const displayName = (req.file.originalname || path.basename(req.file.filename)).trim() || req.file.filename;
+
+        const entry = await Entry.create({
+            name: displayName,
+            type: 'file',
+            parentId: parentId || null,
+            mime: req.file.mimetype,
+            pinned: false,
+            favorite: false,
+            content: '',
+            tags: [],
+            codeLanguage: '',
+            codeBlock: '',
+            userId: req.user._id,
+            asset: {
+                url: mediaUrl,
+                path: `media/${req.file.filename}`,
+                kind: mediaKind,
+                originalName: displayName,
+                sizeBytes: req.file.size,
+                storage: 'local'
+            }
+        });
+
+        await createEntrySnapshot(entry, 'create');
+
+        res.status(201).json({
+            success: true,
+            data: {
+                entryId: entry._id,
+                entry,
+                url: mediaUrl,
+                kind: mediaKind,
+                snippet: buildMediaSnippet({
+                    kind: mediaKind,
+                    url: mediaUrl,
+                    alt: path.parse(displayName).name || 'media'
+                })
+            }
+        });
+    } catch (error) {
+        if (req.file?.path) {
+            await safeUnlink(req.file.path);
+        }
+        console.error(error);
+        res.status(500).json({ success: false, error: 'Internal server error' });
+    }
+};
+
 // POST /api/explorer/folder — Create a folder
 exports.createFolder = async (req, res) => {
     try {
-        const { name, parentId } = req.body;
+        const { name, parentId, description, color, pinned } = req.body;
 
         // If parentId provided, verify it's a valid folder owned by user
         if (parentId) {
@@ -142,8 +268,10 @@ exports.createFolder = async (req, res) => {
             type: 'folder',
             parentId: parentId || null,
             mime: 'folder',
-            pinned: false,
+            pinned: pinned || false,
             favorite: false,
+            description: description || '',
+            color: color || '',
             content: '',
             tags: [],
             userId: req.user._id
@@ -163,7 +291,7 @@ exports.createFolder = async (req, res) => {
 // PATCH /api/explorer/:id — Update entry (name, content, tags, pinned, favorite)
 exports.updateEntry = async (req, res) => {
     try {
-        const allowedFields = ['name', 'content', 'tags', 'codeLanguage', 'codeBlock', 'pinned', 'favorite', 'mime'];
+        const allowedFields = ['name', 'content', 'tags', 'codeLanguage', 'codeBlock', 'pinned', 'favorite', 'mime', 'description', 'color', 'icon', 'asset'];
         const updates = {};
         for (const field of allowedFields) {
             if (req.body[field] !== undefined) {
@@ -181,6 +309,7 @@ exports.updateEntry = async (req, res) => {
             return res.status(404).json({ success: false, error: 'Entry not found' });
         }
 
+        await createEntrySnapshot(entry, 'update');
         res.json({ success: true, data: entry });
     } catch (error) {
         if (error.name === 'ValidationError') {
@@ -218,10 +347,23 @@ exports.deleteEntry = async (req, res) => {
                 }
             }
 
+            const localAssets = await Entry.find({
+                _id: { $in: idsToDelete },
+                userId,
+                'asset.storage': 'local'
+            }).select('asset.path').lean();
+
             await Entry.deleteMany({ _id: { $in: idsToDelete }, userId });
+            await EntryVersion.deleteMany({ entryId: { $in: idsToDelete }, userId });
+
+            await Promise.all(localAssets.map((item) => safeUnlink(resolveLocalAssetPath(item?.asset?.path))));
             res.json({ success: true, data: { deletedCount: idsToDelete.length } });
         } else {
+            if (entry.asset?.storage === 'local' && entry.asset?.path) {
+                await safeUnlink(resolveLocalAssetPath(entry.asset.path));
+            }
             await Entry.deleteOne({ _id: entry._id });
+            await EntryVersion.deleteMany({ entryId: entry._id, userId });
             res.json({ success: true, data: { deletedCount: 1 } });
         }
     } catch (error) {

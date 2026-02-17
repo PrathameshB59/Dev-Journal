@@ -1,4 +1,11 @@
 const Entry = require('../models/Entry');
+const EntryVersion = require('../models/EntryVersion');
+const { createEntrySnapshot } = require('../services/entryVersionService');
+
+const parseVersionParam = (value) => {
+    const parsed = Number.parseInt(value, 10);
+    return Number.isInteger(parsed) && parsed > 0 ? parsed : null;
+};
 
 // Get all entries with optional filtering
 exports.getAllEntries = async (req, res) => {
@@ -63,11 +70,16 @@ exports.getEntry = async (req, res) => {
 // Create new entry
 exports.createEntry = async (req, res) => {
     try {
-        const { title, category, content, tags, codeLanguage, codeBlock } = req.body;
+        const { title, name, category, content, tags, codeLanguage, codeBlock } = req.body;
+        const resolvedName = (name || title || '').trim();
 
         const entry = await Entry.create({
-            title,
+            name: resolvedName,
+            title: (title || resolvedName || '').trim(),
             category,
+            type: 'file',
+            parentId: null,
+            mime: 'text/markdown',
             content,
             tags: tags || [],
             codeLanguage: codeLanguage || '',
@@ -75,6 +87,7 @@ exports.createEntry = async (req, res) => {
             userId: req.user._id
         });
 
+        await createEntrySnapshot(entry, 'create');
         res.status(201).json({ success: true, data: entry });
     } catch (error) {
         if (error.name === 'ValidationError') {
@@ -89,12 +102,26 @@ exports.createEntry = async (req, res) => {
 // Update entry
 exports.updateEntry = async (req, res) => {
     try {
-        const { title, category, content, tags, codeLanguage, codeBlock } = req.body;
+        const { title, name, category, content, tags, codeLanguage, codeBlock } = req.body;
+        const updates = {};
+
+        if (title !== undefined) {
+            updates.title = title;
+            if (!name) {
+                updates.name = title;
+            }
+        }
+        if (name !== undefined) updates.name = name;
+        if (category !== undefined) updates.category = category;
+        if (content !== undefined) updates.content = content;
+        if (tags !== undefined) updates.tags = tags;
+        if (codeLanguage !== undefined) updates.codeLanguage = codeLanguage;
+        if (codeBlock !== undefined) updates.codeBlock = codeBlock;
 
         // Update only if owned by authenticated user
         const entry = await Entry.findOneAndUpdate(
             { _id: req.params.id, userId: req.user._id },
-            { title, category, content, tags, codeLanguage, codeBlock },
+            updates,
             { new: true, runValidators: true }
         );
 
@@ -102,6 +129,7 @@ exports.updateEntry = async (req, res) => {
             return res.status(404).json({ success: false, error: 'Entry not found' });
         }
 
+        await createEntrySnapshot(entry, 'update');
         res.json({ success: true, data: entry });
     } catch (error) {
         if (error.name === 'ValidationError') {
@@ -123,6 +151,7 @@ exports.deleteEntry = async (req, res) => {
             return res.status(404).json({ success: false, error: 'Entry not found' });
         }
 
+        await EntryVersion.deleteMany({ entryId: entry._id, userId: req.user._id });
         res.json({ success: true, data: {} });
     } catch (error) {
         console.error(error);
@@ -180,6 +209,140 @@ exports.getCategoryStats = async (req, res) => {
         ]);
 
         res.json({ success: true, data: stats });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, error: 'Internal server error' });
+    }
+};
+
+// GET /api/entries/:id/versions
+exports.getEntryVersions = async (req, res) => {
+    try {
+        const entry = await Entry.findOne({ _id: req.params.id, userId: req.user._id })
+            .select('_id type')
+            .lean();
+
+        if (!entry) {
+            return res.status(404).json({ success: false, error: 'Entry not found' });
+        }
+
+        if (entry.type !== 'file') {
+            return res.json({ success: true, data: [] });
+        }
+
+        const versions = await EntryVersion.find({ entryId: entry._id, userId: req.user._id })
+            .sort({ version: -1 })
+            .limit(100)
+            .lean();
+
+        if (versions.length === 0) {
+            const currentEntry = await Entry.findOne({ _id: entry._id, userId: req.user._id });
+            if (currentEntry && currentEntry.type === 'file') {
+                await createEntrySnapshot(currentEntry, 'create');
+            }
+        }
+
+        const refreshedVersions = versions.length === 0
+            ? await EntryVersion.find({ entryId: entry._id, userId: req.user._id })
+                .sort({ version: -1 })
+                .limit(100)
+                .lean()
+            : versions;
+
+        res.json({
+            success: true,
+            data: refreshedVersions.map((versionDoc) => ({
+                _id: versionDoc._id,
+                version: versionDoc.version,
+                changeType: versionDoc.changeType,
+                createdAt: versionDoc.createdAt,
+                name: versionDoc.name
+            }))
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, error: 'Internal server error' });
+    }
+};
+
+// GET /api/entries/:id/versions/:version
+exports.getEntryVersion = async (req, res) => {
+    try {
+        const versionNumber = parseVersionParam(req.params.version);
+        if (!versionNumber) {
+            return res.status(400).json({ success: false, error: 'Invalid version number' });
+        }
+
+        const entry = await Entry.findOne({ _id: req.params.id, userId: req.user._id })
+            .select('_id type')
+            .lean();
+
+        if (!entry) {
+            return res.status(404).json({ success: false, error: 'Entry not found' });
+        }
+
+        const versionDoc = await EntryVersion.findOne({
+            entryId: entry._id,
+            userId: req.user._id,
+            version: versionNumber
+        }).lean();
+
+        if (!versionDoc) {
+            return res.status(404).json({ success: false, error: 'Version not found' });
+        }
+
+        res.json({ success: true, data: versionDoc });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, error: 'Internal server error' });
+    }
+};
+
+// POST /api/entries/:id/versions/:version/restore
+exports.restoreEntryVersion = async (req, res) => {
+    try {
+        const versionNumber = parseVersionParam(req.params.version);
+        if (!versionNumber) {
+            return res.status(400).json({ success: false, error: 'Invalid version number' });
+        }
+
+        const entry = await Entry.findOne({ _id: req.params.id, userId: req.user._id });
+        if (!entry) {
+            return res.status(404).json({ success: false, error: 'Entry not found' });
+        }
+        if (entry.type !== 'file') {
+            return res.status(400).json({ success: false, error: 'Only file entries can be restored' });
+        }
+
+        const versionDoc = await EntryVersion.findOne({
+            entryId: entry._id,
+            userId: req.user._id,
+            version: versionNumber
+        });
+
+        if (!versionDoc) {
+            return res.status(404).json({ success: false, error: 'Version not found' });
+        }
+
+        entry.name = versionDoc.name || entry.name;
+        entry.title = versionDoc.name || entry.title || entry.name;
+        entry.content = versionDoc.content || '';
+        entry.tags = Array.isArray(versionDoc.tags) ? versionDoc.tags : [];
+        entry.codeLanguage = versionDoc.codeLanguage || '';
+        entry.codeBlock = versionDoc.codeBlock || '';
+        entry.mime = versionDoc.mime || entry.mime;
+        entry.category = versionDoc.category || '';
+        entry.type = versionDoc.type || entry.type;
+        entry.asset = versionDoc.asset || {};
+
+        await entry.save();
+        await createEntrySnapshot(entry, 'restore');
+
+        res.json({
+            success: true,
+            data: entry,
+            meta: { restoredFromVersion: versionNumber }
+        });
     } catch (error) {
         console.error(error);
         res.status(500).json({ success: false, error: 'Internal server error' });

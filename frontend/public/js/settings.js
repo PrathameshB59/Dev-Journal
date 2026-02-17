@@ -3,7 +3,7 @@
     'use strict';
 
     // Auth check
-    if (typeof requireAuth === 'function') requireAuth();
+    if (window.Auth && !Auth.requireAuth()) return;
 
     const API_BASE = '/api/settings';
 
@@ -24,6 +24,45 @@
         const data = await res.json();
         if (!data.success) throw new Error(data.error || 'Request failed');
         return data;
+    }
+
+    function setupMobileMenu() {
+        const menuBtn = document.getElementById('mobileMenuBtn') || document.querySelector('.mobile-menu-btn');
+        const navPanel = document.getElementById('navPanel') || document.querySelector('.nav-content');
+        if (!menuBtn || !navPanel) return;
+        if (menuBtn.dataset.mobileBound === 'true') return;
+        menuBtn.dataset.mobileBound = 'true';
+
+        menuBtn.setAttribute('aria-expanded', 'false');
+
+        const closeMenu = () => {
+            navPanel.classList.remove('open');
+            menuBtn.classList.remove('active');
+            menuBtn.setAttribute('aria-expanded', 'false');
+        };
+
+        menuBtn.addEventListener('click', () => {
+            const isOpen = navPanel.classList.toggle('open');
+            menuBtn.classList.toggle('active', isOpen);
+            menuBtn.setAttribute('aria-expanded', String(isOpen));
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!menuBtn.contains(e.target) && !navPanel.contains(e.target)) {
+                closeMenu();
+            }
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && navPanel.classList.contains('open')) {
+                closeMenu();
+                menuBtn.focus();
+            }
+        });
+
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 768) closeMenu();
+        });
     }
 
     // Tab switching
@@ -227,6 +266,8 @@
             }
         });
     }
+
+    setupMobileMenu();
 
     // Load data
     loadSettings();

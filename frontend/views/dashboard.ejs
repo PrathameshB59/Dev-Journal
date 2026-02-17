@@ -1,21 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Dev Journal</title>
-    <link rel="stylesheet" href="/css/styles.css">
-    <!-- Chart.js for activity chart -->
+    <%- include('includes/head', { title: 'Dashboard', styles: [], extraHead: `
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        /* Dashboard-specific styles */
         .dashboard-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: var(--space-lg);
             margin-bottom: var(--space-xl);
         }
-
         .stat-card {
             background: var(--card-bg);
             border: 1px solid var(--border);
@@ -25,31 +19,12 @@
             flex-direction: column;
             gap: var(--space-sm);
         }
-
-        .stat-card .stat-icon {
-            font-size: 2rem;
-            margin-bottom: var(--space-sm);
-        }
-
-        .stat-card .stat-value {
-            font-size: var(--text-3xl);
-            font-weight: 700;
-            color: var(--primary);
-        }
-
-        .stat-card .stat-label {
-            color: var(--text-muted);
-            font-size: var(--text-sm);
-        }
-
-        .stat-card .stat-change {
-            font-size: var(--text-xs);
-            margin-top: var(--space-xs);
-        }
-
+        .stat-card .stat-icon { font-size: 2rem; margin-bottom: var(--space-sm); }
+        .stat-card .stat-value { font-size: var(--text-3xl); font-weight: 700; color: var(--primary); }
+        .stat-card .stat-label { color: var(--text-muted); font-size: var(--text-sm); }
+        .stat-card .stat-change { font-size: var(--text-xs); margin-top: var(--space-xs); }
         .stat-change.positive { color: var(--success); }
         .stat-change.negative { color: var(--danger); }
-
         .dashboard-section {
             background: var(--card-bg);
             border: 1px solid var(--border);
@@ -57,7 +32,6 @@
             padding: var(--space-lg);
             margin-bottom: var(--space-lg);
         }
-
         .dashboard-section h2 {
             font-size: var(--text-xl);
             margin-bottom: var(--space-md);
@@ -65,18 +39,8 @@
             align-items: center;
             gap: var(--space-sm);
         }
-
-        .chart-container {
-            height: 300px;
-            position: relative;
-        }
-
-        .category-list {
-            display: flex;
-            flex-direction: column;
-            gap: var(--space-sm);
-        }
-
+        .chart-container { height: 300px; position: relative; }
+        .category-list { display: flex; flex-direction: column; gap: var(--space-sm); }
         .category-item {
             display: flex;
             justify-content: space-between;
@@ -85,31 +49,15 @@
             background: var(--bg-secondary);
             border-radius: var(--radius-md);
         }
-
-        .category-item .category-name {
-            display: flex;
-            align-items: center;
-            gap: var(--space-sm);
-        }
-
-        .category-item .category-count {
-            font-weight: 600;
-            color: var(--primary);
-        }
-
+        .category-item .category-name { display: flex; align-items: center; gap: var(--space-sm); }
+        .category-item .category-count { font-weight: 600; color: var(--primary); }
         .category-bar {
             height: 4px;
             background: var(--primary);
             border-radius: var(--radius-full);
             margin-top: var(--space-xs);
         }
-
-        .tag-cloud {
-            display: flex;
-            flex-wrap: wrap;
-            gap: var(--space-sm);
-        }
-
+        .tag-cloud { display: flex; flex-wrap: wrap; gap: var(--space-sm); }
         .tag-cloud .tag {
             padding: var(--space-xs) var(--space-md);
             background: var(--bg-secondary);
@@ -118,22 +66,11 @@
             cursor: pointer;
             transition: all var(--transition-fast);
         }
-
-        .tag-cloud .tag:hover {
-            background: var(--primary);
-            color: white;
-        }
-
+        .tag-cloud .tag:hover { background: var(--primary); color: white; }
         .tag-cloud .tag.size-lg { font-size: var(--text-lg); font-weight: 600; }
         .tag-cloud .tag.size-md { font-size: var(--text-base); }
         .tag-cloud .tag.size-sm { font-size: var(--text-sm); }
-
-        .recent-entries-list {
-            display: flex;
-            flex-direction: column;
-            gap: var(--space-sm);
-        }
-
+        .recent-entries-list { display: flex; flex-direction: column; gap: var(--space-sm); }
         .recent-entry {
             display: flex;
             justify-content: space-between;
@@ -145,55 +82,15 @@
             color: inherit;
             transition: all var(--transition-fast);
         }
-
-        .recent-entry:hover {
-            background: var(--primary);
-            color: white;
-        }
-
-        .recent-entry .entry-title {
-            font-weight: 500;
-        }
-
-        .recent-entry .entry-meta {
-            font-size: var(--text-sm);
-            color: var(--text-muted);
-        }
-
-        .recent-entry:hover .entry-meta {
-            color: rgba(255,255,255,0.8);
-        }
-
-        .streak-display {
-            display: flex;
-            gap: var(--space-xl);
-            justify-content: center;
-            text-align: center;
-        }
-
-        .streak-item {
-            display: flex;
-            flex-direction: column;
-            gap: var(--space-xs);
-        }
-
-        .streak-value {
-            font-size: var(--text-3xl);
-            font-weight: 700;
-            color: var(--primary);
-        }
-
-        .streak-label {
-            font-size: var(--text-sm);
-            color: var(--text-muted);
-        }
-
-        .quick-actions {
-            display: flex;
-            gap: var(--space-md);
-            flex-wrap: wrap;
-        }
-
+        .recent-entry:hover { background: var(--primary); color: white; }
+        .recent-entry .entry-title { font-weight: 500; }
+        .recent-entry .entry-meta { font-size: var(--text-sm); color: var(--text-muted); }
+        .recent-entry:hover .entry-meta { color: rgba(255,255,255,0.8); }
+        .streak-display { display: flex; gap: var(--space-xl); justify-content: center; text-align: center; }
+        .streak-item { display: flex; flex-direction: column; gap: var(--space-xs); }
+        .streak-value { font-size: var(--text-3xl); font-weight: 700; color: var(--primary); }
+        .streak-label { font-size: var(--text-sm); color: var(--text-muted); }
+        .quick-actions { display: flex; gap: var(--space-md); flex-wrap: wrap; }
         .quick-action-btn {
             display: flex;
             align-items: center;
@@ -207,32 +104,21 @@
             transition: all var(--transition-fast);
             min-height: 44px;
         }
-
-        .quick-action-btn:hover {
-            background: var(--primary);
-            border-color: var(--primary);
-            color: white;
-        }
-
-        .two-column {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: var(--space-lg);
-        }
-
+        .quick-action-btn:hover { background: var(--primary); border-color: var(--primary); color: white; }
+        .two-column { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-lg); }
         @media (max-width: 768px) {
-            .two-column {
-                grid-template-columns: 1fr;
-            }
-
-            .streak-display {
-                flex-wrap: wrap;
-            }
+            .two-column { grid-template-columns: 1fr; }
+            .streak-display { flex-wrap: wrap; }
+            .quick-action-btn { flex: 1 1 220px; justify-content: center; }
+        }
+        @media (max-width: 480px) {
+            .quick-action-btn { width: 100%; }
         }
     </style>
+    ` }) %>
 </head>
 <body>
-    <a href="#main-content" class="skip-link">Skip to main content</a>
+    <%- include('includes/skip-link') %>
 
     <header>
         <div class="header-content">
@@ -241,28 +127,9 @@
         </div>
     </header>
 
-    <nav role="navigation" aria-label="Main navigation">
-        <div class="nav-container">
-            <a href="/" class="nav-brand">&#128218; Dev Journal</a>
-            <button class="mobile-menu-btn" aria-label="Toggle menu" aria-expanded="false">
-                <span class="hamburger"></span>
-            </button>
-            <div class="nav-content">
-                <div class="nav-links">
-                    <a href="/" class="nav-link">&#128196; Entries</a>
-                    <a href="/dashboard" class="nav-link active">&#128202; Dashboard</a>
-                    <a href="/settings" class="nav-link">&#9881; Settings</a>
-                    <a href="/new" class="nav-link">&#10133; New Entry</a>
-                </div>
-                <div class="nav-actions">
-                    <span id="userDisplay" class="user-display"></span>
-                    <button id="logoutBtn" class="btn-secondary btn-sm" aria-label="Logout">Logout</button>
-                </div>
-            </div>
-        </div>
-    </nav>
+    <%- include('includes/nav-app', { currentPage: 'dashboard', showNewEntry: true }) %>
 
-    <main class="container" id="main-content" role="main">
+    <main class="page-main" id="main-content" role="main">
         <!-- Quick Actions -->
         <section class="dashboard-section" aria-labelledby="quick-actions-heading">
             <h2 id="quick-actions-heading">&#9889; Quick Actions</h2>
@@ -352,11 +219,7 @@
         </section>
     </main>
 
-    <footer>
-        <div class="footer-content">
-            <p>Dev Journal - Personal Developer Documentation System</p>
-        </div>
-    </footer>
+    <%- include('includes/footer', { showTech: false }) %>
 
     <script src="/js/auth.js"></script>
     <script src="/js/dashboard.js"></script>

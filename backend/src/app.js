@@ -12,6 +12,10 @@ const {
 
 const app = express();
 
+// EJS template engine
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, '../../frontend/views'));
+
 // Security middleware (apply first)
 app.use(securityHeaders);
 
@@ -24,6 +28,7 @@ app.use(express.urlencoded({ extended: true, limit: '1mb' }));
 app.use('/css', express.static(path.join(__dirname, '../../frontend/public/css')));
 app.use('/js', express.static(path.join(__dirname, '../../frontend/public/js')));
 app.use('/images', express.static(path.join(__dirname, '../../frontend/public/images')));
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 // Import routes
 const entriesRouter = require('./routes/entries');
@@ -50,53 +55,53 @@ app.use('/api/stats', statsRouter);
 app.use('/api/ai', aiRouter);
 app.use('/api/settings', settingsRouter);
 
-// Serve HTML pages
+// Serve EJS pages
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, '../../frontend/views/index.html'));
+    res.render('index', { title: 'Home', currentPage: 'home' });
 });
 
 app.get('/new', (req, res) => {
-    res.sendFile(path.join(__dirname, '../../frontend/views/new-entry.html'));
+    res.render('new-entry', { title: 'New Entry', currentPage: 'new' });
 });
 
 app.get('/entry/:id', (req, res) => {
-    res.sendFile(path.join(__dirname, '../../frontend/views/entry.html'));
+    res.render('entry', { title: 'View Entry', currentPage: 'entry' });
 });
 
 app.get('/edit/:id', (req, res) => {
-    res.sendFile(path.join(__dirname, '../../frontend/views/edit-entry.html'));
+    res.render('edit-entry', { title: 'Edit Entry', currentPage: 'edit' });
 });
 
 app.get('/explain/:id', (req, res) => {
-    res.sendFile(path.join(__dirname, '../../frontend/views/explain.html'));
+    res.render('explain', { title: 'AI Explanation', currentPage: 'explain' });
 });
 
 // Auth pages
 app.get('/login', (req, res) => {
-    res.sendFile(path.join(__dirname, '../../frontend/views/login.html'));
+    res.render('login', { title: 'Login', currentPage: 'login' });
 });
 
 app.get('/register', (req, res) => {
-    res.sendFile(path.join(__dirname, '../../frontend/views/register.html'));
+    res.render('register', { title: 'Register', currentPage: 'register' });
 });
 
 // Dashboard page
 app.get('/dashboard', (req, res) => {
-    res.sendFile(path.join(__dirname, '../../frontend/views/dashboard.html'));
+    res.render('dashboard', { title: 'Dashboard', currentPage: 'dashboard' });
 });
 
 // Settings page
 app.get('/settings', (req, res) => {
-    res.sendFile(path.join(__dirname, '../../frontend/views/settings.html'));
+    res.render('settings', { title: 'Settings', currentPage: 'settings' });
 });
 
 // Admin pages
 app.get('/admin', (req, res) => {
-    res.sendFile(path.join(__dirname, '../../frontend/views/admin/index.html'));
+    res.render('admin/index', { title: 'Admin Dashboard', currentPage: 'admin' });
 });
 
 app.get('/admin/users', (req, res) => {
-    res.sendFile(path.join(__dirname, '../../frontend/views/admin/users.html'));
+    res.render('admin/users', { title: 'User Management', currentPage: 'admin-users' });
 });
 
 // Error handling middleware

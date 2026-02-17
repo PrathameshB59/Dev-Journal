@@ -1033,6 +1033,14 @@ A production-ready documentation system for tracking VPS progress, infrastructur
 - [x] Prompt truncation (8,000 char limit for explain, 400 per file for summarize)
 - [x] Mongoose pre-delete hooks for cascade deletion (User → Entries + Coupons)
 - [x] Admin delete cascade (user deletion cleans up all data)
+- [x] Entry markdown renderer stabilized with vendored parser/sanitizer path and guarded fallback
+- [x] Entry TOC hash navigation fixed for same-page section scrolling
+- [x] Entry markdown task-list and table rendering aligned to GFM behavior
+- [x] Entry copy UX improved with reliable clipboard fallback + toast feedback
+- [x] Entry sidebar upgraded with Details/Tags/Version accordion behavior
+- [x] Mobile entry details panel moved to off-canvas drawer interaction
+- [x] Persistent Entry Version History snapshots with preview and restore flow
+- [x] Explorer media upload pipeline added (image/audio/video) with auto-embed markdown snippets
 
 ---
 
@@ -1051,8 +1059,11 @@ A production-ready documentation system for tracking VPS progress, infrastructur
 - [x] Status bar with item count
 - [x] Dashboard and Admin navigation links
 - [x] Mobile responsive sidebar with overlay
+- [x] Entry details sidebar now supports accordion sections with version panel integration
+- [x] Entry version operations available from file-view context (list, preview, restore)
+- [x] Media files (image/audio/video) can be created from explorer upload flow and embedded into markdown entries
 
-> ✅ File Explorer redesigned to match Windows 11 aesthetics with toolbar, address bar, tabs, collapsible sidebar, and details view.
+> ✅ File Explorer now combines Windows 11-style navigation with stable entry reading, versioning, and media-linked documentation flow.
 
 ---
 
@@ -1068,6 +1079,10 @@ A production-ready documentation system for tracking VPS progress, infrastructur
 - [x] Shadow system for depth (sm, md, lg, xl)
 - [x] Smooth transitions and hover effects
 - [x] Entry cards with gradient borders on hover
+- [x] Entry page Preview/Raw shell aligned with VSCode-like markdown reading flow
+- [x] Entry TOC links now stay in-page with smooth same-document navigation
+- [x] Entry copy actions now provide toast feedback plus button-state confirmation
+- [x] Mobile entry details moved to drawer pattern to preserve markdown reading width
 
 ---
 
@@ -1177,14 +1192,31 @@ Contains all keyframe animations, utility classes, and accessibility support.
 - [x] Account lockout after 5 failed login attempts
 - [x] Advanced file explorer (context menu, keyboard nav, favorites)
 - [x] Windows 11 File Explorer UI (toolbar, address bar, tabs, sidebar)
-- [ ] Markdown live preview while editing
+- [x] Markdown live preview while editing
+- [x] Entry markdown renderer stabilization (Marked + GFM heading IDs + DOMPurify vendor path)
+- [x] Entry TOC same-page hash navigation reliability fixes
+- [x] Entry task-list/table rendering improvements (GFM-aligned output)
+- [x] Entry copy feedback toast and clipboard fallback hardening
+- [x] Entry sidebar accordion + mobile details drawer
+- [x] Explorer media upload and markdown auto-embed support (image/audio/video)
 - [ ] Export entries to Markdown/PDF
 - [ ] Entry templates for different categories
-- [ ] Version history for entries
+- [x] Version history for entries
 - [ ] GitHub Gist backup integration
 - [ ] Dark/Light mode toggle
 
-> ✅ 26 features completed! Dev-Journal now has Windows 11-style UI, JWT auth, admin panel with RBAC, dashboard, security, WCAG 2.2 accessibility, Atlas AI integration (Gemini + Groq), explain page, settings page, coupon system, and cascade deletion.
+> ✅ Dev-Journal now includes stabilized entry markdown UX, persistent versioning, and explorer-linked media embedding while keeping export/template features intentionally pending.
+
+### Dev-Journal Entry APIs (Latest)
+
+```text
+GET  /api/entries/:id/versions
+GET  /api/entries/:id/versions/:version
+POST /api/entries/:id/versions/:version/restore
+POST /api/explorer/media
+```
+
+> Deploy note: If `/api/entries/:id/versions` returns `404` in production, deploy the latest backend build, restart PM2, and hard-refresh the browser to clear stale assets.
 
 ---
 
@@ -1247,6 +1279,7 @@ Dev-Journal/
 │   │   │   ├── aiController.js       # AI endpoints
 │   │   │   ├── authController.js
 │   │   │   ├── entryController.js
+│   │   │   ├── explorerController.js # Explorer + media upload flow
 │   │   │   ├── settingsController.js # Settings + coupon redemption
 │   │   │   └── statsController.js    # Dashboard stats
 │   │   ├── middleware/
@@ -1256,9 +1289,11 @@ Dev-Journal/
 │   │   ├── models/
 │   │   │   ├── Coupon.js             # AI coupon codes
 │   │   │   ├── Entry.js
+│   │   │   ├── EntryVersion.js       # Entry snapshot versions
 │   │   │   └── User.js               # + role, AI fields
 │   │   ├── services/
-│   │   │   └── atlasClient.js        # Atlas AI HTTP client
+│   │   │   ├── atlasClient.js        # Atlas AI HTTP client
+│   │   │   └── entryVersionService.js # Snapshot create/prune helpers
 │   │   ├── scripts/
 │   │   │   └── seedAdmin.js          # Admin + coupon seed
 │   │   └── routes/
@@ -1266,7 +1301,7 @@ Dev-Journal/
 │   │       ├── ai.js                 # AI action routes
 │   │       ├── auth.js
 │   │       ├── entries.js
-│   │       ├── explorer.js           # File explorer routes
+│   │       ├── explorer.js           # File explorer + media routes
 │   │       ├── settings.js           # User settings routes
 │   │       └── stats.js              # Dashboard stats routes
 │   ├── package.json
@@ -1285,21 +1320,26 @@ Dev-Journal/
 │   │       ├── explain.js            # Explain page AI chat
 │   │       ├── dashboard.js          # Dashboard with Chart.js
 │   │       ├── fileExplorer.js       # Advanced file explorer
+│   │       ├── markdownPreview.js    # New/Edit markdown live preview
 │   │       ├── passwordStrength.js   # Password strength meter
-│   │       └── settings.js           # Settings page logic
+│   │       ├── settings.js           # Settings page logic
+│   │       └── vendor/
+│   │           ├── marked.min.js
+│   │           ├── marked-gfm-heading-id.umd.js
+│   │           └── dompurify.min.js
 │   └── views/
-│       ├── index.html
-│       ├── entry.html
-│       ├── new-entry.html
-│       ├── edit-entry.html
-│       ├── login.html
-│       ├── register.html
-│       ├── dashboard.html            # User dashboard
-│       ├── settings.html             # Settings (Profile/AI/Security)
-│       ├── explain.html             # AI Explain conversation page
+│       ├── index.ejs
+│       ├── entry.ejs
+│       ├── new-entry.ejs
+│       ├── edit-entry.ejs
+│       ├── login.ejs
+│       ├── register.ejs
+│       ├── dashboard.ejs             # User dashboard
+│       ├── settings.ejs              # Settings (Profile/AI/Security)
+│       ├── explain.ejs               # AI Explain conversation page
 │       └── admin/
-│           ├── index.html            # Admin dashboard + coupons
-│           └── users.html            # User management
+│           ├── index.ejs             # Admin dashboard + coupons
+│           └── users.ejs             # User management
 ├── VPS/
 │   ├── vps_progress.html
 │   └── vps_progress.md

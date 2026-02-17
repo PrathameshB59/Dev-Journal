@@ -1,14 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Panel - Dev Journal</title>
-    <link rel="stylesheet" href="/css/styles.css">
-    <link rel="stylesheet" href="/css/admin.css">
+    <%- include('../includes/head', { title: 'Admin Panel', styles: ['admin.css'], extraHead: '' }) %>
 </head>
 <body>
-    <a href="#main-content" class="skip-link">Skip to main content</a>
+    <%- include('../includes/skip-link') %>
 
     <header>
         <div class="header-content">
@@ -17,27 +13,7 @@
         </div>
     </header>
 
-    <nav role="navigation" aria-label="Main navigation">
-        <div class="nav-container">
-            <a href="/" class="nav-brand">&#128218; Dev Journal</a>
-            <button class="mobile-menu-btn" aria-label="Toggle menu" aria-expanded="false">
-                <span class="hamburger"></span>
-            </button>
-            <div class="nav-content">
-                <div class="nav-links">
-                    <a href="/" class="nav-link">&#128196; Entries</a>
-                    <a href="/dashboard" class="nav-link">&#128202; Dashboard</a>
-                    <a href="/admin" class="nav-link active">&#9881; Admin</a>
-                    <a href="/admin/users" class="nav-link">&#128101; Users</a>
-                </div>
-                <div class="nav-actions">
-                    <span id="userDisplay" class="user-display"></span>
-                    <span class="admin-badge">Admin</span>
-                    <button id="logoutBtn" class="btn-secondary btn-sm" aria-label="Logout">Logout</button>
-                </div>
-            </div>
-        </div>
-    </nav>
+    <%- include('../includes/nav-admin', { currentPage: 'admin' }) %>
 
     <main class="container" id="main-content" role="main">
         <div id="accessDenied" class="access-denied" style="display: none;">
@@ -183,11 +159,7 @@
         </div>
     </main>
 
-    <footer>
-        <div class="footer-content">
-            <p>Dev Journal - Admin Panel</p>
-        </div>
-    </footer>
+    <%- include('../includes/footer', { showTech: false }) %>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="/js/auth.js"></script>

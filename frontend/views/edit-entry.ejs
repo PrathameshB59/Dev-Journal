@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <%- include('includes/head', { title: 'Edit Entry', styles: [], extraHead: '' }) %>
+    <%- include('includes/head', { title: 'Edit Entry', styles: ['animations.css'], extraHead: '' }) %>
 </head>
 <body>
     <%- include('includes/skip-link') %>
@@ -47,6 +47,15 @@
                     <button type="button" class="editor-mode-btn active" data-mode="edit">Edit</button>
                     <button type="button" class="editor-mode-btn" data-mode="split">Split</button>
                     <button type="button" class="editor-mode-btn" data-mode="preview">Preview</button>
+                    <span class="editor-toolbar-divider" aria-hidden="true"></span>
+                    <button type="button" class="editor-tool-btn" id="insertMediaBtn">&#128247; Insert Media</button>
+                    <input
+                        type="file"
+                        id="entryMediaInput"
+                        name="entryMediaInput"
+                        hidden
+                        accept="image/jpeg,image/png,image/webp,image/gif,audio/mpeg,audio/wav,audio/ogg,audio/mp4,video/mp4,video/webm,video/ogg"
+                    >
                 </div>
                 <div class="editor-container" data-mode="edit">
                     <textarea id="content" name="content" required rows="12" placeholder="Write your entry content here... (Markdown supported)"></textarea>
@@ -79,7 +88,7 @@
     <%- include('includes/footer', { showTech: false }) %>
 
     <script src="/js/auth.js"></script>
-    <script src="/js/app.js"></script>
+    <script src="/js/app.js?v=20260216c"></script>
     <script src="/js/markdownPreview.js"></script>
 </body>
 </html>

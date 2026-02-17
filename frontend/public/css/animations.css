@@ -523,3 +523,264 @@
         transition: none !important;
     }
 }
+
+/* ============================================
+   TYPING CURSOR ANIMATION
+   ============================================ */
+
+@keyframes blink {
+    0%, 50% { border-right-color: var(--primary, #0078d4); }
+    51%, 100% { border-right-color: transparent; }
+}
+
+.typing-cursor {
+    border-right: 2px solid var(--primary, #0078d4);
+    animation: blink 0.8s infinite;
+    padding-right: 2px;
+}
+
+/* ============================================
+   PAGE TRANSITIONS
+   ============================================ */
+
+body {
+    opacity: 0;
+    transition: opacity 0.25s var(--anim-easing);
+}
+
+body.page-loaded {
+    opacity: 1;
+}
+
+body.page-exit {
+    opacity: 0;
+    transition: opacity 0.2s var(--anim-easing);
+}
+
+/* ============================================
+   TOAST ANIMATIONS
+   ============================================ */
+
+@keyframes toastEnter {
+    from {
+        opacity: 0;
+        transform: translateX(100%) translateY(0);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0) translateY(0);
+    }
+}
+
+@keyframes toastExit {
+    from {
+        opacity: 1;
+        transform: translateX(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+}
+
+.toast {
+    animation: toastEnter 0.3s var(--anim-easing) forwards;
+}
+
+.toast-exit {
+    animation: toastExit 0.3s var(--anim-easing) forwards;
+}
+
+/* ============================================
+   BUTTON MICRO-INTERACTIONS
+   ============================================ */
+
+.toolbar-btn:active,
+.btn-primary:active,
+.btn-secondary:active,
+.btn-danger:active,
+.btn-ai:active,
+.nav-btn:active {
+    transform: scale(0.95);
+    transition: transform 0.1s;
+}
+
+/* Nav link underline slide */
+.win11-nav-link,
+.nav-link {
+    position: relative;
+}
+
+.win11-nav-link::after,
+.nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background: var(--primary, #0078d4);
+    transition: width 0.3s var(--anim-easing), left 0.3s var(--anim-easing);
+}
+
+.win11-nav-link:hover::after,
+.nav-link:hover::after,
+.win11-nav-link.active::after,
+.nav-link.active::after {
+    width: 100%;
+    left: 0;
+}
+
+/* Form input focus glow */
+input:focus,
+textarea:focus,
+select:focus {
+    animation: glow 0.5s var(--anim-easing);
+}
+
+/* ============================================
+   CONTEXT MENU ANIMATION
+   ============================================ */
+
+.context-menu {
+    transform-origin: top left;
+    animation: scaleIn var(--anim-fast) var(--anim-easing) forwards;
+}
+
+/* ============================================
+   MODAL ANIMATIONS
+   ============================================ */
+
+.modal {
+    animation: fadeIn var(--anim-fast) var(--anim-easing);
+}
+
+.modal-content {
+    animation: scaleIn var(--anim-normal) var(--anim-easing);
+}
+
+/* ============================================
+   EDITOR TOOLBAR & PREVIEW STYLES
+   ============================================ */
+
+.editor-toolbar {
+    display: flex;
+    gap: 4px;
+    margin-bottom: var(--space-sm, 8px);
+    border: 1px solid var(--border, #333);
+    border-radius: var(--radius-md, 8px);
+    padding: 4px;
+    background: var(--bg-secondary, #1a1a1a);
+    width: fit-content;
+}
+
+.editor-mode-btn {
+    padding: 6px 16px;
+    border: none;
+    background: none;
+    color: var(--text-muted, #888);
+    cursor: pointer;
+    border-radius: var(--radius-sm, 4px);
+    font-size: var(--text-sm, 0.875rem);
+    transition: all var(--anim-fast, 150ms);
+    min-height: 32px;
+}
+
+.editor-mode-btn:hover {
+    background: var(--bg, #111);
+    color: var(--text, #eee);
+}
+
+.editor-mode-btn.active {
+    background: var(--primary, #0078d4);
+    color: white;
+}
+
+.editor-container {
+    display: grid;
+    gap: var(--space-md, 16px);
+}
+
+.editor-container[data-mode="edit"] {
+    grid-template-columns: 1fr;
+}
+
+.editor-container[data-mode="edit"] .markdown-preview {
+    display: none;
+}
+
+.editor-container[data-mode="split"] {
+    grid-template-columns: 1fr 1fr;
+}
+
+.editor-container[data-mode="preview"] textarea {
+    display: none;
+}
+
+.editor-container[data-mode="preview"] {
+    grid-template-columns: 1fr;
+}
+
+.markdown-preview {
+    padding: var(--space-md, 16px);
+    background: var(--bg-secondary, #1a1a1a);
+    border: 1px solid var(--border, #333);
+    border-radius: var(--radius-md, 8px);
+    min-height: 200px;
+    overflow-y: auto;
+    color: var(--text, #eee);
+    line-height: 1.6;
+}
+
+.markdown-preview h1,
+.markdown-preview h2,
+.markdown-preview h3 {
+    margin: 16px 0 8px;
+    color: var(--text, #eee);
+}
+
+.markdown-preview h1 { font-size: 1.5em; border-bottom: 1px solid var(--border, #333); padding-bottom: 8px; }
+.markdown-preview h2 { font-size: 1.3em; }
+.markdown-preview h3 { font-size: 1.1em; }
+
+.markdown-preview pre.md-code-block {
+    background: var(--bg, #111);
+    border: 1px solid var(--border, #333);
+    border-radius: 6px;
+    padding: 12px;
+    overflow-x: auto;
+    margin: 12px 0;
+}
+
+.markdown-preview code.md-inline-code {
+    background: var(--bg, #111);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.9em;
+    color: var(--primary, #0078d4);
+}
+
+.markdown-preview blockquote {
+    border-left: 3px solid var(--primary, #0078d4);
+    padding-left: 12px;
+    color: var(--text-muted, #888);
+    margin: 8px 0;
+}
+
+.markdown-preview ul,
+.markdown-preview ol {
+    padding-left: 24px;
+    margin: 8px 0;
+}
+
+.markdown-preview hr {
+    border: none;
+    border-top: 1px solid var(--border, #333);
+    margin: 16px 0;
+}
+
+@media (max-width: 768px) {
+    .editor-container[data-mode="split"] {
+        grid-template-columns: 1fr;
+    }
+}

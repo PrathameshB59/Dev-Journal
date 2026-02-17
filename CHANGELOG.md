@@ -6,6 +6,26 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [Unreleased]
+
+### Added
+- **Entry Version History** - Added persistent `EntryVersion` snapshots with list, preview, and restore flows on the entry page.
+- **Explorer Media Upload Flow** - Added media upload support for image/audio/video with explorer file creation and auto-embed markdown snippet insertion.
+- **Entry Markdown Vendor Pipeline** - Entry view now ships with vendored markdown dependencies (`marked`, `marked-gfm-heading-id`, `dompurify`) for deterministic rendering.
+
+### Changed
+- **Entry Markdown Renderer** - `/entry/:id` now prefers Marked + GFM heading IDs with a guarded fallback mode and runtime diagnostics.
+- **Entry Preview UX** - Entry page uses Preview/Raw mode shell with same-page hash navigation behavior for TOC links.
+- **Entry Sidebar UX** - Details/Tags/Version panels now use accordion behavior and mobile drawer interaction.
+- **Copy UX Feedback** - Copy actions now include toast feedback in addition to inline button state updates.
+
+### Fixed
+- **TOC Anchor Navigation** - Internal markdown hash links now resolve and scroll in-page instead of opening a new tab.
+- **Markdown Rendering Consistency** - Task-lists and table rendering now follow GFM output with mobile-safe table overflow handling.
+- **Copy Action Reliability** - Code copy paths now use robust clipboard fallback handling with consistent success/failure feedback states.
+
+---
+
 ## [1.6.0] - 2026-02-09
 
 ### Changed
@@ -125,11 +145,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - [x] AI-powered Summarize, Explain, Ask AI
 - [x] Settings page with coupon redemption
 - [x] Admin panel with RBAC
-- [ ] Markdown live preview while editing
+- [x] Markdown live preview while editing
 - [ ] Export entries to Markdown/PDF
 - [ ] Keyboard shortcuts for quick actions
 - [ ] Entry templates for different categories
-- [ ] Version history for entries
+- [x] Version history for entries
 - [ ] GitHub Gist backup integration
 - [ ] Dark/Light mode toggle
 - [ ] Password reset functionality

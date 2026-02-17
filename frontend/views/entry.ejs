@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <%- include('includes/head', { title: 'View Entry', styles: [], extraHead: '' }) %>
+    <%- include('includes/head', { title: 'View Entry', styles: [], extraHead: '<link rel="stylesheet" href="/css/styles.css?v=20260216c">' }) %>
 </head>
 <body>
     <%- include('includes/skip-link') %>
@@ -20,6 +20,10 @@
     }) %>
 
     <main id="main-content" class="container entry-view-container">
+        <button id="entryDetailsToggle" type="button" class="entry-details-toggle" aria-controls="entrySidebar" aria-expanded="false">
+            &#9776; Details
+        </button>
+
         <article id="entryContent" class="entry-view">
             <div id="loadingIndicator" class="loading">
                 <div class="spinner"></div>
@@ -27,33 +31,83 @@
             </div>
         </article>
 
-        <aside class="entry-sidebar">
-            <div class="sidebar-section">
-                <h3>Details</h3>
-                <div id="entryDetails" class="entry-details"></div>
-            </div>
+        <aside id="entrySidebar" class="entry-sidebar" aria-hidden="false">
+            <button id="entrySidebarClose" type="button" class="entry-sidebar-close" aria-label="Close details panel">&times;</button>
 
-            <div class="sidebar-section" id="tagsSection" style="display: none;">
-                <h3>Tags</h3>
-                <div id="entryTags" class="tags-list"></div>
-            </div>
-
-            <div class="sidebar-section" id="codeSection" style="display: none;">
-                <h3>Code Block</h3>
-                <div class="code-header">
-                    <span id="codeLanguageLabel" class="code-lang"></span>
-                    <button id="copyCodeBtn" class="copy-btn">&#128203; Copy</button>
+            <div class="sidebar-section entry-accordion-section is-open" id="entryDetailsSection">
+                <button
+                    type="button"
+                    class="entry-accordion-trigger"
+                    id="entryDetailsAccordionBtn"
+                    aria-expanded="true"
+                    aria-controls="entryDetailsPanel"
+                >
+                    <span>Details</span>
+                    <span class="entry-accordion-chevron" aria-hidden="true"></span>
+                </button>
+                <div id="entryDetailsPanel" class="entry-accordion-panel">
+                    <div id="entryDetails" class="entry-details"></div>
                 </div>
-                <pre id="entryCodeBlock" class="code-block"></pre>
             </div>
 
-            <div class="sidebar-section" id="historySection">
-                <h3>Version History</h3>
-                <button id="viewHistoryBtn" class="btn-secondary btn-sm btn-full">&#128337; View History</button>
-                <div id="versionList" class="version-list" style="display: none;"></div>
+            <div class="sidebar-section entry-accordion-section" id="tagsSection" style="display: none;">
+                <button
+                    type="button"
+                    class="entry-accordion-trigger"
+                    id="entryTagsAccordionBtn"
+                    aria-expanded="false"
+                    aria-controls="entryTagsPanel"
+                >
+                    <span>Tags</span>
+                    <span class="entry-accordion-chevron" aria-hidden="true"></span>
+                </button>
+                <div id="entryTagsPanel" class="entry-accordion-panel" hidden>
+                    <div id="entryTags" class="tags-list"></div>
+                </div>
+            </div>
+
+            <div class="sidebar-section entry-accordion-section" id="codeSection" style="display: none;">
+                <button
+                    type="button"
+                    class="entry-accordion-trigger"
+                    id="entryCodeAccordionBtn"
+                    aria-expanded="false"
+                    aria-controls="entryCodePanel"
+                >
+                    <span>Code Block</span>
+                    <span class="entry-accordion-chevron" aria-hidden="true"></span>
+                </button>
+                <div id="entryCodePanel" class="entry-accordion-panel" hidden>
+                    <div class="code-header">
+                        <span id="codeLanguageLabel" class="code-lang"></span>
+                        <button id="copyCodeBtn" type="button" class="copy-btn">&#128203; Copy</button>
+                    </div>
+                    <pre id="entryCodeBlock" class="code-block"></pre>
+                </div>
+            </div>
+
+            <div class="sidebar-section entry-accordion-section" id="historySection">
+                <button
+                    type="button"
+                    class="entry-accordion-trigger"
+                    id="entryHistoryAccordionBtn"
+                    aria-expanded="false"
+                    aria-controls="entryHistoryPanel"
+                >
+                    <span>Version History</span>
+                    <span class="entry-history-meta">
+                        <span id="versionCountBadge" class="version-count-badge" hidden>0</span>
+                        <span class="entry-accordion-chevron" aria-hidden="true"></span>
+                    </span>
+                </button>
+                <div id="entryHistoryPanel" class="entry-accordion-panel" hidden>
+                    <button id="viewHistoryBtn" type="button" class="btn-secondary btn-sm btn-full">&#128337; View History</button>
+                    <div id="versionList" class="version-list" style="display: none;"></div>
+                </div>
             </div>
         </aside>
     </main>
+    <div id="entrySidebarOverlay" class="entry-sidebar-overlay" hidden></div>
 
     <%- include('includes/delete-modal') %>
 
@@ -66,6 +120,9 @@
     <%- include('includes/footer', { showTech: false }) %>
 
     <script src="/js/auth.js"></script>
-    <script src="/js/app.js"></script>
+    <script src="/js/vendor/marked.min.js?v=20260216c"></script>
+    <script src="/js/vendor/marked-gfm-heading-id.umd.js?v=20260216c"></script>
+    <script src="/js/vendor/dompurify.min.js?v=20260216c"></script>
+    <script src="/js/app.js?v=20260216c"></script>
 </body>
 </html>

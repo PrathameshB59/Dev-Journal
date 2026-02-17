@@ -145,6 +145,7 @@ const FileExplorer = {
                 <li role="menuitem" tabindex="-1" data-action="rename"><span>&#128221;</span> Rename</li>
                 <li role="menuitem" tabindex="-1" data-action="favorite"><span>&#9733;</span> Toggle Favorite</li>
                 <li role="menuitem" tabindex="-1" data-action="pin"><span>&#128204;</span> Toggle Pin</li>
+                <li role="menuitem" tabindex="-1" data-action="move-to"><span>&#128230;</span> Move to...</li>
                 <li class="divider"></li>
                 <li role="menuitem" tabindex="-1" data-action="ai-summarize" class="ai-action"><span>&#129302;</span> Summarize</li>
                 <li role="menuitem" tabindex="-1" data-action="ai-explain" class="ai-action"><span>&#129302;</span> Explain</li>
@@ -192,6 +193,9 @@ const FileExplorer = {
                     break;
                 case 'pin':
                     this.togglePin(entryId);
+                    break;
+                case 'move-to':
+                    this.showMoveToModal(entryId);
                     break;
                 case 'ai-summarize':
                     if (entryType === 'folder' && window.AiPanel) {
@@ -494,6 +498,64 @@ const FileExplorer = {
         }, 3000);
     },
 
+    // Show "Move to..." modal with folder picker
+    async showMoveToModal(entryId) {
+        let modal = document.getElementById('moveToModal');
+        if (!modal) {
+            modal = document.createElement('div');
+            modal.id = 'moveToModal';
+            modal.className = 'folder-modal-overlay';
+            modal.setAttribute('role', 'dialog');
+            modal.setAttribute('aria-modal', 'true');
+            modal.innerHTML = `
+                <div class="folder-modal">
+                    <div class="folder-modal-header">
+                        <h3>&#128230; Move to...</h3>
+                        <button class="folder-modal-close" aria-label="Close">&times;</button>
+                    </div>
+                    <div class="folder-modal-body">
+                        <div class="move-folder-list" id="moveFolderList"></div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+
+            modal.querySelector('.folder-modal-close').addEventListener('click', () => { modal.style.display = 'none'; });
+            modal.addEventListener('click', (e) => { if (e.target === modal) modal.style.display = 'none'; });
+            modal.addEventListener('keydown', (e) => { if (e.key === 'Escape') modal.style.display = 'none'; });
+        }
+
+        const listEl = modal.querySelector('#moveFolderList');
+        listEl.innerHTML = '<p style="padding:var(--space-md); color:var(--text-muted);">Loading folders...</p>';
+        modal.style.display = 'flex';
+
+        try {
+            const result = await window.ExplorerAPI.getRoot();
+            if (!result.success) return;
+
+            const folders = result.data.filter(e => e.type === 'folder' && e._id !== entryId);
+            let html = `<button class="move-folder-item" data-folder-id="">
+                <span>&#127968;</span> Root (Home)
+            </button>`;
+            folders.forEach(f => {
+                html += `<button class="move-folder-item" data-folder-id="${f._id}">
+                    <span>&#128193;</span> ${this.escapeHtml(f.name)}
+                </button>`;
+            });
+            listEl.innerHTML = html;
+
+            listEl.querySelectorAll('.move-folder-item').forEach(btn => {
+                btn.addEventListener('click', async () => {
+                    const targetId = btn.dataset.folderId || null;
+                    modal.style.display = 'none';
+                    await this.moveEntry(entryId, targetId);
+                });
+            });
+        } catch (error) {
+            listEl.innerHTML = '<p style="padding:var(--space-md); color:var(--danger);">Error loading folders</p>';
+        }
+    },
+
     // Escape HTML
     escapeHtml(text) {
         const div = document.createElement('div');
@@ -624,6 +686,114 @@ fileExplorerStyles.textContent = `
             opacity: 1;
         }
     }
+
+    /* Folder Creation & Move-To Modal */
+    .folder-modal-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.5);
+        z-index: 2000;
+        justify-content: center;
+        align-items: center;
+    }
+    .folder-modal {
+        background: var(--card-bg);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-lg);
+        width: 90%;
+        max-width: 440px;
+        max-height: 80vh;
+        overflow-y: auto;
+        animation: modalIn 0.2s ease;
+    }
+    @keyframes modalIn {
+        from { transform: scale(0.95); opacity: 0; }
+        to { transform: scale(1); opacity: 1; }
+    }
+    .folder-modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: var(--space-md) var(--space-lg);
+        border-bottom: 1px solid var(--border);
+    }
+    .folder-modal-header h3 { margin: 0; font-size: var(--text-lg); }
+    .folder-modal-close {
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        cursor: pointer;
+        color: var(--text-muted);
+        padding: 0 var(--space-xs);
+    }
+    .folder-modal-close:hover { color: var(--text); }
+    .folder-modal-body {
+        padding: var(--space-lg);
+    }
+    .folder-modal-body .form-group { margin-bottom: var(--space-md); }
+    .folder-modal-body label { display: block; font-size: var(--text-sm); color: var(--text-muted); margin-bottom: var(--space-xs); }
+    .folder-modal-body input[type="text"],
+    .folder-modal-body textarea {
+        width: 100%;
+        padding: var(--space-sm) var(--space-md);
+        background: var(--bg-secondary);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-md);
+        color: var(--text);
+        font-size: var(--text-base);
+        box-sizing: border-box;
+    }
+    .folder-modal-body input:focus,
+    .folder-modal-body textarea:focus {
+        outline: none;
+        border-color: var(--primary);
+    }
+    .folder-modal-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: var(--space-sm);
+        margin-top: var(--space-lg);
+    }
+    .color-swatches {
+        display: flex;
+        gap: var(--space-sm);
+        flex-wrap: wrap;
+    }
+    .swatch {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        border: 2px solid transparent;
+        cursor: pointer;
+        transition: transform 0.15s;
+    }
+    .swatch:hover { transform: scale(1.15); }
+    .swatch.active { border-color: var(--text); box-shadow: 0 0 0 2px var(--card-bg); }
+
+    /* Move-to folder list */
+    .move-folder-list {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+    }
+    .move-folder-item {
+        display: flex;
+        align-items: center;
+        gap: var(--space-sm);
+        padding: var(--space-sm) var(--space-md);
+        background: none;
+        border: none;
+        border-radius: var(--radius-md);
+        color: var(--text);
+        cursor: pointer;
+        font-size: var(--text-base);
+        text-align: left;
+        width: 100%;
+        transition: background 0.15s;
+    }
+    .move-folder-item:hover { background: var(--bg-secondary); }
 `;
 document.head.appendChild(fileExplorerStyles);
 

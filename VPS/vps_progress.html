@@ -9105,7 +9105,7 @@ AI answers using your history
     </div>
 
     <div class="card" id="dev-journal-done">
-        <h2>✅ What We Have Done (VPS)</h2>
+        <h2>✅ What We Have Done (Dev-Journal)</h2>
         <ul class="list">
             <li><span class="status done"></span>Ubuntu VPS provisioned & secured (SSH)</li>
             <li><span class="status done"></span>Git installed & GitHub connected</li>
@@ -9144,6 +9144,9 @@ AI answers using your history
             <li><span class="status done"></span>Prompt truncation fix (8,000 char limit)</li>
             <li><span class="status done"></span>Mongoose pre-delete hooks (cascade deletion)</li>
             <li><span class="status done"></span>Admin delete cascade (users → entries + coupons)</li>
+            <li><span class="status done"></span>Entry-page markdown stabilization (renderer, TOC behavior, task-list/table output)</li>
+            <li><span class="status done"></span>Persistent entry version history snapshots with restore support</li>
+            <li><span class="status done"></span>Explorer media upload support (image/audio/video) with auto-embed snippets</li>
         </ul>
     </div>
 
@@ -9432,17 +9435,21 @@ AI answers using your history
             <li><span class="status done"></span>Admin coupon management (create/list/disable)</li>
             <li><span class="status done"></span>Admin per-user AI toggle</li>
             <li><span class="status done"></span>Default admin seed script (seedAdmin.js)</li>
-            <li><span class="status todo"></span>Markdown live preview while editing</li>
+            <li><span class="status done"></span>Markdown live preview while editing</li>
+            <li><span class="status done"></span>Entry markdown stabilization + TOC same-page navigation fixes</li>
+            <li><span class="status done"></span>Explorer media upload + markdown auto-embed flow</li>
             <li><span class="status todo"></span>Export entries to Markdown/PDF</li>
             <li><span class="status todo"></span>Entry templates for different categories</li>
-            <li><span class="status todo"></span>Version history for entries</li>
+            <li><span class="status done"></span>Version history for entries</li>
             <li><span class="status todo"></span>GitHub Gist backup integration</li>
             <li><span class="status todo"></span>Dark/Light mode toggle</li>
         </ul>
 
         <blockquote class="success">
-            ✅ 26 features completed! Dev-Journal now has Windows 11-style UI, JWT auth, admin panel with RBAC, dashboard, security enhancements, WCAG 2.2 accessibility, Atlas AI integration, settings page, coupon system, explain page with dark theme, and cascade deletion hooks.
+            ✅ Dev-Journal now includes entry-page stabilization, persistent version history, and media upload support while keeping export as a planned item.
         </blockquote>
+
+        <p class="muted"><strong>Deploy note:</strong> after shipping new routes/assets, restart backend (PM2) and hard refresh the browser to avoid stale 404/runtime mismatch.</p>
     </div>
 
     <div class="card full" id="dev-journal-structure">
@@ -9518,6 +9525,16 @@ AI answers using your history
             ├── README.md
             └── CHANGELOG.md
         </div>
+
+        <h3>Latest Key Paths</h3>
+        <ul class="list">
+            <li><code>backend/src/models/EntryVersion.js</code></li>
+            <li><code>backend/src/services/entryVersionService.js</code></li>
+            <li><code>frontend/public/js/vendor/marked.min.js</code></li>
+            <li><code>frontend/public/js/vendor/marked-gfm-heading-id.umd.js</code></li>
+            <li><code>frontend/public/js/vendor/dompurify.min.js</code></li>
+            <li><code>frontend/public/js/markdownPreview.js</code></li>
+        </ul>
     </div>
 
     <!-- STACKPILOT PROJECT -->

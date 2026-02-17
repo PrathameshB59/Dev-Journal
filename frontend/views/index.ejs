@@ -1,18 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dev Journal - Personal Developer Documentation</title>
-    <link rel="stylesheet" href="/css/styles.css">
-    <link rel="stylesheet" href="/css/win11-explorer.css">
-    <link rel="stylesheet" href="/css/animations.css">
+    <%- include('includes/head', { title: 'Home', styles: ['win11-explorer.css', 'animations.css'], extraHead: '' }) %>
 </head>
-<body>
-    <!-- Skip Link for Accessibility -->
-    <a href="#main-content" class="skip-link">Skip to main content</a>
+<body class="explorer-shell">
+    <%- include('includes/skip-link') %>
 
-    <!-- Header -->
     <header>
         <div class="header-content">
             <h1><span class="logo-icon">&#128221;</span> Dev Journal</h1>
@@ -20,41 +13,9 @@
         </div>
     </header>
 
-    <!-- Windows 11 Style Navigation -->
-    <nav>
-        <div class="nav-container">
-            <a href="/" class="nav-brand">&#128218; Dev Journal</a>
+    <%- include('includes/nav-explorer') %>
 
-            <!-- Windows 11 Style Nav Links -->
-            <div class="win11-nav-links" id="navLinks">
-                <a href="/" class="win11-nav-link active">&#127968; Home</a>
-                <a href="/dashboard" class="win11-nav-link">&#128202; Dashboard</a>
-                <a href="/settings" class="win11-nav-link">&#9881; Settings</a>
-                <a href="/admin" class="win11-nav-link" id="adminNavLink" style="display: none;">
-                    &#9881; Admin <span class="admin-badge">Admin</span>
-                </a>
-            </div>
-
-            <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle menu">
-                <span class="hamburger-line"></span>
-                <span class="hamburger-line"></span>
-                <span class="hamburger-line"></span>
-            </button>
-
-            <div class="nav-actions" id="navActions">
-                <div class="mobile-nav-links">
-                    <a href="/">&#127968; Home</a>
-                    <a href="/dashboard">&#128202; Dashboard</a>
-                    <a href="/settings">&#9881; Settings</a>
-                </div>
-                <span id="userDisplay" class="user-display"></span>
-                <button id="logoutBtn" class="btn-logout">Logout</button>
-            </div>
-        </div>
-    </nav>
-
-    <!-- Windows 11 File Explorer Main Content -->
-    <main class="win11-explorer" id="main-content">
+    <main class="win11-explorer win11-home-desktop" id="main-content">
         <!-- Toolbar -->
         <div class="win11-toolbar">
             <div class="toolbar-left">
@@ -141,7 +102,7 @@
                 <button class="nav-btn" id="backBtn" title="Back" aria-label="Go back" disabled>&#9664;</button>
                 <button class="nav-btn" id="forwardBtn" title="Forward" aria-label="Go forward" disabled>&#9654;</button>
                 <button class="nav-btn" id="upBtn" title="Up" aria-label="Go up one level">&#9650;</button>
-                <button class="nav-btn" id="sidebarToggle" title="Toggle Sidebar" aria-label="Toggle sidebar">&#9776;</button>
+                <button class="nav-btn" id="sidebarToggle" title="Toggle Folders Panel" aria-label="Toggle folders panel">&#9776;</button>
             </div>
             <nav class="breadcrumb-container" aria-label="Breadcrumb">
                 <ol class="breadcrumb-path" id="breadcrumbPath">
@@ -174,9 +135,7 @@
 
         <!-- Main Content Area -->
         <div class="win11-main">
-            <!-- Sidebar -->
             <aside class="win11-sidebar" id="win11Sidebar">
-                <!-- Home Section -->
                 <div class="sidebar-section">
                     <a href="/" class="sidebar-item active" data-path="home">
                         <span class="item-icon">&#127968;</span>
@@ -192,7 +151,6 @@
                     </a>
                 </div>
 
-                <!-- Quick Access (Categories) -->
                 <div class="sidebar-section">
                     <button class="section-header" type="button" aria-expanded="true" aria-controls="quickaccess">
                         <span class="collapse-arrow">&#9660;</span>
@@ -227,7 +185,6 @@
                     </div>
                 </div>
 
-                <!-- Favorites -->
                 <div class="sidebar-section">
                     <button class="section-header" type="button" aria-expanded="true" aria-controls="favorites-section">
                         <span class="collapse-arrow">&#9660;</span>
@@ -235,33 +192,25 @@
                     </button>
                     <div class="section-content" id="favorites-section">
                         <div id="favoritesList">
-                            <div class="sidebar-item" style="color: var(--win11-text-muted); font-style: italic;">
-                                No favorites yet
-                            </div>
+                            <div class="sidebar-item" style="color: var(--win11-text-muted); font-style: italic;">No favorites yet</div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Tags -->
                 <div class="sidebar-section">
                     <button class="section-header" type="button" aria-expanded="false" aria-controls="tags-section">
                         <span class="collapse-arrow collapsed">&#9660;</span>
                         <span class="section-title">Tags</span>
                     </button>
                     <div class="section-content collapsed" id="tags-section">
-                        <div id="tagsList">
-                            <!-- Tags loaded dynamically -->
-                        </div>
+                        <div id="tagsList"></div>
                     </div>
                 </div>
             </aside>
 
-            <!-- Sidebar Overlay for Mobile -->
             <div class="win11-sidebar-overlay" id="sidebarOverlay"></div>
 
-            <!-- Content Area -->
             <section class="win11-content">
-                <!-- Quick Access Grid (Home View) -->
                 <div class="quick-access-grid" id="quickAccessGrid">
                     <h3>&#9733; Pinned</h3>
                     <div class="pinned-folders" id="pinnedFolders">
@@ -294,9 +243,7 @@
                     <h3>&#128337; Recent</h3>
                 </div>
 
-                <!-- File List Container -->
                 <div class="file-list-container" id="fileListContainer">
-                    <!-- File List Header -->
                     <div class="file-list-header" id="fileListHeader">
                         <div class="col-header sorted" data-sort="name">
                             <span>Name</span>
@@ -310,23 +257,16 @@
                             <span>Type</span>
                             <span class="sort-icon">&#9660;</span>
                         </div>
-                        <div class="col-header">
-                            <span>Tags</span>
-                        </div>
+                        <div class="col-header"><span>Tags</span></div>
                     </div>
 
-                    <!-- File List -->
-                    <div class="file-list" id="fileList" aria-live="polite">
-                        <!-- Entries loaded dynamically -->
-                    </div>
+                    <div class="file-list" id="fileList" aria-live="polite"></div>
 
-                    <!-- Loading State -->
                     <div class="win11-loading" id="loadingState" role="status" aria-live="polite" style="display: none;">
                         <div class="win11-spinner"></div>
                         <p style="margin-top: var(--space-md); color: var(--win11-text-secondary);">Loading entries...</p>
                     </div>
 
-                    <!-- Empty State -->
                     <div class="empty-state" id="emptyState" role="status" aria-live="polite" style="display: none;">
                         <span class="empty-icon">&#128466;</span>
                         <h3 class="empty-title">No entries found</h3>
@@ -352,15 +292,11 @@
         </div>
     </main>
 
-    <footer>
-        <div class="footer-content">
-            <p>Dev Journal - Personal Developer Documentation System</p>
-            <p>Built with Node.js, Express, MongoDB Atlas</p>
-        </div>
-    </footer>
+    <%- include('includes/footer', { showTech: true }) %>
 
     <script src="/js/auth.js"></script>
     <script src="/js/app.js"></script>
     <script src="/js/fileExplorer.js"></script>
+    <script src="/js/animations.js"></script>
 </body>
 </html>

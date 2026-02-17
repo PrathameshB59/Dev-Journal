@@ -71,7 +71,7 @@ const detectAndRenderCode = (content) => {
         return `<div class="code-block-wrapper">
             <div class="code-header">
                 <span class="code-lang">${language}</span>
-                <button class="copy-btn" onclick="copyCodeBlock(this)" data-code="${btoa(encodeURIComponent(code.trim()))}">&#128203; Copy</button>
+                <button class="copy-btn" type="button" onclick="copyCodeBlock(this)" data-code="${btoa(encodeURIComponent(code.trim()))}">&#128203; Copy</button>
             </div>
             <pre class="code-block"><code class="language-${language}">${escapedCode}</code></pre>
         </div>`;
@@ -83,26 +83,680 @@ const detectAndRenderCode = (content) => {
     return content;
 };
 
-// Copy code block to clipboard
-const copyCodeBlock = (btn) => {
-    try {
-        const encodedCode = btn.getAttribute('data-code');
-        const code = decodeURIComponent(atob(encodedCode));
-        navigator.clipboard.writeText(code).then(() => {
-            btn.innerHTML = '&#10003; Copied!';
-            btn.classList.add('copied');
-            setTimeout(() => {
-                btn.innerHTML = '&#128203; Copy';
-                btn.classList.remove('copied');
-            }, 2000);
-        });
-    } catch (error) {
-        console.error('Failed to copy code:', error);
+// Copy text with Clipboard API and legacy fallback
+const safeCopyText = async (text) => {
+    const value = typeof text === 'string' ? text : String(text || '');
+    if (!value) return false;
+
+    if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+        try {
+            await navigator.clipboard.writeText(value);
+            return true;
+        } catch (error) {
+            // Fallback path below.
+        }
     }
+
+    try {
+        const textarea = document.createElement('textarea');
+        textarea.value = value;
+        textarea.setAttribute('readonly', '');
+        textarea.style.position = 'fixed';
+        textarea.style.opacity = '0';
+        textarea.style.pointerEvents = 'none';
+        textarea.style.left = '-9999px';
+        textarea.style.top = '0';
+        document.body.appendChild(textarea);
+        try {
+            textarea.focus({ preventScroll: true });
+        } catch (error) {
+            textarea.focus();
+        }
+        textarea.select();
+        textarea.setSelectionRange(0, value.length);
+        const copied = document.execCommand('copy');
+        document.body.removeChild(textarea);
+        return copied;
+    } catch (error) {
+        return false;
+    }
+};
+
+const ensureToastRegion = () => {
+    let region = document.getElementById('globalToastRegion');
+    if (region) return region;
+
+    region = document.createElement('div');
+    region.id = 'globalToastRegion';
+    region.className = 'toast-region';
+    region.setAttribute('aria-live', 'polite');
+    region.setAttribute('aria-atomic', 'false');
+    document.body.appendChild(region);
+    return region;
+};
+
+const showToast = (message, type = 'info', durationMs = 2200) => {
+    const region = ensureToastRegion();
+    const toast = document.createElement('div');
+    toast.className = `toast-notice toast-${type}`;
+    toast.setAttribute('role', 'status');
+    toast.textContent = message;
+
+    region.appendChild(toast);
+    requestAnimationFrame(() => {
+        toast.classList.add('show');
+    });
+
+    window.setTimeout(() => {
+        toast.classList.remove('show');
+        window.setTimeout(() => {
+            toast.remove();
+        }, 220);
+    }, durationMs);
+};
+
+const flashCopyResult = (btn, copied) => {
+    if (!btn) return;
+    if (btn._copyResetTimer) {
+        clearTimeout(btn._copyResetTimer);
+    }
+
+    btn.textContent = copied ? 'Copied!' : 'Copy failed';
+    btn.classList.toggle('copied', copied);
+    btn.classList.toggle('copy-failed', !copied);
+    btn.classList.remove('is-copying');
+    btn.disabled = false;
+    btn.dataset.copyBusy = '0';
+
+    btn._copyResetTimer = setTimeout(() => {
+        btn.innerHTML = btn.dataset.copyDefault || '&#128203; Copy';
+        btn.classList.remove('copied', 'copy-failed', 'is-copying');
+        btn.disabled = false;
+        btn.dataset.copyBusy = '0';
+    }, copied ? 1600 : 2200);
+
+    showToast(copied ? 'Copied command/text to clipboard' : 'Copy failed', copied ? 'success' : 'error');
+};
+
+// Copy code block to clipboard
+const copyCodeBlock = async (btn) => {
+    if (!btn) return;
+    if (btn.dataset.copyBusy === '1') return;
+
+    const originalHtml = btn.dataset.copyDefault || btn.innerHTML || '&#128203; Copy';
+    if (!btn.dataset.copyDefault) {
+        btn.dataset.copyDefault = originalHtml;
+    }
+
+    btn.dataset.copyBusy = '1';
+    btn.disabled = true;
+    btn.classList.add('is-copying');
+
+    let textToCopy = '';
+    const wrapper = btn.closest('.code-block-wrapper');
+    const codeEl = wrapper ? wrapper.querySelector('pre code, code') : null;
+    if (codeEl && codeEl.textContent) {
+        textToCopy = codeEl.textContent;
+    }
+
+    if (!textToCopy) {
+        const encodedCode = btn.getAttribute('data-code');
+        if (encodedCode) {
+            try {
+                textToCopy = decodeURIComponent(atob(encodedCode));
+            } catch (error) {
+                textToCopy = '';
+            }
+        }
+    }
+
+    const copied = await safeCopyText(textToCopy);
+    flashCopyResult(btn, copied);
 };
 
 // Make copyCodeBlock globally available
 window.copyCodeBlock = copyCodeBlock;
+
+// Inline formatting used by entry markdown fallback mode
+const formatInlineEntryMarkdown = (text) => {
+    let html = text;
+
+    html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_, label, url) => {
+        const rawUrl = (url || '').trim();
+        const safeUrl = /^(https?:\/\/|\/|#)/i.test(rawUrl) ? rawUrl : '#';
+        const isExternal = /^https?:\/\//i.test(safeUrl);
+        const linkAttrs = isExternal ? ' target="_blank" rel="noopener noreferrer"' : '';
+        return `<a href="${safeUrl}"${linkAttrs}>${label}</a>`;
+    });
+
+    html = html.replace(/`([^`]+)`/g, '<code class="inline-code">$1</code>');
+    html = html.replace(/\*\*\*([^*]+)\*\*\*/g, '<strong><em>$1</em></strong>');
+    html = html.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+    html = html.replace(/\*([^*]+)\*/g, '<em>$1</em>');
+
+    return html;
+};
+
+// Lightweight fallback markdown renderer (used if vendor libs fail to load)
+const renderEntryMarkdownFallback = (markdown) => {
+    const source = typeof markdown === 'string' ? markdown : String(markdown || '');
+    if (!source.trim()) {
+        return '<p class="entry-md-empty">No markdown content.</p>';
+    }
+
+    const codeBlocks = [];
+    let text = escapeHtml(source).replace(/\r\n/g, '\n');
+
+    text = text.replace(/```([a-zA-Z0-9_-]*)\n?([\s\S]*?)```/g, (_, lang, code) => {
+        const token = `@@ENTRY_CODE_BLOCK_${codeBlocks.length}@@`;
+        const langLabel = (lang || 'code').trim() || 'code';
+        const langClass = langLabel.toLowerCase().replace(/[^a-z0-9_-]/g, '') || 'code';
+        const codeValue = code.trim();
+
+        codeBlocks.push(
+            `<div class="code-block-wrapper">
+                <div class="code-header">
+                    <span class="code-lang">${langLabel}</span>
+                    <button class="copy-btn" type="button" onclick="copyCodeBlock(this)">&#128203; Copy</button>
+                </div>
+                <pre class="code-block"><code class="language-${langClass}">${codeValue}</code></pre>
+            </div>`
+        );
+        return token;
+    });
+
+    const lines = text.split('\n');
+    const html = [];
+    let paragraph = [];
+    let listType = null;
+
+    const closeList = () => {
+        if (!listType) return;
+        html.push(listType === 'ol' ? '</ol>' : '</ul>');
+        listType = null;
+    };
+
+    const flushParagraph = () => {
+        if (!paragraph.length) return;
+        html.push(`<p>${formatInlineEntryMarkdown(paragraph.join(' '))}</p>`);
+        paragraph = [];
+    };
+
+    lines.forEach((line) => {
+        const trimmed = line.trim();
+
+        if (!trimmed) {
+            flushParagraph();
+            closeList();
+            return;
+        }
+
+        if (/^@@ENTRY_CODE_BLOCK_\d+@@$/.test(trimmed)) {
+            flushParagraph();
+            closeList();
+            html.push(trimmed);
+            return;
+        }
+
+        const headerMatch = trimmed.match(/^(#{1,6})\s+(.+)$/);
+        if (headerMatch) {
+            flushParagraph();
+            closeList();
+            const level = headerMatch[1].length;
+            html.push(`<h${level}>${formatInlineEntryMarkdown(headerMatch[2])}</h${level}>`);
+            return;
+        }
+
+        if (/^-{3,}$/.test(trimmed)) {
+            flushParagraph();
+            closeList();
+            html.push('<hr>');
+            return;
+        }
+
+        const quoteMatch = trimmed.match(/^&gt;\s?(.+)$/);
+        if (quoteMatch) {
+            flushParagraph();
+            closeList();
+            html.push(`<blockquote>${formatInlineEntryMarkdown(quoteMatch[1])}</blockquote>`);
+            return;
+        }
+
+        const olMatch = trimmed.match(/^\d+\.\s+(.+)$/);
+        if (olMatch) {
+            flushParagraph();
+            if (listType !== 'ol') {
+                closeList();
+                html.push('<ol>');
+                listType = 'ol';
+            }
+            html.push(`<li>${formatInlineEntryMarkdown(olMatch[1])}</li>`);
+            return;
+        }
+
+        const ulMatch = trimmed.match(/^[-*]\s+(.+)$/);
+        if (ulMatch) {
+            flushParagraph();
+            if (listType !== 'ul') {
+                closeList();
+                html.push('<ul>');
+                listType = 'ul';
+            }
+            html.push(`<li>${formatInlineEntryMarkdown(ulMatch[1])}</li>`);
+            return;
+        }
+
+        if (listType) {
+            closeList();
+        }
+
+        paragraph.push(trimmed);
+    });
+
+    flushParagraph();
+    closeList();
+
+    let rendered = html.join('\n');
+    rendered = rendered.replace(/@@ENTRY_CODE_BLOCK_(\d+)@@/g, (_, idx) => codeBlocks[Number(idx)] || '');
+
+    return rendered;
+};
+
+let entryMarkedConfigured = false;
+const ENTRY_VENDOR_VERSION = '20260216c';
+const ENTRY_VENDOR_SCRIPTS = [
+    `/js/vendor/marked.min.js?v=${ENTRY_VENDOR_VERSION}`,
+    `/js/vendor/marked-gfm-heading-id.umd.js?v=${ENTRY_VENDOR_VERSION}`,
+    `/js/vendor/dompurify.min.js?v=${ENTRY_VENDOR_VERSION}`
+];
+const entryVendorLoadCache = new Map();
+
+const loadScriptOnce = (src) => {
+    if (entryVendorLoadCache.has(src)) {
+        return entryVendorLoadCache.get(src);
+    }
+
+    const loader = new Promise((resolve, reject) => {
+        const existing = document.querySelector(`script[src="${src}"]`) || document.querySelector(`script[src="${src.split('?')[0]}"]`);
+        if (existing && existing.dataset.loaded === 'true') {
+            resolve(true);
+            return;
+        }
+
+        const scriptEl = existing || document.createElement('script');
+        scriptEl.src = src;
+        scriptEl.async = false;
+
+        const cleanup = () => {
+            scriptEl.removeEventListener('load', onLoad);
+            scriptEl.removeEventListener('error', onError);
+        };
+
+        const onLoad = () => {
+            scriptEl.dataset.loaded = 'true';
+            cleanup();
+            resolve(true);
+        };
+
+        const onError = () => {
+            cleanup();
+            reject(new Error(`Failed to load ${src}`));
+        };
+
+        scriptEl.addEventListener('load', onLoad, { once: true });
+        scriptEl.addEventListener('error', onError, { once: true });
+
+        if (!existing) {
+            document.head.appendChild(scriptEl);
+        }
+    });
+
+    entryVendorLoadCache.set(src, loader);
+    return loader;
+};
+const getMarkedApi = () => {
+    const markedLib = window.marked;
+    if (!markedLib) return null;
+
+    const parse = typeof markedLib.parse === 'function'
+        ? markedLib.parse.bind(markedLib)
+        : (typeof markedLib === 'function' ? markedLib.bind(markedLib) : null);
+
+    if (!parse) return null;
+
+    return {
+        parse,
+        parseInline: typeof markedLib.parseInline === 'function' ? markedLib.parseInline.bind(markedLib) : null,
+        setOptions: typeof markedLib.setOptions === 'function' ? markedLib.setOptions.bind(markedLib) : null,
+        Renderer: markedLib.Renderer || null
+    };
+};
+
+const getEntryDomPurify = () => {
+    const purify = window.DOMPurify;
+    if (!purify) return null;
+    if (typeof purify.sanitize === 'function') return purify;
+    if (typeof purify === 'function') {
+        return { sanitize: purify };
+    }
+    return null;
+};
+
+const configureEntryMarkdownEngine = () => {
+    if (entryMarkedConfigured) return;
+    const markedApi = getMarkedApi();
+    if (!markedApi) {
+        throw new Error('Marked library not available');
+    }
+    if (!getEntryDomPurify()) {
+        throw new Error('DOMPurify library not available');
+    }
+
+    if (markedApi.setOptions) {
+        markedApi.setOptions({
+            gfm: true,
+            breaks: false
+        });
+    }
+
+    entryMarkedConfigured = true;
+};
+
+const getEntryMarkdownEngineState = () => {
+    const hasMarked = !!getMarkedApi();
+    const hasPurify = !!getEntryDomPurify();
+    return {
+        hasMarked,
+        hasPurify,
+        ready: hasMarked && hasPurify
+    };
+};
+
+const ensureEntryMarkdownVendorsLoaded = async () => {
+    const state = getEntryMarkdownEngineState();
+    if (state.ready) return true;
+
+    for (const scriptSrc of ENTRY_VENDOR_SCRIPTS) {
+        try {
+            // eslint-disable-next-line no-await-in-loop
+            await loadScriptOnce(scriptSrc);
+        } catch (error) {
+            console.warn('[entry-md] vendor load failed:', scriptSrc, error.message);
+        }
+    }
+
+    return getEntryMarkdownEngineState().ready;
+};
+
+const resolveEntryInternalHash = (hrefValue) => {
+    const href = (hrefValue || '').trim();
+    if (!href) return '';
+    if (href.startsWith('#')) return href;
+
+    try {
+        const url = new URL(href, window.location.origin);
+        const normalizedPath = (value) => (value || '').replace(/\/+$/, '') || '/';
+        const currentPath = normalizedPath(window.location.pathname);
+        const targetPath = normalizedPath(url.pathname);
+        if (
+            url.origin === window.location.origin &&
+            targetPath === currentPath &&
+            url.hash &&
+            url.hash !== '#'
+        ) {
+            return url.hash;
+        }
+    } catch (error) {
+        return '';
+    }
+
+    return '';
+};
+
+const normalizeEntryAnchorKey = (value) => {
+    const decoded = decodeHashFragment(value || '');
+    return decoded
+        .trim()
+        .toLowerCase()
+        .replace(/[^a-z0-9\s-]+/g, '')
+        .replace(/\s/g, '-')
+        .replace(/^-+/, '')
+        .replace(/-+$/, '');
+};
+
+const normalizeEntryAnchorLooseKey = (value) => {
+    return normalizeEntryAnchorKey(value).replace(/-{2,}/g, '-');
+};
+
+const decodeHtmlEntities = (value) => {
+    const textarea = document.createElement('textarea');
+    textarea.innerHTML = value || '';
+    return textarea.value || '';
+};
+
+const stripHtmlTags = (value) => {
+    return String(value || '')
+        .replace(/<[^>]+>/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+};
+
+const createEntryHeadingIdGenerator = () => {
+    const seenSlugs = new Map();
+    return (headingValue) => {
+        const rawText = decodeHtmlEntities(stripHtmlTags(headingValue));
+        const baseSlug = normalizeEntryAnchorKey(rawText || 'section') || 'section';
+        const count = seenSlugs.get(baseSlug) || 0;
+        seenSlugs.set(baseSlug, count + 1);
+        return count === 0 ? baseSlug : `${baseSlug}-${count}`;
+    };
+};
+
+const buildEntryHeadingLookup = (previewPanel) => {
+    const lookup = new Map();
+    if (!previewPanel) return lookup;
+
+    previewPanel.querySelectorAll('h1[id], h2[id], h3[id], h4[id], h5[id], h6[id]').forEach((heading) => {
+        const id = heading.id || '';
+        if (!id) return;
+        lookup.set(id, id);
+        lookup.set(normalizeEntryAnchorKey(id), id);
+        lookup.set(normalizeEntryAnchorLooseKey(id), id);
+    });
+
+    return lookup;
+};
+
+const decorateEntryPreviewDom = (root) => {
+    if (!root) return;
+
+    root.querySelectorAll('a[href]').forEach((link) => {
+        const href = (link.getAttribute('href') || '').trim();
+        if (!href) return;
+        const internalHash = resolveEntryInternalHash(href);
+        if (internalHash) {
+            link.setAttribute('href', internalHash);
+            link.dataset.entryHash = internalHash;
+            link.removeAttribute('target');
+            link.removeAttribute('rel');
+            return;
+        }
+        if (/^https?:\/\//i.test(href)) {
+            link.setAttribute('target', '_blank');
+            link.setAttribute('rel', 'noopener noreferrer');
+        }
+    });
+
+    root.querySelectorAll('table').forEach((table) => {
+        table.classList.add('entry-md-table');
+        if (table.parentElement && table.parentElement.classList.contains('md-table-wrap')) return;
+        const wrapper = document.createElement('div');
+        wrapper.className = 'md-table-wrap';
+        table.parentNode.insertBefore(wrapper, table);
+        wrapper.appendChild(table);
+    });
+
+    root.querySelectorAll('li > input[type="checkbox"]').forEach((checkbox) => {
+        checkbox.setAttribute('disabled', '');
+        checkbox.setAttribute('aria-hidden', 'true');
+        checkbox.tabIndex = -1;
+
+        const listItem = checkbox.closest('li');
+        if (!listItem) return;
+        listItem.classList.add('task-list-item', 'entry-task-item');
+
+        const list = listItem.closest('ul, ol');
+        if (list) {
+            list.classList.add('contains-task-list', 'entry-task-list');
+        }
+    });
+};
+
+const renderEntryMarkdown = (markdown) => {
+    const source = typeof markdown === 'string' ? markdown : String(markdown || '');
+    if (!source.trim()) {
+        return {
+            html: '<p class="entry-md-empty">No markdown content.</p>',
+            engine: 'marked',
+            degraded: false
+        };
+    }
+
+    try {
+        configureEntryMarkdownEngine();
+        const markedApi = getMarkedApi();
+        if (!markedApi || !markedApi.Renderer) {
+            throw new Error('Marked renderer unavailable');
+        }
+        const createHeadingId = createEntryHeadingIdGenerator();
+        const domPurify = getEntryDomPurify();
+        if (!domPurify) {
+            throw new Error('DOMPurify sanitizer unavailable');
+        }
+
+        const renderer = new markedApi.Renderer();
+        renderer.code = (code, infostring) => {
+            let codeText = code;
+            let rawLang = infostring;
+
+            if (typeof code === 'object' && code !== null) {
+                codeText = typeof code.text === 'string' ? code.text : '';
+                rawLang = code.lang || '';
+            }
+
+            if (typeof codeText !== 'string') codeText = String(codeText || '');
+            if (typeof rawLang !== 'string') rawLang = String(rawLang || '');
+
+            const langLabel = (rawLang.trim().split(/\s+/)[0] || 'code').toLowerCase();
+            const safeLangClass = langLabel.replace(/[^a-z0-9_-]/g, '') || 'code';
+            const escapedCode = escapeHtml(codeText.replace(/\n$/, ''));
+
+            return `<div class="code-block-wrapper">
+                <div class="code-header">
+                    <span class="code-lang">${escapeHtml(langLabel)}</span>
+                    <button class="copy-btn entry-md-copy-btn" type="button">&#128203; Copy</button>
+                </div>
+                <pre class="code-block"><code class="language-${safeLangClass}">${escapedCode}</code></pre>
+            </div>`;
+        };
+
+        renderer.heading = (text, level, rawText) => {
+            let headingHtml = text;
+            let headingDepth = level;
+            let headingRaw = rawText;
+
+            if (typeof text === 'object' && text !== null) {
+                const token = text;
+                headingDepth = token.depth || level || 2;
+                headingRaw = token.text || token.raw || rawText || '';
+                headingHtml = token.text
+                    ? (typeof markedApi.parseInline === 'function'
+                        ? markedApi.parseInline(token.text)
+                        : escapeHtml(token.text))
+                    : '';
+            }
+
+            const depth = Math.min(Math.max(Number(headingDepth) || 2, 1), 6);
+            const headingId = createHeadingId(headingRaw || headingHtml);
+            return `<h${depth} id="${escapeHtml(headingId)}">${headingHtml}</h${depth}>\n`;
+        };
+
+        const renderedHtml = markedApi.parse(source, { renderer });
+        const sanitizedHtml = domPurify.sanitize(renderedHtml, {
+            USE_PROFILES: { html: true },
+            ADD_TAGS: ['input', 'audio', 'video', 'source'],
+            ADD_ATTR: [
+                'target',
+                'rel',
+                'class',
+                'id',
+                'aria-hidden',
+                'type',
+                'checked',
+                'disabled',
+                'data-checked',
+                'src',
+                'controls',
+                'poster',
+                'preload',
+                'width',
+                'height',
+                'alt'
+            ]
+        });
+
+        const container = document.createElement('div');
+        container.innerHTML = sanitizedHtml;
+        decorateEntryPreviewDom(container);
+
+        return {
+            html: container.innerHTML || '<p class="entry-md-empty">No markdown content.</p>',
+            engine: 'marked',
+            degraded: false
+        };
+    } catch (error) {
+        console.warn('Entry markdown vendor renderer unavailable, using fallback parser.', error);
+        return {
+            html: renderEntryMarkdownFallback(source),
+            engine: 'fallback',
+            degraded: true
+        };
+    }
+};
+
+const decodeHashFragment = (hashValue) => {
+    if (!hashValue) return '';
+    const normalized = hashValue.startsWith('#') ? hashValue.slice(1) : hashValue;
+    try {
+        return decodeURIComponent(normalized);
+    } catch (error) {
+        return normalized;
+    }
+};
+
+const scrollEntryAnchorIntoView = (previewPanel, hashValue, behavior = 'smooth', headingLookup = null) => {
+    if (!previewPanel || !hashValue) return false;
+    const decodedId = decodeHashFragment(hashValue);
+    if (!decodedId) return false;
+    const escapedSelector = window.CSS && typeof window.CSS.escape === 'function'
+        ? window.CSS.escape(decodedId)
+        : decodedId.replace(/([ !"#$%&'()*+,./:;<=>?@[\\\]^`{|}~])/g, '\\$1');
+    let target = previewPanel.querySelector(`#${escapedSelector}`);
+    if (!target && headingLookup instanceof Map) {
+        const fallbackId =
+            headingLookup.get(normalizeEntryAnchorKey(decodedId)) ||
+            headingLookup.get(normalizeEntryAnchorLooseKey(decodedId));
+        if (fallbackId) {
+            const fallbackSelector = window.CSS && typeof window.CSS.escape === 'function'
+                ? window.CSS.escape(fallbackId)
+                : fallbackId.replace(/([ !"#$%&'()*+,./:;<=>?@[\\\]^`{|}~])/g, '\\$1');
+            target = previewPanel.querySelector(`#${fallbackSelector}`);
+        }
+    }
+    if (!target) return false;
+    target.scrollIntoView({ behavior, block: 'start' });
+    return target;
+};
 
 // Render content with markdown-like formatting
 const renderContent = (content) => {
@@ -156,13 +810,36 @@ const ExplorerAPI = {
         return res.json();
     },
 
-    async createFolder(name, parentId = null) {
+    async createFolder(data) {
         const res = await fetch(`${EXPLORER_API}/folder`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', ...Auth.getAuthHeader() },
-            body: JSON.stringify({ name, parentId })
+            body: JSON.stringify(data)
         });
         return res.json();
+    },
+
+    async uploadMedia(file, parentId = null) {
+        const formData = new FormData();
+        formData.append('media', file);
+        if (parentId) {
+            formData.append('parentId', parentId);
+        }
+
+        const res = await fetch(`${EXPLORER_API}/media`, {
+            method: 'POST',
+            headers: Auth.getAuthHeader(),
+            body: formData
+        });
+        const payload = await res.json().catch(() => ({}));
+        if (!res.ok) {
+            return {
+                success: false,
+                status: res.status,
+                error: payload.error || 'Media upload failed'
+            };
+        }
+        return payload;
     },
 
     async updateEntry(id, data) {
@@ -442,6 +1119,65 @@ const fetchEntry = async (id) => {
         headers: Auth.getAuthHeader()
     });
     return response.json();
+};
+
+const requestVersionEndpoint = async (entryId, suffix = '', options = {}) => {
+    const requestOptions = {
+        headers: Auth.getAuthHeader(),
+        ...options
+    };
+
+    let response = await fetch(`${API_BASE}/${entryId}/versions${suffix}`, requestOptions);
+    let payload = await response.json().catch(() => ({}));
+
+    if (!response.ok && response.status === 404) {
+        response = await fetch(`${EXPLORER_API}/${entryId}/versions${suffix}`, requestOptions);
+        payload = await response.json().catch(() => ({}));
+    }
+
+    return { response, payload };
+};
+
+const fetchEntryVersions = async (id) => {
+    const { response, payload } = await requestVersionEndpoint(id);
+    if (!response.ok) {
+        return {
+            success: false,
+            status: response.status,
+            error: payload.error || `Failed to load versions (${response.status})`
+        };
+    }
+    return payload;
+};
+
+const fetchEntryVersionSnapshot = async (id, version) => {
+    const { response, payload } = await requestVersionEndpoint(id, `/${version}`);
+    if (!response.ok) {
+        return {
+            success: false,
+            status: response.status,
+            error: payload.error || `Failed to load version ${version}`
+        };
+    }
+    return payload;
+};
+
+const restoreEntryVersionSnapshot = async (id, version) => {
+    const { response, payload } = await requestVersionEndpoint(id, `/${version}/restore`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            ...Auth.getAuthHeader()
+        }
+    });
+    if (!response.ok) {
+        return {
+            success: false,
+            status: response.status,
+            error: payload.error || `Failed to restore version ${version}`
+        };
+    }
+    return payload;
 };
 
 const createEntry = async (data) => {
@@ -756,10 +1492,91 @@ const setupSearch = () => {
     });
 };
 
+const insertTextAtCursor = (textarea, textToInsert) => {
+    if (!textarea) return;
+    const start = textarea.selectionStart ?? textarea.value.length;
+    const end = textarea.selectionEnd ?? textarea.value.length;
+    const before = textarea.value.slice(0, start);
+    const after = textarea.value.slice(end);
+    textarea.value = `${before}${textToInsert}${after}`;
+    const cursorPos = start + textToInsert.length;
+    textarea.setSelectionRange(cursorPos, cursorPos);
+    textarea.dispatchEvent(new Event('input', { bubbles: true }));
+    textarea.focus();
+};
+
+const setupMediaInsert = () => {
+    const contentTextarea = getElement('content');
+    const insertBtn = getElement('insertMediaBtn');
+    const fileInput = getElement('entryMediaInput');
+    if (!contentTextarea || !insertBtn || !fileInput) return;
+    if (insertBtn.dataset.mediaBound === 'true') return;
+    insertBtn.dataset.mediaBound = 'true';
+
+    const setUploadingState = (uploading) => {
+        insertBtn.disabled = uploading;
+        insertBtn.classList.toggle('is-uploading', uploading);
+        insertBtn.textContent = uploading ? 'Uploading...' : 'Insert Media';
+    };
+
+    insertBtn.addEventListener('click', () => {
+        if (insertBtn.disabled) return;
+        fileInput.click();
+    });
+
+    fileInput.addEventListener('change', async () => {
+        const file = fileInput.files && fileInput.files[0];
+        if (!file) return;
+        const parentFolder = getElement('parentFolder');
+        const parentId = parentFolder && parentFolder.value ? parentFolder.value : null;
+
+        setUploadingState(true);
+        try {
+            const result = await ExplorerAPI.uploadMedia(file, parentId);
+            if (!result.success || !result.data || !result.data.snippet) {
+                showToast(result.error || 'Media upload failed', 'error', 2600);
+                return;
+            }
+
+            const snippet = result.data.snippet.trim();
+            const insertBlock = contentTextarea.value && !contentTextarea.value.endsWith('\n')
+                ? `\n\n${snippet}\n`
+                : `${snippet}\n`;
+            insertTextAtCursor(contentTextarea, insertBlock);
+            showToast('Media uploaded and inserted', 'success', 2200);
+        } catch (error) {
+            showToast(error.message || 'Media upload failed', 'error', 2600);
+        } finally {
+            fileInput.value = '';
+            setUploadingState(false);
+        }
+    });
+};
+
+const populateParentFolderOptions = async () => {
+    const parentFolder = getElement('parentFolder');
+    if (!parentFolder) return;
+
+    try {
+        const result = await ExplorerAPI.getRoot('name', 'asc');
+        if (!result.success || !Array.isArray(result.data)) return;
+        const folders = result.data.filter((entry) => entry.type === 'folder');
+        const optionsHtml = folders.map((folder) => (
+            `<option value="${folder._id}">${escapeHtml(folder.name)}</option>`
+        )).join('');
+        parentFolder.innerHTML = '<option value="">Root (Home)</option>' + optionsHtml;
+    } catch (error) {
+        // Keep default option only on failure.
+    }
+};
+
 // Form Handling - Create Entry
 const setupCreateForm = () => {
     const form = getElement('entryForm');
     if (!form) return;
+
+    setupMediaInsert();
+    populateParentFolderOptions();
 
     let submitting = false;
 
@@ -775,7 +1592,7 @@ const setupCreateForm = () => {
         // Support both legacy (title/category) and new (name/parentId) creation
         const titleEl = getElement('title');
         const categoryEl = getElement('category');
-        const parentIdEl = getElement('parentId');
+        const parentIdEl = getElement('parentId') || getElement('parentFolder');
 
         const data = {
             title: titleEl ? titleEl.value.trim() : '',
@@ -822,6 +1639,8 @@ const setupEditForm = () => {
     const form = getElement('editForm');
     const loadingIndicator = getElement('loadingIndicator');
     if (!form) return;
+
+    setupMediaInsert();
 
     // Get entry ID from URL
     const pathParts = window.location.pathname.split('/');
@@ -908,17 +1727,325 @@ const setupEditForm = () => {
     });
 };
 
+const ensureEntryVersionModal = () => {
+    let modal = getElement('entryVersionModal');
+    if (modal) return modal;
+
+    modal = document.createElement('div');
+    modal.id = 'entryVersionModal';
+    modal.className = 'modal version-preview-modal';
+    modal.style.display = 'none';
+    modal.setAttribute('role', 'dialog');
+    modal.setAttribute('aria-modal', 'true');
+    modal.setAttribute('aria-labelledby', 'entryVersionModalTitle');
+
+    modal.innerHTML = `
+        <div class="modal-content version-preview-content">
+            <h3 id="entryVersionModalTitle">Version Preview</h3>
+            <p id="entryVersionModalMeta" class="version-preview-meta"></p>
+            <pre id="entryVersionModalBody" class="entry-md-raw"><code></code></pre>
+            <div class="modal-actions">
+                <button id="entryVersionCancelBtn" type="button" class="btn-secondary">Close</button>
+                <button id="entryVersionRestoreBtn" type="button" class="btn-primary">Restore This Version</button>
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(modal);
+    return modal;
+};
+
+const closeEntryVersionModal = ({ restoreFocusTo = null } = {}) => {
+    const modal = getElement('entryVersionModal');
+    if (!modal) return;
+    modal.style.display = 'none';
+    modal.removeAttribute('data-version');
+    modal.removeAttribute('data-entry-id');
+    if (restoreFocusTo && typeof restoreFocusTo.focus === 'function') {
+        restoreFocusTo.focus();
+    }
+};
+
+const setupEntrySidebarDrawer = () => {
+    const toggleBtn = getElement('entryDetailsToggle');
+    const sidebar = getElement('entrySidebar');
+    const overlay = getElement('entrySidebarOverlay');
+    const closeBtn = getElement('entrySidebarClose');
+    if (!toggleBtn || !sidebar || !overlay) return;
+    if (toggleBtn.dataset.drawerBound === 'true') return;
+    toggleBtn.dataset.drawerBound = 'true';
+
+    const mobileQuery = window.matchMedia('(max-width: 768px)');
+    const isMobile = () => mobileQuery.matches;
+
+    toggleBtn.setAttribute('aria-expanded', 'false');
+    overlay.hidden = true;
+
+    const openDrawer = () => {
+        if (!isMobile()) return;
+        sidebar.classList.add('open');
+        sidebar.setAttribute('aria-hidden', 'false');
+        overlay.hidden = false;
+        requestAnimationFrame(() => overlay.classList.add('show'));
+        toggleBtn.setAttribute('aria-expanded', 'true');
+        const focusTarget = sidebar.querySelector('#entrySidebarClose, button, a, [tabindex]:not([tabindex="-1"])');
+        if (focusTarget) focusTarget.focus();
+    };
+
+    const closeDrawer = ({ restoreFocus = true } = {}) => {
+        sidebar.classList.remove('open');
+        overlay.classList.remove('show');
+        toggleBtn.setAttribute('aria-expanded', 'false');
+        sidebar.setAttribute('aria-hidden', isMobile() ? 'true' : 'false');
+        setTimeout(() => {
+            if (!sidebar.classList.contains('open')) {
+                overlay.hidden = true;
+            }
+        }, 220);
+        if (restoreFocus) toggleBtn.focus();
+    };
+
+    toggleBtn.addEventListener('click', () => {
+        if (!isMobile()) return;
+        if (sidebar.classList.contains('open')) {
+            closeDrawer();
+        } else {
+            openDrawer();
+        }
+    });
+
+    if (closeBtn) {
+        closeBtn.addEventListener('click', () => closeDrawer());
+    }
+
+    overlay.addEventListener('click', () => closeDrawer({ restoreFocus: false }));
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && sidebar.classList.contains('open')) {
+            closeDrawer();
+        }
+    });
+
+    window.addEventListener('resize', () => {
+        if (!isMobile()) {
+            sidebar.classList.remove('open');
+            sidebar.setAttribute('aria-hidden', 'false');
+            overlay.classList.remove('show');
+            overlay.hidden = true;
+            toggleBtn.setAttribute('aria-expanded', 'false');
+            return;
+        }
+
+        sidebar.setAttribute('aria-hidden', sidebar.classList.contains('open') ? 'false' : 'true');
+    });
+
+    sidebar.setAttribute('aria-hidden', isMobile() ? 'true' : 'false');
+};
+
+const setEntryAccordionExpanded = (sectionEl, expanded) => {
+    if (!sectionEl) return;
+    const trigger = sectionEl.querySelector('.entry-accordion-trigger');
+    const panel = sectionEl.querySelector('.entry-accordion-panel');
+    if (!trigger || !panel) return;
+
+    sectionEl.classList.toggle('is-open', expanded);
+    trigger.setAttribute('aria-expanded', String(expanded));
+    panel.hidden = !expanded;
+};
+
+const setupEntrySidebarAccordion = () => {
+    const sections = document.querySelectorAll('#entrySidebar .entry-accordion-section');
+    sections.forEach((section) => {
+        const trigger = section.querySelector('.entry-accordion-trigger');
+        if (!trigger || trigger.dataset.accordionBound === 'true') return;
+
+        const toggle = () => {
+            const expanded = trigger.getAttribute('aria-expanded') === 'true';
+            setEntryAccordionExpanded(section, !expanded);
+        };
+
+        trigger.dataset.accordionBound = 'true';
+        trigger.addEventListener('click', toggle);
+        trigger.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                toggle();
+            }
+        });
+    });
+};
+
 // Entry View Page
 const setupEntryView = () => {
     const entryContent = getElement('entryContent');
     if (!entryContent) return;
+    setupEntrySidebarDrawer();
+    setupEntrySidebarAccordion();
 
     // Get entry ID from URL
     const pathParts = window.location.pathname.split('/');
     const entryId = pathParts[pathParts.length - 1];
 
+    const openVersionPreview = async (versionNumber, triggerBtn = null) => {
+        const modal = ensureEntryVersionModal();
+        const titleEl = getElement('entryVersionModalTitle');
+        const metaEl = getElement('entryVersionModalMeta');
+        const bodyCode = modal.querySelector('#entryVersionModalBody code');
+        const restoreBtn = getElement('entryVersionRestoreBtn');
+        const cancelBtn = getElement('entryVersionCancelBtn');
+        const restoreDefault = restoreBtn.innerHTML;
+
+        modal.style.display = 'flex';
+        modal.dataset.version = String(versionNumber);
+        modal.dataset.entryId = entryId;
+        titleEl.textContent = `Version ${versionNumber}`;
+        metaEl.textContent = 'Loading snapshot...';
+        bodyCode.textContent = '';
+        restoreBtn.disabled = true;
+        restoreBtn.textContent = 'Loading...';
+
+        const closeModal = (restoreFocus = true) => {
+            closeEntryVersionModal({ restoreFocusTo: restoreFocus ? triggerBtn : null });
+            restoreBtn.disabled = false;
+            restoreBtn.innerHTML = restoreDefault;
+        };
+
+        cancelBtn.onclick = () => closeModal();
+        modal.onclick = (event) => {
+            if (event.target === modal) closeModal(false);
+        };
+        modal.onkeydown = (event) => {
+            if (event.key === 'Escape') {
+                closeModal();
+            }
+        };
+
+        try {
+            const snapshotResult = await fetchEntryVersionSnapshot(entryId, versionNumber);
+            if (!snapshotResult.success) {
+                metaEl.textContent = snapshotResult.error || 'Unable to load version details.';
+                restoreBtn.disabled = true;
+                restoreBtn.textContent = 'Unavailable';
+                return;
+            }
+
+            const snapshot = snapshotResult.data;
+            metaEl.textContent = `Saved ${formatDate(snapshot.createdAt)} · ${snapshot.changeType}`;
+            bodyCode.textContent = snapshot.content || '';
+            restoreBtn.disabled = false;
+            restoreBtn.textContent = 'Restore This Version';
+            restoreBtn.onclick = async () => {
+                restoreBtn.disabled = true;
+                restoreBtn.textContent = 'Restoring...';
+                const restoreResult = await restoreEntryVersionSnapshot(entryId, versionNumber);
+                if (!restoreResult.success) {
+                    restoreBtn.disabled = false;
+                    restoreBtn.textContent = 'Restore Failed';
+                    showToast(restoreResult.error || 'Restore failed', 'error', 2600);
+                    setTimeout(() => {
+                        restoreBtn.textContent = 'Restore This Version';
+                    }, 1800);
+                    return;
+                }
+
+                closeModal(false);
+                showToast(`Restored version ${versionNumber}`, 'success', 2200);
+                loadEntryView();
+            };
+        } catch (error) {
+            metaEl.textContent = 'Unable to load version details.';
+            restoreBtn.disabled = true;
+            restoreBtn.textContent = 'Unavailable';
+        }
+    };
+
+    const renderVersionList = (versions) => {
+        if (!Array.isArray(versions) || versions.length === 0) {
+            return '<p class="version-empty">No snapshots yet.</p>';
+        }
+
+        return versions.map((item) => `
+            <button type="button" class="version-item-btn" data-version="${item.version}">
+                <span class="version-item-title">Version ${item.version}</span>
+                <span class="version-item-meta">${item.changeType} · ${formatDate(item.createdAt)}</span>
+            </button>
+        `).join('');
+    };
+
+    const bindHistoryPanel = () => {
+        const historyBtn = getElement('viewHistoryBtn');
+        const versionList = getElement('versionList');
+        const versionBadge = getElement('versionCountBadge');
+        if (!historyBtn || !versionList) return;
+
+        historyBtn.setAttribute('aria-expanded', 'false');
+        versionList.style.display = 'none';
+        versionList.dataset.loaded = '0';
+        versionList.dataset.loading = '0';
+        versionList.innerHTML = '';
+        if (versionBadge) {
+            versionBadge.hidden = true;
+            versionBadge.textContent = '0';
+        }
+
+        const loadVersions = async ({ force = false } = {}) => {
+            if (versionList.dataset.loading === '1') return;
+            if (!force && versionList.dataset.loaded === '1') return;
+
+            versionList.dataset.loading = '1';
+            versionList.innerHTML = '<p class="version-loading">Loading versions...</p>';
+            let loadedSuccessfully = false;
+
+            try {
+                const result = await fetchEntryVersions(entryId);
+                if (!result.success) {
+                    const unavailableMessage = result.status === 404
+                        ? 'Version history route unavailable. Restart backend with latest build.'
+                        : (result.error || 'Failed to load versions');
+                    versionList.innerHTML = `<p class="version-error">${escapeHtml(unavailableMessage)}</p>`;
+                } else {
+                    versionList.innerHTML = renderVersionList(result.data);
+                    if (versionBadge) {
+                        versionBadge.textContent = String(result.data.length || 0);
+                        versionBadge.hidden = false;
+                    }
+                    loadedSuccessfully = true;
+                }
+            } catch (error) {
+                versionList.innerHTML = '<p class="version-error">Failed to load versions.</p>';
+            } finally {
+                versionList.dataset.loading = '0';
+                versionList.dataset.loaded = loadedSuccessfully ? '1' : '0';
+            }
+        };
+
+        historyBtn.onclick = async () => {
+            const expanded = historyBtn.getAttribute('aria-expanded') === 'true';
+            if (expanded) {
+                versionList.style.display = 'none';
+                historyBtn.setAttribute('aria-expanded', 'false');
+                return;
+            }
+
+            versionList.style.display = 'block';
+            historyBtn.setAttribute('aria-expanded', 'true');
+            await loadVersions({ force: versionList.dataset.loaded !== '1' });
+        };
+
+        versionList.onclick = async (event) => {
+            const previewBtn = event.target.closest('.version-item-btn[data-version]');
+            if (!previewBtn) return;
+            const versionNumber = Number.parseInt(previewBtn.dataset.version, 10);
+            if (!Number.isInteger(versionNumber)) return;
+            await openVersionPreview(versionNumber, previewBtn);
+        };
+
+        loadVersions({ force: true });
+    };
+
     const loadEntryView = async () => {
         try {
+            await ensureEntryMarkdownVendorsLoaded();
             const result = await fetchEntry(entryId);
 
             if (result.success) {
@@ -931,11 +2058,108 @@ const setupEntryView = () => {
                 getElement('entryMeta').textContent = `${displayCategory} - ${formatDate(entry.createdAt)}`;
 
                 // Update content with auto-detected code blocks
+                const rawMarkdown = entry.content || '';
+                const engineState = getEntryMarkdownEngineState();
+                const markdownRender = renderEntryMarkdown(rawMarkdown);
+                const warningBanner = markdownRender.degraded
+                    ? `<div class="entry-md-warning" role="status">Markdown enhanced renderer unavailable. Showing fallback output.</div>`
+                    : '';
+
                 entryContent.innerHTML = `
-                    <div class="content-body">
-                        ${renderContent(entry.content)}
+                    <div class="entry-md-shell" data-entry-mode="preview" data-md-engine="${markdownRender.engine}">
+                        ${warningBanner}
+                        <div class="entry-md-toolbar" role="tablist" aria-label="Entry view mode">
+                            <button type="button" class="entry-md-mode-btn active" data-md-mode="preview" aria-selected="true">Preview</button>
+                            <button type="button" class="entry-md-mode-btn" data-md-mode="raw" aria-selected="false">Raw</button>
+                        </div>
+                        <div id="entryMarkdownPreview" class="entry-md-preview content-body">
+                            ${markdownRender.html}
+                        </div>
+                        <pre id="entryMarkdownRaw" class="entry-md-raw" hidden><code>${escapeHtml(rawMarkdown)}</code></pre>
                     </div>
                 `;
+                entryContent.dataset.mdEngine = markdownRender.engine;
+                if (entryContent.dataset.mdEngineLog !== markdownRender.engine) {
+                    console.info(`[entry-md] engine=${markdownRender.engine}`, {
+                        marked: engineState.hasMarked,
+                        domPurify: engineState.hasPurify
+                    });
+                    entryContent.dataset.mdEngineLog = markdownRender.engine;
+                }
+
+                const markdownShell = entryContent.querySelector('.entry-md-shell');
+                const previewPanel = entryContent.querySelector('#entryMarkdownPreview');
+                const rawPanel = entryContent.querySelector('#entryMarkdownRaw');
+                const modeButtons = entryContent.querySelectorAll('.entry-md-mode-btn');
+                const headingLookup = buildEntryHeadingLookup(previewPanel);
+
+                const setEntryMode = (mode) => {
+                    const isPreview = mode === 'preview';
+                    if (markdownShell) {
+                        markdownShell.setAttribute('data-entry-mode', mode);
+                    }
+                    if (previewPanel) previewPanel.hidden = !isPreview;
+                    if (rawPanel) rawPanel.hidden = isPreview;
+
+                    modeButtons.forEach((btn) => {
+                        const active = btn.dataset.mdMode === mode;
+                        btn.classList.toggle('active', active);
+                        btn.setAttribute('aria-selected', String(active));
+                    });
+                };
+
+                modeButtons.forEach((btn) => {
+                    btn.addEventListener('click', () => {
+                        setEntryMode(btn.dataset.mdMode || 'preview');
+                    });
+                });
+
+                setEntryMode('preview');
+
+                if (previewPanel) {
+                    previewPanel.addEventListener('click', async (e) => {
+                        const copyBtn = e.target.closest('.entry-md-copy-btn, .code-block-wrapper .copy-btn');
+                        if (copyBtn) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            if (typeof e.stopImmediatePropagation === 'function') {
+                                e.stopImmediatePropagation();
+                            }
+                            await copyCodeBlock(copyBtn);
+                            return;
+                        }
+
+                        const anchorLink = e.target.closest('a[href]');
+                        if (!anchorLink) return;
+
+                        const hash = anchorLink.dataset.entryHash || resolveEntryInternalHash(anchorLink.getAttribute('href') || '');
+                        if (!hash || hash === '#') return;
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        const targetNode = scrollEntryAnchorIntoView(previewPanel, hash, 'smooth', headingLookup);
+                        if (!targetNode) {
+                            showToast('Target section not found for this link', 'error', 2200);
+                            return;
+                        }
+
+                        const targetHash = `#${targetNode.id || decodeHashFragment(hash)}`;
+                        if (window.history && typeof window.history.replaceState === 'function') {
+                            window.history.replaceState(null, '', targetHash);
+                        } else {
+                            window.location.hash = targetHash;
+                        }
+                    });
+
+                    if (window.location.hash) {
+                        setTimeout(() => {
+                            const targetNode = scrollEntryAnchorIntoView(previewPanel, window.location.hash, 'auto', headingLookup);
+                            if (targetNode && targetNode.id && window.history && typeof window.history.replaceState === 'function') {
+                                window.history.replaceState(null, '', `#${targetNode.id}`);
+                            }
+                        }, 0);
+                    }
+                }
 
                 // Update details
                 getElement('entryDetails').innerHTML = `
@@ -954,27 +2178,63 @@ const setupEntryView = () => {
                 `;
 
                 // Update tags
+                const tagsSection = getElement('tagsSection');
                 if (entry.tags && entry.tags.length > 0) {
-                    getElement('tagsSection').style.display = 'block';
+                    if (tagsSection) tagsSection.style.display = 'block';
                     getElement('entryTags').innerHTML = entry.tags.map(tag =>
                         `<span class="tag">${tag}</span>`
                     ).join('');
+                    if (tagsSection) setEntryAccordionExpanded(tagsSection, true);
+                } else {
+                    if (tagsSection) {
+                        tagsSection.style.display = 'none';
+                        setEntryAccordionExpanded(tagsSection, false);
+                    }
+                    const tagsList = getElement('entryTags');
+                    if (tagsList) tagsList.innerHTML = '';
                 }
 
                 // Update code block
+                const codeSection = getElement('codeSection');
                 if (entry.codeBlock) {
-                    getElement('codeSection').style.display = 'block';
+                    if (codeSection) codeSection.style.display = 'block';
                     getElement('codeLanguageLabel').textContent = entry.codeLanguage || 'Code';
                     getElement('entryCodeBlock').textContent = entry.codeBlock;
+                    if (codeSection) setEntryAccordionExpanded(codeSection, false);
 
                     // Setup copy button
-                    getElement('copyCodeBtn').addEventListener('click', () => {
-                        navigator.clipboard.writeText(entry.codeBlock);
-                        getElement('copyCodeBtn').textContent = 'Copied!';
-                        setTimeout(() => {
-                            getElement('copyCodeBtn').innerHTML = '&#128203; Copy';
-                        }, 2000);
-                    });
+                    const copyBtn = getElement('copyCodeBtn');
+                    if (copyBtn) {
+                        copyBtn.type = 'button';
+                        copyBtn.onclick = async (event) => {
+                            event.preventDefault();
+                            event.stopPropagation();
+                            if (!copyBtn.dataset.copyDefault) {
+                                copyBtn.dataset.copyDefault = copyBtn.innerHTML || '&#128203; Copy';
+                            }
+                            if (copyBtn.dataset.copyBusy === '1') return;
+                            copyBtn.dataset.copyBusy = '1';
+                            copyBtn.disabled = true;
+                            copyBtn.classList.add('is-copying');
+                            const copied = await safeCopyText(entry.codeBlock || '');
+                            flashCopyResult(copyBtn, copied);
+                        };
+                    }
+                } else {
+                    if (codeSection) {
+                        codeSection.style.display = 'none';
+                        setEntryAccordionExpanded(codeSection, false);
+                    }
+                }
+
+                const detailsSection = getElement('entryDetailsSection');
+                if (detailsSection) {
+                    setEntryAccordionExpanded(detailsSection, true);
+                }
+
+                const historySection = getElement('historySection');
+                if (historySection) {
+                    setEntryAccordionExpanded(historySection, false);
                 }
 
                 // Setup edit button
@@ -990,6 +2250,9 @@ const setupEntryView = () => {
                         window.location.href = '/explain/' + entry._id;
                     });
                 }
+
+                bindHistoryPanel();
+                setupEntrySidebarAccordion();
 
             } else {
                 entryContent.innerHTML = '<p class="error">Entry not found</p>';
@@ -1066,34 +2329,36 @@ const setupDeleteModal = (entryId, entryType) => {
 // Mobile Menu Toggle
 const setupMobileMenu = () => {
     const mobileMenuBtn = getElement('mobileMenuBtn');
-    const navActions = getElement('navActions');
+    const navPanel = getElement('navPanel') || getElement('navActions') || document.querySelector('.nav-content');
 
-    if (!mobileMenuBtn || !navActions) return;
+    if (!mobileMenuBtn || !navPanel) return;
+    if (mobileMenuBtn.dataset.mobileBound === 'true') return;
+    mobileMenuBtn.dataset.mobileBound = 'true';
 
     mobileMenuBtn.setAttribute('aria-expanded', 'false');
 
     const closeMenu = () => {
         mobileMenuBtn.classList.remove('active');
-        navActions.classList.remove('open');
+        navPanel.classList.remove('open');
         mobileMenuBtn.setAttribute('aria-expanded', 'false');
     };
 
     mobileMenuBtn.addEventListener('click', () => {
-        const isOpen = navActions.classList.contains('open');
+        const isOpen = navPanel.classList.contains('open');
         mobileMenuBtn.classList.toggle('active');
-        navActions.classList.toggle('open');
+        navPanel.classList.toggle('open');
         mobileMenuBtn.setAttribute('aria-expanded', String(!isOpen));
     });
 
     document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && navActions.classList.contains('open')) {
+        if (e.key === 'Escape' && navPanel.classList.contains('open')) {
             closeMenu();
             mobileMenuBtn.focus();
         }
     });
 
     document.addEventListener('click', (e) => {
-        if (!mobileMenuBtn.contains(e.target) && !navActions.contains(e.target)) {
+        if (!mobileMenuBtn.contains(e.target) && !navPanel.contains(e.target)) {
             closeMenu();
         }
     });
@@ -1169,6 +2434,7 @@ const renderFileItem = (entry) => {
     const displayName = entry.name || entry.title || 'Untitled';
     const icon = getEntryIcon(entry);
     const typeLabel = isFolder ? 'Folder' : (entry.category ? getCategoryLabel(entry.category) : 'File');
+    const mobileMeta = `${formatRelativeDate(entry.updatedAt || entry.createdAt)}${isFolder ? '' : ` \u00b7 ${typeLabel}`}`;
 
     // Folders get folder-specific styling and behavior
     const itemClass = isFolder ? 'file-item folder-item' : 'file-item';
@@ -1185,7 +2451,10 @@ const renderFileItem = (entry) => {
             <div class="file-name">
                 <input type="checkbox" class="file-checkbox" onclick="event.stopPropagation(); Win11.toggleSelect('${entry._id}')">
                 <span class="file-icon ${isFolder ? 'folder' : ''}">${icon}</span>
-                <span class="file-title">${escapeHtml(displayName)}</span>
+                <span class="file-text">
+                    <span class="file-title">${escapeHtml(displayName)}</span>
+                    <span class="file-mobile-meta">${escapeHtml(mobileMeta)}</span>
+                </span>
                 ${pinnedIcon}${favIcon}
             </div>
             <span class="file-date">${formatRelativeDate(entry.updatedAt || entry.createdAt)}</span>
@@ -1432,38 +2701,70 @@ const Win11 = {
         const overlay = document.getElementById('sidebarOverlay');
 
         if (!toggleBtn || !sidebar) return;
+        if (toggleBtn.dataset.sidebarBound === 'true') return;
+        toggleBtn.dataset.sidebarBound = 'true';
+
+        const mobileQuery = window.matchMedia('(max-width: 768px)');
+        const isMobile = () => mobileQuery.matches;
 
         toggleBtn.setAttribute('aria-expanded', 'false');
 
-        const openSidebar = () => {
+        const openSidebar = ({ focusFirst = true } = {}) => {
+            if (!isMobile()) return;
             sidebar.classList.add('open');
             if (overlay) overlay.classList.add('show');
             toggleBtn.setAttribute('aria-expanded', 'true');
-            const firstLink = sidebar.querySelector('a, button');
-            if (firstLink) firstLink.focus();
+            if (focusFirst) {
+                const firstLink = sidebar.querySelector('a, button');
+                if (firstLink) firstLink.focus();
+            }
         };
 
-        const closeSidebar = () => {
+        const closeSidebar = ({ restoreFocus = false } = {}) => {
             sidebar.classList.remove('open');
             if (overlay) overlay.classList.remove('show');
             toggleBtn.setAttribute('aria-expanded', 'false');
-            toggleBtn.focus();
+            if (restoreFocus) toggleBtn.focus();
         };
 
         toggleBtn.addEventListener('click', () => {
+            if (!isMobile()) return;
             const isOpen = sidebar.classList.contains('open');
-            if (isOpen) closeSidebar();
+            if (isOpen) closeSidebar({ restoreFocus: true });
             else openSidebar();
         });
 
-        sidebar.addEventListener('keydown', (e) => {
+        document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape' && sidebar.classList.contains('open')) {
-                closeSidebar();
+                closeSidebar({ restoreFocus: true });
             }
         });
 
         if (overlay) {
-            overlay.addEventListener('click', closeSidebar);
+            overlay.addEventListener('click', () => closeSidebar());
+        }
+
+        sidebar.addEventListener('click', (e) => {
+            if (!isMobile()) return;
+            if (e.target.closest('.sidebar-item[data-folder-id], .sidebar-item[data-category], .sidebar-item[data-tag], .sidebar-item[href="/"], .sidebar-item[href="/dashboard"], .sidebar-item[href="/new"]')) {
+                closeSidebar();
+            }
+        });
+
+        window.addEventListener('resize', () => {
+            if (!isMobile()) {
+                closeSidebar();
+            }
+        });
+
+        // Discoverability: show sidebar once per session on mobile home.
+        try {
+            if (isMobile() && sessionStorage.getItem('win11SidebarHintShown') !== '1') {
+                openSidebar({ focusFirst: false });
+                sessionStorage.setItem('win11SidebarHintShown', '1');
+            }
+        } catch (error) {
+            // Ignore storage access issues and continue.
         }
     },
 
@@ -1760,22 +3061,115 @@ const Win11 = {
         }
     },
 
-    // Prompt to create a new folder
-    async promptCreateFolder() {
-        const name = prompt('Enter folder name:');
-        if (!name || !name.trim()) return;
+    // Show folder creation modal
+    promptCreateFolder() {
+        // Create modal if it doesn't exist
+        let modal = document.getElementById('folderModal');
+        if (!modal) {
+            modal = document.createElement('div');
+            modal.id = 'folderModal';
+            modal.className = 'folder-modal-overlay';
+            modal.setAttribute('role', 'dialog');
+            modal.setAttribute('aria-modal', 'true');
+            modal.setAttribute('aria-labelledby', 'folderModalTitle');
+            modal.innerHTML = `
+                <div class="folder-modal">
+                    <div class="folder-modal-header">
+                        <h3 id="folderModalTitle">&#128193; New Folder</h3>
+                        <button class="folder-modal-close" id="folderModalClose" aria-label="Close">&times;</button>
+                    </div>
+                    <form id="folderCreateForm" class="folder-modal-body">
+                        <div class="form-group">
+                            <label for="folderName">Name *</label>
+                            <input type="text" id="folderName" required maxlength="200" placeholder="Folder name" autofocus>
+                        </div>
+                        <div class="form-group">
+                            <label for="folderDesc">Description</label>
+                            <textarea id="folderDesc" rows="2" maxlength="500" placeholder="Optional description"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Color</label>
+                            <div class="color-swatches" id="colorSwatches">
+                                <button type="button" class="swatch active" data-color="" title="Default" style="background: var(--win11-text-muted);"></button>
+                                <button type="button" class="swatch" data-color="#3b82f6" title="Blue" style="background: #3b82f6;"></button>
+                                <button type="button" class="swatch" data-color="#22c55e" title="Green" style="background: #22c55e;"></button>
+                                <button type="button" class="swatch" data-color="#ef4444" title="Red" style="background: #ef4444;"></button>
+                                <button type="button" class="swatch" data-color="#a855f7" title="Purple" style="background: #a855f7;"></button>
+                                <button type="button" class="swatch" data-color="#eab308" title="Yellow" style="background: #eab308;"></button>
+                                <button type="button" class="swatch" data-color="#f97316" title="Orange" style="background: #f97316;"></button>
+                                <button type="button" class="swatch" data-color="#06b6d4" title="Cyan" style="background: #06b6d4;"></button>
+                            </div>
+                        </div>
+                        <div class="form-group" style="display:flex; align-items:center; gap:var(--space-sm);">
+                            <input type="checkbox" id="folderPinned">
+                            <label for="folderPinned" style="margin:0;">Pin to sidebar</label>
+                        </div>
+                        <div class="folder-modal-actions">
+                            <button type="button" class="btn-secondary" id="folderCancelBtn">Cancel</button>
+                            <button type="submit" class="btn-primary">Create Folder</button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            document.body.appendChild(modal);
 
-        try {
-            const result = await ExplorerAPI.createFolder(name.trim(), Win11State.currentFolderId);
-            if (result.success) {
-                this.loadFileList(Win11State.currentFolderId, Win11State.currentTab);
-                if (window.FileExplorer) window.FileExplorer.showToast('Folder created');
-            } else {
-                alert('Error creating folder: ' + (result.error || 'Unknown error'));
-            }
-        } catch (error) {
-            alert('Error creating folder: ' + error.message);
+            // Swatch selection
+            modal.querySelector('#colorSwatches').addEventListener('click', (e) => {
+                const swatch = e.target.closest('.swatch');
+                if (!swatch) return;
+                modal.querySelectorAll('.swatch').forEach(s => s.classList.remove('active'));
+                swatch.classList.add('active');
+            });
+
+            // Close handlers
+            modal.querySelector('#folderModalClose').addEventListener('click', () => this.closeFolderModal());
+            modal.querySelector('#folderCancelBtn').addEventListener('click', () => this.closeFolderModal());
+            modal.addEventListener('click', (e) => { if (e.target === modal) this.closeFolderModal(); });
+            modal.addEventListener('keydown', (e) => { if (e.key === 'Escape') this.closeFolderModal(); });
+
+            // Submit
+            modal.querySelector('#folderCreateForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const name = modal.querySelector('#folderName').value.trim();
+                if (!name) return;
+
+                const activeSwatch = modal.querySelector('.swatch.active');
+                const data = {
+                    name,
+                    parentId: Win11State.currentFolderId,
+                    description: modal.querySelector('#folderDesc').value.trim(),
+                    color: activeSwatch ? activeSwatch.dataset.color : '',
+                    pinned: modal.querySelector('#folderPinned').checked
+                };
+
+                try {
+                    const result = await ExplorerAPI.createFolder(data);
+                    if (result.success) {
+                        this.closeFolderModal();
+                        this.loadFileList(Win11State.currentFolderId, Win11State.currentTab);
+                        if (window.FileExplorer) window.FileExplorer.showToast('Folder created');
+                    } else {
+                        if (window.FileExplorer) window.FileExplorer.showToast('Error: ' + (result.error || 'Unknown'), 'error');
+                    }
+                } catch (error) {
+                    if (window.FileExplorer) window.FileExplorer.showToast('Error: ' + error.message, 'error');
+                }
+            });
         }
+
+        // Reset form and show
+        modal.querySelector('#folderName').value = '';
+        modal.querySelector('#folderDesc').value = '';
+        modal.querySelector('#folderPinned').checked = false;
+        modal.querySelectorAll('.swatch').forEach(s => s.classList.remove('active'));
+        modal.querySelector('.swatch[data-color=""]').classList.add('active');
+        modal.style.display = 'flex';
+        modal.querySelector('#folderName').focus();
+    },
+
+    closeFolderModal() {
+        const modal = document.getElementById('folderModal');
+        if (modal) modal.style.display = 'none';
     },
 
     // Toggle item selection
