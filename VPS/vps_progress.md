@@ -1,7 +1,7 @@
 # ShopEase VPS Progress Report
 
 > Personal infrastructure & backend setup overview
-> **Last Updated:** February 17, 2026 | Email-VPS runtime + dashboard docs aligned
+> **Last Updated:** February 18, 2026 | Email-VPS OTP-first public auth + activity checker aligned
 
 ---
 
@@ -55,6 +55,8 @@
 - [Email-VPS Single Dashboard Security Model (Current)](#email-vps-single-dashboard-security-model-current)
 - [Email-VPS Responsive Dashboard Upgrade (All Devices)](#email-vps-responsive-dashboard-upgrade-all-devices)
 - [Email-VPS Operational Commands (Verified)](#email-vps-operational-commands-verified)
+- [Email-VPS Multi-Page Console Expansion (Overview Preserved)](#email-vps-multi-page-console-expansion-overview-preserved)
+- [Email-VPS Cron Mail Noise Root Cause and Fix](#email-vps-cron-mail-noise-root-cause-and-fix)
 
 ### Environment Setup
 
@@ -729,12 +731,13 @@ This provides high security without operational self-lockout risk.
 
 ## Email-VPS 2026 Status Snapshot
 
-Status confirmed on **February 17, 2026**.
+Status confirmed on **February 18, 2026**.
 
 - [x] Single Email-VPS service active (no split admin runtime)
 - [x] Public domain live: `mail.stackpilot.in`
 - [x] Nginx reverse proxy enforced to `127.0.0.1:8081`
-- [x] Dashboard and mail telemetry operating from unified app
+- [x] Dashboard + mail telemetry running from one Node process
+- [x] OTP-first login enabled for public dashboard access
 - [x] Local-only mail API security contract retained
 
 Current architecture:
@@ -768,27 +771,28 @@ Validation results:
 
 ## Email-VPS FORBIDDEN_IP Root Cause and Fix
 
-Issue observed:
+Issue observed on rollout:
 
-- Dashboard returned `FORBIDDEN_IP` even after HTTPS became healthy.
+- Dashboard returned `FORBIDDEN_IP` while allowlist mode was active.
 
 Root cause:
 
-- `DASHBOARD_ALLOWED_IPS` was initially set with VPS IP, while allowlist enforcement checks **operator client IP** (via trusted proxy chain).
+- Allowlist checks **operator client IP** through trusted proxy headers, not VPS public IP.
 
-Fix applied:
+Current policy on **February 18, 2026**:
 
-- Set allowlist to operator public IP(s) + loopback.
-- Restarted runtime with environment refresh:
+- `DASHBOARD_IP_ALLOWLIST_ENABLED=false` (default public OTP mode).
+- Allowlist remains available as strict hardening toggle for emergency use.
+
+Strict-mode fallback:
 
 ```bash
+# enable strict mode
+DASHBOARD_IP_ALLOWLIST_ENABLED=true
+DASHBOARD_ALLOWED_IPS=<operator_public_ip>,127.0.0.1,::1
 pm2 restart email-vps --update-env
 pm2 save
 ```
-
-Operational rule:
-
-- If ISP/network IP changes, update `.env` allowlist and restart with `--update-env`.
 
 ---
 
@@ -796,9 +800,11 @@ Operational rule:
 
 Active security boundaries:
 
-- [x] One private dashboard (`/login` -> `/dashboard`)
+- [x] One unified dashboard with route-level deep dives (`/dashboard/*`)
+- [x] OTP-first login (`/auth/otp/request` + `/auth/otp/verify`)
+- [x] Credential login retained as backup (`/auth/login`)
 - [x] Session cookie auth (signed, HttpOnly)
-- [x] Dashboard IP allowlist enforced
+- [x] Optional IP allowlist mode via `DASHBOARD_IP_ALLOWLIST_ENABLED`
 - [x] Mail API remains loopback + bearer token only
 - [x] Backend bind remains localhost (`127.0.0.1:8081`)
 
@@ -811,6 +817,10 @@ Current active dashboard APIs:
 - `GET /api/v1/dashboard/logs?status=&category=&severity=&q=`
 - `GET /api/v1/dashboard/alerts`
 - `GET /api/v1/dashboard/security`
+- `GET /api/v1/dashboard/activity`
+- `GET /api/v1/dashboard/programs`
+- `GET /api/v1/dashboard/mail-check`
+- `POST /api/v1/dashboard/mail-probe`
 
 Compatibility paths intentionally retained:
 
@@ -856,15 +866,76 @@ sudo certbot certificates
 sudo certbot renew --dry-run
 ```
 
-Allowlist rotation maintenance:
+OTP login check:
 
 ```bash
-# from operator device
-curl -4 https://api.ipify.org
+curl -i -c /tmp/email-vps.cookie -X POST https://mail.stackpilot.in/auth/otp/request
+curl -i -b /tmp/email-vps.cookie -X POST https://mail.stackpilot.in/auth/otp/verify \
+  -H 'Content-Type: application/json' \
+  -d '{"code":"123456"}'
+```
 
-# then update DASHBOARD_ALLOWED_IPS and apply
+Optional allowlist strict mode:
+
+```bash
+curl -4 https://api.ipify.org
+# update DASHBOARD_ALLOWED_IPS then:
 pm2 restart email-vps --update-env
 pm2 save
+```
+
+---
+
+## Email-VPS Multi-Page Console Expansion (Overview Preserved)
+
+Status confirmed on **February 18, 2026**:
+
+- [x] Existing `/dashboard` overview retained as primary NOC page.
+- [x] Dedicated deep-dive routes added:
+  - `/dashboard/activity`
+  - `/dashboard/security`
+  - `/dashboard/health`
+  - `/dashboard/performance`
+  - `/dashboard/stability`
+  - `/dashboard/programs`
+  - `/dashboard/mail`
+- [x] Shared top navigation added across all dashboard pages.
+- [x] New Activity page refreshes every 5 seconds with pause/resume control.
+
+All existing endpoints remain active:
+
+- `GET /api/v1/dashboard/overview|trends|timeseries|insights|logs|alerts|security|activity|programs|mail-check`
+- `POST /api/v1/dashboard/mail-probe`
+- `/api/v1/mail/*` still local-only + bearer token.
+
+---
+
+## Email-VPS Cron Mail Noise Root Cause and Fix
+
+Issue seen in inbox:
+
+- `/bin/sh: 1: /opt/stackpilot-monitor/generate_metrics.sh: not found`
+
+Root cause:
+
+- Legacy cron entries still referenced pre-migration `/opt/stackpilot-monitor` path.
+
+Fix direction:
+
+- Standardize cron command to:
+  - `/home/devuser/dev/email-vps/generate_metrics.sh >/dev/null 2>&1`
+- Set silent cron policy (`MAILTO=""`) and surface failures in dashboard/program checker instead of inbox spam.
+- Added operational helper script:
+  - `deploy/ops/fix_metrics_cron.sh`
+
+Verification commands:
+
+```bash
+crontab -l | grep generate_metrics.sh
+bash /home/devuser/dev/email-vps/deploy/ops/fix_metrics_cron.sh audit
+bash /home/devuser/dev/email-vps/deploy/ops/fix_metrics_cron.sh apply-user
+sudo bash /home/devuser/dev/email-vps/deploy/ops/fix_metrics_cron.sh audit-root
+sudo bash /home/devuser/dev/email-vps/deploy/ops/fix_metrics_cron.sh apply-root
 ```
 
 ---

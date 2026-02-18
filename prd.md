@@ -289,11 +289,11 @@ It aligns with:
 
 ---
 
-# 1️⃣5️⃣ Secure Email VPS Web Dashboard (Single Dashboard Control Plane)
+# 1️⃣5️⃣ Secure Email VPS Web Dashboard (Unified Multi-Page Control Plane)
 
 ## 15.1 Purpose
 
-A single secure web dashboard is used to operate and monitor the Email VPS system.
+A unified secure web console is used to operate and monitor the Email VPS system.
 
 This control plane provides:
 
@@ -303,9 +303,9 @@ This control plane provides:
 * Time-series operational insights
 
 This is NOT a public mail interface.
-It is a private infrastructure console for a single owner/operator.
+It is a private infrastructure console for a single owner/operator with route-level deep dives.
 
-## 15.2 Current Live State (Verified February 17, 2026)
+## 15.2 Current Live State (Verified February 18, 2026)
 
 * Domain: `mail.stackpilot.in`
 * DNS: `A mail.stackpilot.in -> 72.61.251.2`
@@ -314,6 +314,7 @@ It is a private infrastructure console for a single owner/operator.
 * Renewal validation: `certbot renew --dry-run` passed
 * Backend bind: `127.0.0.1:8081`
 * Runtime model: single Node process (`email-vps`) managed via PM2
+* Auth mode: public OTP-first login with credential fallback
 
 ## 15.3 Hardened Architecture Model
 
@@ -338,16 +339,19 @@ Security rules:
 
 Access model:
 
-* Single dashboard login with env-managed credentials
+* Primary login: email OTP (`/auth/otp/request` + `/auth/otp/verify`)
+* Backup login: env-managed credentials (`/auth/login`)
 * Signed HttpOnly session cookie
 * Session expiry enforced
 * SameSite strict cookie policy
-* IP allowlist enforced for login and protected dashboard APIs
+* Optional IP allowlist enforcement (`DASHBOARD_IP_ALLOWLIST_ENABLED=true`)
 
 Operational behavior:
 
-* Allowlist checks operator client IP (via trusted proxy chain), not VPS IP
-* Login rate limiting + temporary lockout on repeated failures
+* Default mode: public OTP login (`DASHBOARD_IP_ALLOWLIST_ENABLED=false`)
+* Strict mode: allowlist checks operator client IP (via trusted proxy chain), not VPS IP
+* OTP controls: TTL, resend cooldown, max attempts, per-IP window, and separate OTP daily quota
+* Credential backup path: login rate limiting + temporary lockout on repeated failures
 * Optional Nginx Basic Auth layer
 * Fail2Ban monitoring remains active
 
@@ -360,9 +364,9 @@ Compatibility behavior retained:
 * `/admin/*` -> redirect to `/dashboard`
 * `/api/v1/admin/*` -> deprecation response
 
-## 15.5 Functional Features (Single Page Dashboard)
+## 15.5 Functional Features (Overview + Dedicated Deep-Dive Pages)
 
-### Overview
+### Overview Page (`/dashboard`)
 
 Displays:
 
@@ -373,15 +377,68 @@ Displays:
 * Relay health
 * Risk score
 
-### Trends and Insights
+### Activity Page (`/dashboard/activity`)
+
+Displays:
+
+* htop-like VPS background activity summary
+* top processes by CPU and memory
+* task state counters (running/sleeping/stopped/zombie)
+* load average, uptime, memory pressure, and collector diagnostics
+* 5-second auto-refresh with pause/resume controls
+
+### Security Page (`/dashboard/security`)
+
+Displays:
+
+* Risk posture and source tag
+* Fail2Ban/AIDE/report control signals
+* System alert state matrix
+* Relay error diagnostics
+
+### Health Page (`/dashboard/health`)
+
+Displays:
+
+* Delivery and quota health snapshots
+* Host runtime signals (CPU/memory/load/disk)
+* Recent retry/failed exception timeline
+
+### Performance Page (`/dashboard/performance`)
 
 Displays:
 
 * `24h` / `7d` / `30d` windows
-* Delivery volume trend
-* Risk and quota burn trend
-* Error code distribution
-* Actionable operator insights
+* Throughput chart (sent/failed/retrying)
+* Risk + quota trend chart
+* Recent performance buckets table
+
+### Stability Page (`/dashboard/stability`)
+
+Displays:
+
+* Queue pressure score and oldest age
+* Active alerts count and top error signature
+* Action plan panel and unstable event stream
+
+### Programs Page (`/dashboard/programs`)
+
+Displays:
+
+* Systemd checks (`nginx`, `postfix`, `fail2ban`)
+* PM2 inventory and status
+* Docker summary
+* Critical listener checks (`127.0.0.1:25`, `127.0.0.1:8081`, `80/443`)
+* Metrics and snapshot worker freshness
+
+### Mail Page (`/dashboard/mail`)
+
+Displays:
+
+* Relay/queue/quota diagnostics
+* Top recent error codes
+* Last successful delivery timestamp
+* Manual mail probe trigger with cooldown guard
 
 ### Email Logs (Metadata Only)
 
@@ -397,7 +454,7 @@ Fields include:
 
 No message body content is exposed in dashboard logs.
 
-### Security and Alerts
+### Security and Alerts (Cross-Page)
 
 Displays:
 
@@ -409,7 +466,7 @@ Displays:
 
 ## 15.6 Responsive UX Completion (All Devices)
 
-Responsive dashboard upgrade completed (single-page model preserved):
+Responsive dashboard upgrade completed while preserving overview and adding dedicated pages:
 
 * Stacked mobile flow implemented
 * Horizontal overflow/cropping issues resolved
@@ -417,8 +474,17 @@ Responsive dashboard upgrade completed (single-page model preserved):
 * Mobile log readability improved with labeled row layout
 * Touch target and focus visibility improvements added
 * Local favicon asset added (favicon 404 removed)
+* Shared section navigation added across all dashboard routes
 
 ## 15.7 Active Dashboard API Surface
+
+Auth endpoints:
+
+* `POST /auth/otp/request`
+* `POST /auth/otp/verify`
+* `POST /auth/login` (backup)
+* `POST /auth/logout`
+* `GET /auth/session`
 
 * `GET /api/v1/dashboard/overview`
 * `GET /api/v1/dashboard/trends?window=24h|7d|30d`
@@ -427,6 +493,21 @@ Responsive dashboard upgrade completed (single-page model preserved):
 * `GET /api/v1/dashboard/logs?status=&category=&severity=&q=`
 * `GET /api/v1/dashboard/alerts`
 * `GET /api/v1/dashboard/security`
+* `GET /api/v1/dashboard/activity`
+* `GET /api/v1/dashboard/programs`
+* `GET /api/v1/dashboard/mail-check`
+* `POST /api/v1/dashboard/mail-probe`
+
+Active dashboard page routes:
+
+* `/dashboard`
+* `/dashboard/activity`
+* `/dashboard/security`
+* `/dashboard/health`
+* `/dashboard/performance`
+* `/dashboard/stability`
+* `/dashboard/programs`
+* `/dashboard/mail`
 
 Mail API security contract remains unchanged:
 
@@ -445,6 +526,8 @@ Active tables include:
 * `daily_quota`
 * `system_alert_state`
 * `dashboard_metric_snapshots`
+* `dashboard_otp_challenges`
+* `dashboard_otp_daily_quota`
 
 Snapshot history retention: 90 days with cleanup automation.
 
@@ -478,6 +561,17 @@ Observability sources:
 * Fail2Ban and daily VPS report signals
 
 Dashboard auth events are auditable and included in operational review.
+
+OTP delivery controls are independent from normal mail quota:
+
+* OTP daily quota is separate from the `500/day` mail send quota.
+* OTP request/verify paths enforce cooldown, max attempts, and expiry.
+
+Cron policy:
+
+* Legacy `/opt/stackpilot-monitor` references are deprecated.
+* Active metrics cron uses `/home/devuser/dev/email-vps/generate_metrics.sh`.
+* Cron mail noise is suppressed with `MAILTO=""`; failures are surfaced via dashboard alerts/logs.
 
 ## 15.11 Future Enhancements (Pending)
 

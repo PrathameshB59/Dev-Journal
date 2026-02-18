@@ -2249,7 +2249,7 @@ AllowUsers devuser
                 <ul>
                     <li>📊 Historical Metrics Storage</li>
                     <li>📉 Trend Comparison Engine</li>
-                    <li>🌐 Web Dashboard (monitor.stackpilot.in)</li>
+                    <li>🌐 Web Dashboard (mail.stackpilot.in/dashboard)</li>
                     <li>📩 Telegram Alerts</li>
                     <li>🧠 AI-Based Anomaly Detection</li>
                     <li>🛡 Rootkit Scan (rkhunter integration)</li>
@@ -2261,17 +2261,18 @@ AllowUsers devuser
         <!-- STACKPILOT WEB MONITORING DASHBOARD -->
         <div class="card">
         
-            <h2>🚀 StackPilot Web Monitoring Dashboard (Production Deployment)</h2>
+            <h2>🚀 Email-VPS Monitoring Console (Production Deployment)</h2>
         
             <div class="sub-card highlight">
                 <h3>📌 Architecture Overview</h3>
                 <pre>
-        /opt/stackpilot-monitor/
+        /home/devuser/dev/email-vps/
         │
-        ├── generate_metrics.sh   → Collects live VPS data
-        ├── metrics.json          → Auto-generated metrics
-        ├── dashboard.html        → Responsive Web UI
-        ├── server.js             → Node Express Server
+        ├── generate_metrics.sh            → Collects live VPS data
+        ├── metrics.json                   → Auto-generated metrics
+        ├── src/server.js                  → Unified Node server
+        ├── src/dashboard/public/          → Multi-page console UI
+        └── deploy/nginx/mail.stackpilot.in.conf
         </pre>
             </div>
         
@@ -2303,9 +2304,9 @@ AllowUsers devuser
             <div class="sub-card highlight">
                 <h3>⏱ Auto Metrics Update</h3>
                 <pre>
-        * * * * * /opt/stackpilot-monitor/generate_metrics.sh
+        * * * * * /home/devuser/dev/email-vps/generate_metrics.sh >/dev/null 2>&1
         </pre>
-                <p>Metrics regenerate every minute via cron.</p>
+                <p>Metrics regenerate every minute via cron without inbox spam.</p>
             </div>
         
             <div class="sub-card success">
@@ -2314,7 +2315,7 @@ AllowUsers devuser
                     <li>✔ Dark Professional UI Theme</li>
                     <li>✔ Responsive Grid Layout</li>
                     <li>✔ Mobile + Desktop Optimized</li>
-                    <li>✔ Auto Refresh Every 60 Seconds</li>
+                    <li>✔ Activity page auto-refresh every 5 seconds (pause/resume)</li>
                     <li>✔ Real-Time JSON Data Fetch</li>
                     <li>✔ Lightweight Express Server</li>
                 </ul>
@@ -2323,19 +2324,74 @@ AllowUsers devuser
             <div class="sub-card warning">
                 <h3>📡 Deployment Access</h3>
                 <pre>
-        http://YOUR_VPS_IP:8081/dashboard.html
+        https://mail.stackpilot.in/dashboard
         </pre>
-                <p>Optional: Configure Nginx Reverse Proxy → monitor.stackpilot.in</p>
+                <p>Nginx reverse proxy points to localhost bind: 127.0.0.1:8081.</p>
+            </div>
+
+            <div class="sub-card success">
+                <h3>🧭 Multi-Page Console (Live on February 18, 2026)</h3>
+                <pre>
+        /dashboard                → Overview (preserved)
+        /dashboard/activity       → htop-like VPS activity checker
+        /dashboard/security       → Security deep dive
+        /dashboard/health         → Health deep dive
+        /dashboard/performance    → Throughput + trend deep dive
+        /dashboard/stability      → Queue/failure stability deep dive
+        /dashboard/programs       → VPS programs checker
+        /dashboard/mail           → Relay/queue/mail probe checker
+                </pre>
+            </div>
+
+            <div class="sub-card info">
+                <h3>🧩 Dashboard API Extensions (Protected)</h3>
+                <pre>
+        GET  /api/v1/dashboard/activity
+        GET  /api/v1/dashboard/programs
+        GET  /api/v1/dashboard/mail-check
+        POST /api/v1/dashboard/mail-probe
+                </pre>
+                <p>Auth model current: OTP-first login + signed session cookie + optional allowlist toggle.</p>
+            </div>
+
+            <div class="sub-card warning">
+                <h3>🔐 Public OTP Login Model (Primary)</h3>
+                <pre>
+        POST /auth/otp/request
+        POST /auth/otp/verify
+        POST /auth/login           # backup credentials
+
+        DASHBOARD_IP_ALLOWLIST_ENABLED=false  (default)
+        DASHBOARD_IP_ALLOWLIST_ENABLED=true   (strict mode optional)
+                </pre>
+                <p>Mail API isolation remains unchanged: <code>/api/v1/mail/*</code> is loopback + bearer token only.</p>
+            </div>
+
+            <div class="sub-card warning">
+                <h3>📬 Cron Mail Noise Incident (Resolved)</h3>
+                <pre>
+        Root cause:
+        /opt/stackpilot-monitor/generate_metrics.sh (stale cron path)
+
+        Standard command now:
+        * * * * * /home/devuser/dev/email-vps/generate_metrics.sh >/dev/null 2>&1
+
+        Helper:
+        bash /home/devuser/dev/email-vps/deploy/ops/fix_metrics_cron.sh audit
+        bash /home/devuser/dev/email-vps/deploy/ops/fix_metrics_cron.sh apply-user
+        sudo bash /home/devuser/dev/email-vps/deploy/ops/fix_metrics_cron.sh audit-root
+        sudo bash /home/devuser/dev/email-vps/deploy/ops/fix_metrics_cron.sh apply-root
+                </pre>
+                <p>Policy: keep cron silent via MAILTO="" and rely on dashboard alerting/logs.</p>
             </div>
         
             <div class="sub-card highlight">
                 <h3>📦 Node Server Configuration</h3>
                 <pre>
-        npm init -y
-        npm install express
-        node server.js
+        pm2 start /home/devuser/dev/email-vps/deploy/pm2/ecosystem.config.cjs
+        pm2 save
         </pre>
-                <p>Runs on Port 8081 (0.0.0.0 binding enabled)</p>
+                <p>Runs on Port 8081 with localhost binding and trusted proxy mode.</p>
             </div>
         
             <div class="sub-card info">
@@ -2352,14 +2408,14 @@ AllowUsers devuser
             <div class="sub-card highlight">
                 <h3>📈 Future Upgrade Roadmap</h3>
                 <ul>
-                    <li>📊 Chart.js Historical Graphs</li>
+                    <li>📊 Per-page anomaly score correlation</li>
                     <li>🌍 GeoIP Attack Visualization</li>
                     <li>🔔 Telegram Alerts</li>
-                    <li>📉 30-Day Performance Trends</li>
+                    <li>📉 90-Day trend forecasting</li>
                     <li>🧠 AI Anomaly Detection</li>
-                    <li>🔐 Login Protected Dashboard</li>
+                    <li>🔐 Service dependency graph (nginx/postfix/pm2)</li>
                     <li>📡 WebSocket Real-Time Updates</li>
-                    <li>🌐 Subdomain Deployment (monitor.stackpilot.in)</li>
+                    <li>🌐 Enhanced deployment analytics on mail.stackpilot.in</li>
                 </ul>
             </div>
         

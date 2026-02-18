@@ -13,7 +13,7 @@
     <header>
         <h1><span class="rocket">🚀</span> <span class="title-text">ShopEase VPS Progress Report</span></h1>
         <p>Personal infrastructure & backend setup overview</p>
-        <p><strong>Last Updated:</strong> February 17, 2026 | Email-VPS runtime + dashboard docs aligned</p>
+        <p><strong>Last Updated:</strong> February 18, 2026 | Email-VPS OTP-first public auth + activity checker aligned</p>
     </header>
 
     <nav>
@@ -39,10 +39,12 @@
                             Decision</a>
                         <a href="#email-vps-2026-status" class="dropdown-link">📧 Email-VPS 2026 Status Snapshot</a>
                         <a href="#email-vps-public-access-recovery" class="dropdown-link">🌐 Email-VPS Public Access Recovery</a>
-                        <a href="#email-vps-forbidden-ip-fix" class="dropdown-link">🛡️ Email-VPS FORBIDDEN_IP Fix</a>
+                        <a href="#email-vps-forbidden-ip-fix" class="dropdown-link">🛡️ Email-VPS FORBIDDEN_IP Policy Shift</a>
                         <a href="#email-vps-single-dashboard-security-model" class="dropdown-link">🔐 Email-VPS Single Dashboard Security Model</a>
                         <a href="#email-vps-responsive-dashboard-upgrade" class="dropdown-link">📱 Email-VPS Responsive Dashboard Upgrade</a>
                         <a href="#email-vps-operational-commands-verified" class="dropdown-link">🧪 Email-VPS Operational Commands</a>
+                        <a href="#email-vps-multi-page-console-expansion" class="dropdown-link">🧭 Email-VPS Multi-Page Console Expansion</a>
+                        <a href="#email-vps-cron-mail-noise-fix" class="dropdown-link">📬 Email-VPS Cron Mail Noise Fix</a>
 
                         <a href="#vps-planning-nested-workspace" class="dropdown-link">📁 VPS Planning Workspace</a>
 
@@ -570,12 +572,13 @@
     <!-- EMAIL-VPS 2026 STATUS SNAPSHOT -->
     <div class="card full" id="email-vps-2026-status">
         <h2>📧 Email-VPS 2026 Status Snapshot</h2>
-        <p class="muted">Verified state on <strong>February 17, 2026</strong>.</p>
+        <p class="muted">Verified state on <strong>February 18, 2026</strong>.</p>
 
         <ul class="list">
             <li><span class="status done"></span>Single Email-VPS service active (split admin runtime removed)</li>
             <li><span class="status done"></span><code>mail.stackpilot.in</code> DNS + HTTPS active</li>
             <li><span class="status done"></span>Nginx reverse proxy mapped to <code>127.0.0.1:8081</code></li>
+            <li><span class="status done"></span>OTP-first login enabled for public dashboard access</li>
             <li><span class="status done"></span>SQLite + Postfix relay pipeline stable</li>
             <li><span class="status done"></span>Dashboard and mail APIs running under one Node service</li>
         </ul>
@@ -615,7 +618,7 @@ curl -i http://127.0.0.1:8081/health
 
     <!-- EMAIL-VPS FORBIDDEN_IP FIX -->
     <div class="card full" id="email-vps-forbidden-ip-fix">
-        <h2>🛡️ Email-VPS FORBIDDEN_IP Root Cause and Fix</h2>
+        <h2>🛡️ Email-VPS FORBIDDEN_IP Root Cause and Policy Shift</h2>
 
         <h3>Root Cause</h3>
         <p>
@@ -623,14 +626,17 @@ curl -i http://127.0.0.1:8081/health
             Initial allowlist mismatch triggered <code>FORBIDDEN_IP</code>.
         </p>
 
-        <h3>Fix Applied</h3>
+        <h3>Current Policy (February 18, 2026)</h3>
         <ul class="list">
-            <li><span class="status done"></span>Set <code>DASHBOARD_ALLOWED_IPS</code> using operator public IP(s) + loopback</li>
-            <li><span class="status done"></span>Applied runtime update with PM2 environment refresh</li>
-            <li><span class="status done"></span>Documented rotation procedure for dynamic ISP IP changes</li>
+            <li><span class="status done"></span><code>DASHBOARD_IP_ALLOWLIST_ENABLED=false</code> by default (public OTP mode)</li>
+            <li><span class="status done"></span>Allowlist kept as optional strict hardening toggle</li>
+            <li><span class="status done"></span>Session + OTP controls remain mandatory for access</li>
         </ul>
 
         <div class="folder">
+# optional strict mode
+DASHBOARD_IP_ALLOWLIST_ENABLED=true
+DASHBOARD_ALLOWED_IPS=&lt;operator_public_ip&gt;,127.0.0.1,::1
 pm2 restart email-vps --update-env
 pm2 save
         </div>
@@ -641,9 +647,11 @@ pm2 save
         <h2>🔐 Email-VPS Single Dashboard Security Model (Current)</h2>
 
         <ul class="list">
-            <li><span class="status done"></span>Single dashboard access path: <code>/login</code> -> <code>/dashboard</code></li>
+            <li><span class="status done"></span>Single dashboard access path with OTP-first login</li>
+            <li><span class="status done"></span>Primary auth: <code>POST /auth/otp/request</code> + <code>POST /auth/otp/verify</code></li>
+            <li><span class="status done"></span>Backup auth: <code>POST /auth/login</code> credentials fallback</li>
             <li><span class="status done"></span>Signed HttpOnly session cookie auth</li>
-            <li><span class="status done"></span>IP allowlist enforced for dashboard access</li>
+            <li><span class="status done"></span>Optional allowlist mode via <code>DASHBOARD_IP_ALLOWLIST_ENABLED</code></li>
             <li><span class="status done"></span>Mail API remains local-only + bearer token</li>
             <li><span class="status done"></span>Compatibility kept: <code>/admin/*</code> redirect + <code>/api/v1/admin/*</code> deprecation</li>
         </ul>
@@ -657,6 +665,10 @@ GET /api/v1/dashboard/insights?window=24h|7d|30d
 GET /api/v1/dashboard/logs?status=&category=&severity=&q=
 GET /api/v1/dashboard/alerts
 GET /api/v1/dashboard/security
+GET /api/v1/dashboard/activity
+GET /api/v1/dashboard/programs
+GET /api/v1/dashboard/mail-check
+POST /api/v1/dashboard/mail-probe
         </div>
     </div>
 
@@ -676,11 +688,11 @@ GET /api/v1/dashboard/security
 
         <h3>Breakpoint Matrix</h3>
         <div class="folder">
-<=1280 compact desktop
-<=1024 tablet landscape
-<=820  tablet portrait / foldables
-<=640  phone
-<=420  narrow phone
+&lt;=1280 compact desktop
+&lt;=1024 tablet landscape
+&lt;=820  tablet portrait / foldables
+&lt;=640  phone
+&lt;=420  narrow phone
         </div>
     </div>
 
@@ -704,13 +716,71 @@ sudo certbot certificates
 sudo certbot renew --dry-run
         </div>
 
-        <h3>Allowlist Rotation Maintenance</h3>
+        <h3>OTP Login Validation</h3>
         <div class="folder">
-curl -4 https://api.ipify.org
-# update DASHBOARD_ALLOWED_IPS in .env
-pm2 restart email-vps --update-env
-pm2 save
+curl -i -c /tmp/email-vps.cookie -X POST https://mail.stackpilot.in/auth/otp/request
+curl -i -b /tmp/email-vps.cookie -X POST https://mail.stackpilot.in/auth/otp/verify \
+  -H 'Content-Type: application/json' \
+  -d '{"code":"123456"}'
         </div>
+    </div>
+
+    <!-- EMAIL-VPS MULTI-PAGE CONSOLE EXPANSION -->
+    <div class="card full" id="email-vps-multi-page-console-expansion">
+        <h2>🧭 Email-VPS Multi-Page Console Expansion (Overview Preserved)</h2>
+        <p class="muted">Applied architecture update on <strong>February 18, 2026</strong>.</p>
+
+        <ul class="list">
+            <li><span class="status done"></span><code>/dashboard</code> retained as primary overview page</li>
+            <li><span class="status done"></span>Dedicated deep-dive routes include activity, security, health, performance, stability, programs, and mail</li>
+            <li><span class="status done"></span>Shared dashboard navigation added across all pages</li>
+            <li><span class="status done"></span>Activity page runs 5-second auto refresh with pause/resume control</li>
+        </ul>
+
+        <h3>Dedicated Routes</h3>
+        <div class="folder">
+GET /dashboard/activity
+GET /dashboard/security
+GET /dashboard/health
+GET /dashboard/performance
+GET /dashboard/stability
+GET /dashboard/programs
+GET /dashboard/mail
+        </div>
+
+        <h3>Deep-Dive APIs</h3>
+        <div class="folder">
+GET /api/v1/dashboard/activity
+GET /api/v1/dashboard/programs
+GET /api/v1/dashboard/mail-check
+POST /api/v1/dashboard/mail-probe
+        </div>
+    </div>
+
+    <!-- EMAIL-VPS CRON MAIL NOISE FIX -->
+    <div class="card full" id="email-vps-cron-mail-noise-fix">
+        <h2>📬 Email-VPS Cron Mail Noise Root Cause and Fix</h2>
+        <p class="muted">Inbox spam source resolved from legacy `/opt` cron path.</p>
+
+        <h3>Root Cause</h3>
+        <ul class="list">
+            <li><span class="status done"></span>Stale cron entry referenced <code>/opt/stackpilot-monitor/generate_metrics.sh</code></li>
+            <li><span class="status done"></span>Script path migration to repo location was complete, but cron cleanup was pending</li>
+        </ul>
+
+        <h3>Standardized Command (Current)</h3>
+        <div class="folder">
+* * * * * /home/devuser/dev/email-vps/generate_metrics.sh &gt;/dev/null 2&gt;&amp;1
+        </div>
+
+        <h3>Operational Fix Helper</h3>
+        <div class="folder">
+bash /home/devuser/dev/email-vps/deploy/ops/fix_metrics_cron.sh audit
+bash /home/devuser/dev/email-vps/deploy/ops/fix_metrics_cron.sh apply-user
+sudo bash /home/devuser/dev/email-vps/deploy/ops/fix_metrics_cron.sh audit-root
+sudo bash /home/devuser/dev/email-vps/deploy/ops/fix_metrics_cron.sh apply-root
+        </div>
+        <p>Policy: keep cron silent (<code>MAILTO=""</code>) and surface failures via dashboard alerts.</p>
     </div>
 
     <!-- VPS WSL-LIKE DEVELOPMENT SETUP -->
@@ -7627,9 +7697,6 @@ pm2 save
                     Fail2Ban automatically blocks repeated attackers.
                 </p>
             </div>
-            
-            
-            
             <div class="card success">
                 <h3>🛡 Active Protection Stack</h3>
             
