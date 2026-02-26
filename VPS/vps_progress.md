@@ -1,7 +1,7 @@
-# ShopEase VPS Progress Report
+cd# ShopEase VPS Progress Report
 
 > Personal infrastructure & backend setup overview
-> **Last Updated:** February 18, 2026 | Email-VPS OTP-first public auth + activity checker aligned
+> **Last Updated:** February 19, 2026 | Email-VPS deep operations insights + mail UX + lighthouse hardening rollout
 
 ---
 
@@ -57,6 +57,11 @@
 - [Email-VPS Operational Commands (Verified)](#email-vps-operational-commands-verified)
 - [Email-VPS Multi-Page Console Expansion (Overview Preserved)](#email-vps-multi-page-console-expansion-overview-preserved)
 - [Email-VPS Cron Mail Noise Root Cause and Fix](#email-vps-cron-mail-noise-root-cause-and-fix)
+- [Email-VPS Deep Ops Insights (Operations Dashboard)](#email-vps-deep-ops-insights-operations-dashboard)
+- [Email-VPS Ops Event Timeline Model (Live + History)](#email-vps-ops-event-timeline-model-live--history)
+- [Email-VPS Operational Mail UX Upgrade (HTML/CSS)](#email-vps-operational-mail-ux-upgrade-htmlcss)
+- [Email-VPS Lighthouse Hardening Baseline (Phased)](#email-vps-lighthouse-hardening-baseline-phased)
+- [Email-VPS Plan Completion Delta (Tests + Runbook Parity)](#email-vps-plan-completion-delta-tests--runbook-parity)
 
 ### Environment Setup
 
@@ -884,6 +889,15 @@ pm2 restart email-vps --update-env
 pm2 save
 ```
 
+Postfix warning + operations collector checks:
+
+```bash
+sudo bash /home/devuser/dev/email-vps/deploy/ops/fix_postfix_config.sh
+sudo postconf -n | grep -E 'relayhost|smtp_tls_security_level'
+curl -i -b /tmp/email-vps.cookie -X POST https://mail.stackpilot.in/api/v1/dashboard/operations/recheck
+curl -i -b /tmp/email-vps.cookie "https://mail.stackpilot.in/api/v1/dashboard/ops-events?source=postfix&status=open&limit=20&offset=0"
+```
+
 ---
 
 ## Email-VPS Multi-Page Console Expansion (Overview Preserved)
@@ -937,6 +951,124 @@ bash /home/devuser/dev/email-vps/deploy/ops/fix_metrics_cron.sh apply-user
 sudo bash /home/devuser/dev/email-vps/deploy/ops/fix_metrics_cron.sh audit-root
 sudo bash /home/devuser/dev/email-vps/deploy/ops/fix_metrics_cron.sh apply-root
 ```
+
+---
+
+## Email-VPS Deep Ops Insights (Operations Dashboard)
+
+Status confirmed on **February 19, 2026**:
+
+- [x] New dedicated route: `/dashboard/operations`
+- [x] Operations page now tracks `AIDE`, `Fail2Ban`, `relay`, `postfix`, and `cron/logwatch` in one control panel
+- [x] Timeline filter controls added by `source`, `status`, and `severity`
+- [x] On-demand collector trigger available from UI (`Recheck`)
+- [x] Command-level fix hints embedded in page for fast remediation
+
+New API surface (non-breaking additions):
+
+- `GET /api/v1/dashboard/operations?window=24h|7d|30d`
+- `GET /api/v1/dashboard/ops-events?source=&status=&severity=&window=&limit=&offset=`
+- `POST /api/v1/dashboard/operations/recheck`
+
+---
+
+## Email-VPS Ops Event Timeline Model (Live + History)
+
+Status confirmed on **February 19, 2026**:
+
+- [x] SQLite event store active: `ops_events`
+- [x] Event identity tracked by stable fingerprint
+- [x] Open/resolved lifecycle captured with first-seen and last-seen timestamps
+- [x] Severity and source breakdown available for trend cards
+- [x] Retention cleanup active (90-day policy)
+
+Tracked sources currently include:
+
+- `cron`
+- `logwatch`
+- `postfix`
+- `relay`
+- `aide`
+- `fail2ban`
+
+---
+
+## Email-VPS Operational Mail UX Upgrade (HTML/CSS)
+
+Status confirmed on **February 19, 2026**:
+
+- [x] Dedicated operational template set added:
+  - `delivery-probe`
+  - `health-check`
+  - `cron-warning`
+  - `logwatch-digest`
+  - `postfix-warning`
+  - existing `system-alert` and `app-notification` retained
+- [x] Manual probe flow now uses dedicated `delivery-probe` template
+- [x] Templates standardized with:
+  - severity chip
+  - incident metadata footer
+  - clear diagnostics blocks
+  - monospace raw-snippet section
+  - dashboard/runbook action links
+- [x] Plain-text fallbacks preserved for all templates
+
+---
+
+## Email-VPS Lighthouse Hardening Baseline (Phased)
+
+Status confirmed on **February 19, 2026**:
+
+- [x] Meta descriptions present across dashboard/login routes
+- [x] CLS hardening applied for nav/masthead placeholders
+- [x] Static asset caching tightened for dashboard assets
+- [x] Route-aware lazy loading applied (`dashboard-pages.js` dispatcher + page modules)
+- [x] Security header rollout started:
+  - `COOP` and `CORP` active
+  - `CSP Report-Only` active (phase 1)
+  - staged `HSTS` configured in Nginx template
+- [x] Script loading adjusted for route modules with reduced first-load JS on activity/operations pages
+
+Lighthouse operation notes:
+
+- Run audits in clean/incognito browser profile to avoid extension noise.
+- Keep CSP in report-only during validation window; switch to enforce mode after review.
+
+---
+
+## Email-VPS Plan Completion Delta (Tests + Runbook Parity)
+
+Completion checkpoint validated on **February 19, 2026**.
+
+- [x] Unit coverage added for deep ops parser/fingerprinting lifecycle:
+  - postfix duplicate key detection
+  - cron stale path extraction
+  - logwatch warning classification
+  - stable fingerprint and open/resolved transitions
+- [x] Integration coverage expanded for operations surface:
+  - `/dashboard/operations`
+  - `GET /api/v1/dashboard/operations`
+  - `GET /api/v1/dashboard/ops-events`
+  - `POST /api/v1/dashboard/operations/recheck`
+- [x] Template tests extended for operational template suite:
+  - `cron-warning`, `logwatch-digest`, `health-check`
+  - existing `delivery-probe` and `postfix-warning` retained
+- [x] Runbook and README now include:
+  - postfix duplicate warning remediation workflow
+  - cron noise remediation workflow
+  - operations collector validation commands
+  - clean-profile Lighthouse audit gate
+
+Current Lighthouse baseline notes (clean-profile required):
+
+- Performance: ~`79`
+- Accessibility: `100`
+- Best Practices: ~`81`
+- SEO: ~`90`
+
+Known remaining tuning target:
+
+- CLS spikes on activity masthead under throttled runs; continue phased CSS/JS stabilization without breaking operational UI.
 
 ---
 

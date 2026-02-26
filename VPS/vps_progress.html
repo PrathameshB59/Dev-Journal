@@ -13,7 +13,7 @@
     <header>
         <h1><span class="rocket">🚀</span> <span class="title-text">ShopEase VPS Progress Report</span></h1>
         <p>Personal infrastructure & backend setup overview</p>
-        <p><strong>Last Updated:</strong> February 18, 2026 | Email-VPS OTP-first public auth + activity checker aligned</p>
+        <p><strong>Last Updated:</strong> February 19, 2026 | Email-VPS deep operations insights + mail UX + lighthouse hardening rollout</p>
     </header>
 
     <nav>
@@ -45,6 +45,11 @@
                         <a href="#email-vps-operational-commands-verified" class="dropdown-link">🧪 Email-VPS Operational Commands</a>
                         <a href="#email-vps-multi-page-console-expansion" class="dropdown-link">🧭 Email-VPS Multi-Page Console Expansion</a>
                         <a href="#email-vps-cron-mail-noise-fix" class="dropdown-link">📬 Email-VPS Cron Mail Noise Fix</a>
+                        <a href="#email-vps-deep-ops-insights" class="dropdown-link">🛰️ Email-VPS Deep Ops Insights</a>
+                        <a href="#email-vps-ops-event-timeline-model" class="dropdown-link">🧾 Email-VPS Ops Event Timeline</a>
+                        <a href="#email-vps-operational-mail-ux-upgrade" class="dropdown-link">✉️ Email-VPS Operational Mail UX</a>
+                        <a href="#email-vps-lighthouse-hardening-baseline" class="dropdown-link">🚦 Email-VPS Lighthouse Hardening</a>
+                        <a href="#email-vps-plan-completion-delta" class="dropdown-link">✅ Email-VPS Plan Completion Delta</a>
 
                         <a href="#vps-planning-nested-workspace" class="dropdown-link">📁 VPS Planning Workspace</a>
 
@@ -723,6 +728,14 @@ curl -i -b /tmp/email-vps.cookie -X POST https://mail.stackpilot.in/auth/otp/ver
   -H 'Content-Type: application/json' \
   -d '{"code":"123456"}'
         </div>
+
+        <h3>Postfix + Operations Collector Validation</h3>
+        <div class="folder">
+sudo bash /home/devuser/dev/email-vps/deploy/ops/fix_postfix_config.sh
+sudo postconf -n | grep -E 'relayhost|smtp_tls_security_level'
+curl -i -b /tmp/email-vps.cookie -X POST https://mail.stackpilot.in/api/v1/dashboard/operations/recheck
+curl -i -b /tmp/email-vps.cookie "https://mail.stackpilot.in/api/v1/dashboard/ops-events?source=postfix&status=open&limit=20&offset=0"
+        </div>
     </div>
 
     <!-- EMAIL-VPS MULTI-PAGE CONSOLE EXPANSION -->
@@ -781,6 +794,97 @@ sudo bash /home/devuser/dev/email-vps/deploy/ops/fix_metrics_cron.sh audit-root
 sudo bash /home/devuser/dev/email-vps/deploy/ops/fix_metrics_cron.sh apply-root
         </div>
         <p>Policy: keep cron silent (<code>MAILTO=""</code>) and surface failures via dashboard alerts.</p>
+    </div>
+
+    <!-- EMAIL-VPS DEEP OPS INSIGHTS -->
+    <div class="card full" id="email-vps-deep-ops-insights">
+        <h2>🛰️ Email-VPS Deep Ops Insights (Operations Dashboard)</h2>
+        <p class="muted">Verified on <strong>February 19, 2026</strong>.</p>
+
+        <ul class="list">
+            <li><span class="status done"></span>New route active: <code>/dashboard/operations</code></li>
+            <li><span class="status done"></span>Unified control strip for <code>AIDE</code>, <code>Fail2Ban</code>, relay, postfix, cron, and logwatch</li>
+            <li><span class="status done"></span>On-demand collector recheck from dashboard UI</li>
+            <li><span class="status done"></span>Filterable event timeline by source/status/severity</li>
+            <li><span class="status done"></span>Embedded command-level remediation hints for postfix/cron/logwatch noise</li>
+        </ul>
+
+        <div class="folder">
+GET /dashboard/operations
+GET /api/v1/dashboard/operations?window=24h|7d|30d
+GET /api/v1/dashboard/ops-events?source=&status=&severity=&window=&limit=&offset=
+POST /api/v1/dashboard/operations/recheck
+        </div>
+    </div>
+
+    <!-- EMAIL-VPS OPS EVENT TIMELINE MODEL -->
+    <div class="card full" id="email-vps-ops-event-timeline-model">
+        <h2>🧾 Email-VPS Ops Event Timeline Model (Live + History)</h2>
+
+        <ul class="list">
+            <li><span class="status done"></span>SQLite table <code>ops_events</code> active for event lifecycle tracking</li>
+            <li><span class="status done"></span>Fingerprint-based dedupe for recurring warnings</li>
+            <li><span class="status done"></span>Open/resolved state with first-seen and last-seen timestamps</li>
+            <li><span class="status done"></span>90-day retention with cleanup automation</li>
+            <li><span class="status done"></span>Sources tracked: cron, logwatch, postfix, relay, fail2ban, aide</li>
+        </ul>
+    </div>
+
+    <!-- EMAIL-VPS OPERATIONAL MAIL UX UPGRADE -->
+    <div class="card full" id="email-vps-operational-mail-ux-upgrade">
+        <h2>✉️ Email-VPS Operational Mail UX Upgrade (HTML/CSS)</h2>
+        <p class="muted">Operational mail templates aligned to incident-grade readability.</p>
+
+        <ul class="list">
+            <li><span class="status done"></span>Dedicated templates shipped: <code>delivery-probe</code>, <code>cron-warning</code>, <code>logwatch-digest</code>, <code>postfix-warning</code></li>
+            <li><span class="status done"></span><code>health-check</code>, <code>system-alert</code>, and <code>app-notification</code> retained and aligned</li>
+            <li><span class="status done"></span>Manual probe mail now uses dedicated delivery-probe layout</li>
+            <li><span class="status done"></span>Monospace raw-snippet blocks and severity chips added for faster triage</li>
+            <li><span class="status done"></span>Plain-text fallbacks preserved for all templates</li>
+        </ul>
+    </div>
+
+    <!-- EMAIL-VPS LIGHTHOUSE HARDENING -->
+    <div class="card full" id="email-vps-lighthouse-hardening-baseline">
+        <h2>🚦 Email-VPS Lighthouse Hardening Baseline (Phased)</h2>
+        <p class="muted">Baseline hardening pass completed on <strong>February 19, 2026</strong>.</p>
+
+        <ul class="list">
+            <li><span class="status done"></span>Meta description coverage present across dashboard/login routes</li>
+            <li><span class="status done"></span>CLS hardening added for nav/masthead placeholder stability</li>
+            <li><span class="status done"></span>Route-aware module loading active for dashboard page bundles</li>
+            <li><span class="status done"></span>Header hardening active: COOP/CORP + CSP report-only</li>
+            <li><span class="status done"></span>Nginx template includes staged HSTS rollout (<code>max-age=86400</code>)</li>
+        </ul>
+
+        <div class="folder">
+# clean-profile validation
+https://mail.stackpilot.in/dashboard/activity
+https://mail.stackpilot.in/dashboard/operations
+        </div>
+        <p>Current clean-profile target baseline: Perf ~79, Accessibility 100, Best Practices ~81, SEO ~90.</p>
+    </div>
+
+    <!-- EMAIL-VPS PLAN COMPLETION DELTA -->
+    <div class="card full" id="email-vps-plan-completion-delta">
+        <h2>✅ Email-VPS Plan Completion Delta (Tests + Runbook Parity)</h2>
+        <p class="muted">Completion checkpoint verified on <strong>February 19, 2026</strong>.</p>
+
+        <ul class="list">
+            <li><span class="status done"></span>Unit tests added for deep-ops parser, fingerprint stability, and open/resolved lifecycle</li>
+            <li><span class="status done"></span>Integration checks expanded for <code>/dashboard/operations</code> and operations APIs</li>
+            <li><span class="status done"></span>Operational template tests added for <code>cron-warning</code>, <code>logwatch-digest</code>, and <code>health-check</code></li>
+            <li><span class="status done"></span>README + Section 15 runbook updated with postfix duplicate fix, cron noise remediation, and collector validation flow</li>
+            <li><span class="status done"></span>Lighthouse release gate documented as clean-profile procedure with staged CSP/HSTS policy</li>
+        </ul>
+
+        <h3>Release-Gate Command Set</h3>
+        <div class="folder">
+npm test
+curl -i -b /tmp/email-vps.cookie https://mail.stackpilot.in/api/v1/dashboard/operations?window=24h
+curl -i -b /tmp/email-vps.cookie "https://mail.stackpilot.in/api/v1/dashboard/ops-events?source=cron&status=open&limit=20&offset=0"
+curl -i -b /tmp/email-vps.cookie -X POST https://mail.stackpilot.in/api/v1/dashboard/operations/recheck
+        </div>
     </div>
 
     <!-- VPS WSL-LIKE DEVELOPMENT SETUP -->

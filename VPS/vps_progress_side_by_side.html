@@ -2384,6 +2384,71 @@ AllowUsers devuser
                 </pre>
                 <p>Policy: keep cron silent via MAILTO="" and rely on dashboard alerting/logs.</p>
             </div>
+
+            <div class="sub-card success">
+                <h3>🛰️ Deep Ops Insights (Live on February 19, 2026)</h3>
+                <pre>
+        /dashboard/operations
+          -> AIDE + Fail2Ban + relay + postfix + cron/logwatch controls
+          -> open/resolved top issue matrix
+          -> timeline with source/status/severity filters
+          -> on-demand collector recheck
+                </pre>
+            </div>
+
+            <div class="sub-card info">
+                <h3>🧾 Ops Timeline + API Surface</h3>
+                <pre>
+        GET  /api/v1/dashboard/operations?window=24h|7d|30d
+        GET  /api/v1/dashboard/ops-events?source=&status=&severity=&window=&limit=&offset=
+        POST /api/v1/dashboard/operations/recheck
+
+        SQLite model:
+        ops_events (fingerprint, source, severity, status, first_seen, last_seen)
+                </pre>
+            </div>
+
+            <div class="sub-card highlight">
+                <h3>✉️ Operational Mail UX Upgrade</h3>
+                <ul>
+                    <li>✔ delivery-probe template for manual probe flow</li>
+                    <li>✔ cron-warning + logwatch-digest + postfix-warning templates</li>
+                    <li>✔ severity chips + log snippet cards + runbook/dashboard links</li>
+                    <li>✔ metadata-only policy preserved for dashboard logs</li>
+                </ul>
+            </div>
+
+            <div class="sub-card info">
+                <h3>🚦 Lighthouse Hardening (Phased Baseline)</h3>
+                <ul>
+                    <li>✔ Meta description coverage on login/dashboard pages</li>
+                    <li>✔ Nav/masthead CLS hardening for stable first paint</li>
+                    <li>✔ Route-aware module loading + tighter asset caching</li>
+                    <li>✔ COOP/CORP + CSP report-only active in app headers</li>
+                    <li>✔ Staged HSTS added in nginx template (max-age=86400)</li>
+                </ul>
+            </div>
+
+            <div class="sub-card warning">
+                <h3>🛠 Postfix Duplicate Warning Remediation</h3>
+                <pre>
+        sudo bash /home/devuser/dev/email-vps/deploy/ops/fix_postfix_config.sh
+        sudo postconf -n | grep -E 'relayhost|smtp_tls_security_level'
+        sudo tail -n 120 /var/log/mail.log | grep -E 'overriding earlier entry|postfix'
+                </pre>
+                <p>Use with operations collector recheck to confirm open postfix warnings resolve.</p>
+            </div>
+
+            <div class="sub-card success">
+                <h3>✅ Plan Completion Delta (February 19, 2026)</h3>
+                <ul>
+                    <li>✔ Deep-ops parser/fingerprint lifecycle unit tests added</li>
+                    <li>✔ Operations route/API integration checks added</li>
+                    <li>✔ Operational template tests expanded (cron-warning, logwatch-digest, health-check)</li>
+                    <li>✔ README + Section 15 runbook parity completed (postfix/cron/collector procedures)</li>
+                    <li>✔ Lighthouse clean-profile release gate documented</li>
+                </ul>
+            </div>
         
             <div class="sub-card highlight">
                 <h3>📦 Node Server Configuration</h3>
